@@ -1,0 +1,22 @@
+mutation REGISTER(
+  $username: String!
+  $password: String!
+  $passwordConfirmation: String!
+  $email: String!
+) {
+  register(
+    data: {
+      username: $username
+      password: $password
+      password_confirmation: $passwordConfirmation
+      email: $email
+    }
+  ) {
+    access_token
+    refresh_token
+    expire_date
+    user {
+      ...UserFields
+    }
+  }
+}

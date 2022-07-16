@@ -1,0 +1,11 @@
+fragment UserFields on User {
+  username
+  id
+  email
+  gender
+  avatar
+  bio
+  isEmailConfirmed
+  birthday
+  blockIncomingCalls
+}

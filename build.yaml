@@ -1,0 +1,17 @@
+targets:
+  $default:
+    sources:
+      - lib/**
+      - graphql/**
+    builders:
+      artemis:
+        options:
+          fragments_glob: lib/graphql/fragments/*.graphql
+          schema_mapping:
+            - schema: lib/schema.graphql
+              queries_glob: lib/graphql/queries/*.graphql
+              output: lib/graphql/graphql_api.dart
+              naming_scheme: pathedWithFields
+          scalar_mapping:
+            - graphql_type: DateTime
+              dart_type: DateTime
