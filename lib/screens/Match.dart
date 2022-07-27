@@ -1,27 +1,27 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/Match/Communities.dart';
 import 'package:scflutter/components/Match/MatchFound.dart';
-import 'package:scflutter/graphql/graphql_api.dart';
-import 'package:scflutter/services/websocket.service.dart';
+import 'package:scflutter/models/client_paired.dart';
+import 'package:scflutter/models/message.dart';
+import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/utils/palette.dart';
-import 'package:scflutter/utils/router.gr.dart' as r;
 
 class MatchScreen extends ConsumerStatefulWidget {
-  MatchScreen({Key? key}) : super(key: key);
+  const MatchScreen({Key? key}) : super(key: key);
 
   @override
   _MatchScreenState createState() => _MatchScreenState();
 }
 
 class _MatchScreenState extends ConsumerState<MatchScreen> {
-  final sc = Socket();
+  final sc = SocketService();
   late OverlayEntry overlayEntry;
   bool searchingForOpponent = false;
   int tabIndex = 0;
@@ -34,31 +34,40 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
       setState(() {
         searchingForOpponent = false;
       });
-      Login$Mutation$Login$User opponent =
-          Login$Mutation$Login$User.fromJson(data["user"]);
 
-      OverlayState? overlayState = Overlay.of(context);
+      ClientPaired formattedData = ClientPaired.fromJson(data);
 
-      overlayEntry = OverlayEntry(
-          opaque: false,
-          builder: (context) {
-            return MatchFound(
-              user: opponent,
-              onCancel: onCancel,
-            );
-          });
-
-      overlayState?.insert(overlayEntry);
+      showDialog(
+          context: context,
+          barrierColor: const Color(0x00ffffff),
+          barrierDismissible: false,
+          builder: (context) => MatchFound(
+              room: Room(
+                  roomAdress: formattedData.room,
+                  id: 0,
+                  created_at: DateTime.now(),
+                  expireDate: DateTime.now(),
+                  updated_at: DateTime.now()),
+              user: formattedData.user));
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    sc.eventEmitter.removeAllByEvent(SocketListenerEvents.CLIENT_PAIRED.path);
+  }
+
   void onCancel() {
-    overlayEntry.remove();
+    AutoRouter.of(context).pop();
   }
 
   void joinQueue() {
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Eşleşme sırasına girdiniz! ")));
     final notifier = ref.read(userProvider.notifier);
-    sc.joinQueue(notifier.state.user);
+    sc.joinQueue(notifier.state.user!);
 
     setState(() {
       searchingForOpponent = true;
@@ -81,9 +90,14 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider.notifier);
+
     return Scaffold(
         appBar: AppBar(
-          leading: Icon(Icons.settings),
+          leading: IconButton(
+            icon: const Icon(EvaIcons.moreHorizontal),
+            onPressed: () => user.clearUser(),
+          ),
           title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Container(
               decoration: BoxDecoration(
@@ -95,21 +109,25 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                   InkWell(
                     onTap: () => changeTab(0),
                     child: Container(
+                      padding: const EdgeInsets.all(10),
                       width: 100,
                       decoration: BoxDecoration(
                           color: tabIndex == 0 ? ColorPalette.primary : null,
                           borderRadius: BorderRadius.circular(20)),
-                      child: Icon(Icons.settings),
+                      child: const Icon(EvaIcons.globe,
+                          color: ColorPalette.grey, size: 15),
                     ),
                   ),
                   InkWell(
                     onTap: () => changeTab(1),
                     child: Container(
                       width: 100,
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           color: tabIndex == 1 ? ColorPalette.primary : null,
                           borderRadius: BorderRadius.circular(20)),
-                      child: Icon(Icons.settings),
+                      child: const Icon(EvaIcons.people,
+                          size: 15, color: ColorPalette.grey),
                     ),
                   )
                 ],
@@ -117,10 +135,10 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
             )
           ]),
         ),
-        body: tabIndex == 0 ? Main(context) : CommunitiesTab());
+        body: tabIndex == 0 ? _Main(context) : const CommunitiesTab());
   }
 
-  Widget Main(BuildContext context) {
+  Widget _Main(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -142,37 +160,55 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
               ),
             ],
           ),
-          searchingForOpponent ? SearchingButton() : SearchButton()
-          // Lottie.asset("assets/animations/search.json"),
+          AnimatedCrossFade(
+              firstChild: _SearchingButton(),
+              secondChild: _SearchButton(),
+              crossFadeState: searchingForOpponent
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
+              duration: const Duration(
+                  milliseconds:
+                      300)) // Lottie.asset("assets/animations/search.json"),
         ],
       ),
     );
   }
 
-  Widget SearchButton() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 200),
+  Widget _SearchButton() {
+    return Container(
+      padding: const EdgeInsets.all(50),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(200),
+          border:
+              Border.all(color: ColorPalette.grey.withOpacity(0.4), width: 1)),
       child: Container(
-        width: 100,
-        height: 100,
+        padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            gradient: LinearGradient(colors: [
-              ColorPalette.primary,
-              Colors.orange.shade300,
-            ])),
-        child: InkWell(
+            borderRadius: BorderRadius.circular(200),
+            border: Border.all(
+                color: ColorPalette.grey.withOpacity(0.4), width: 1)),
+        child: GestureDetector(
           onTap: joinQueue,
-          child: const Icon(
-            Icons.search,
-            size: 30,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                gradient: LinearGradient(colors: [
+                  ColorPalette.primary,
+                  Colors.orange.shade300,
+                ])),
+            child: const Icon(
+              Icons.search,
+              size: 30,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget SearchingButton() {
+  Widget _SearchingButton() {
     return Padding(
       padding: const EdgeInsets.only(top: 200),
       child: Stack(

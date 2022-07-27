@@ -10,108 +10,135 @@
 //
 // ignore_for_file: type=lint
 
-import 'package:auto_route/auto_route.dart' as _i10;
-import 'package:flutter/material.dart' as _i11;
-import 'package:scflutter/guards/auth.guard.dart' as _i12;
+import 'package:auto_route/auto_route.dart' as _i13;
+import 'package:flutter/material.dart' as _i14;
+import 'package:scflutter/components/Match/MatchFound.dart' as _i9;
+import 'package:scflutter/guards/auth.guard.dart' as _i15;
+import 'package:scflutter/models/message.dart' as _i17;
+import 'package:scflutter/models/user_model.dart' as _i16;
+import 'package:scflutter/screens/Chat.dart' as _i8;
+import 'package:scflutter/screens/Chats.dart' as _i12;
 import 'package:scflutter/screens/Home.dart' as _i7;
 import 'package:scflutter/screens/Login.dart' as _i2;
-import 'package:scflutter/screens/Match.dart' as _i8;
+import 'package:scflutter/screens/Match.dart' as _i10;
 import 'package:scflutter/screens/Onboard.dart' as _i1;
-import 'package:scflutter/screens/Profile.dart' as _i9;
+import 'package:scflutter/screens/Profile.dart' as _i11;
 import 'package:scflutter/screens/Register/StepFour.dart' as _i6;
 import 'package:scflutter/screens/Register/StepOne.dart' as _i3;
 import 'package:scflutter/screens/Register/StepThree.dart' as _i5;
 import 'package:scflutter/screens/Register/StepTwo.dart' as _i4;
 
-class AppRouter extends _i10.RootStackRouter {
+class AppRouter extends _i13.RootStackRouter {
   AppRouter(
-      {_i11.GlobalKey<_i11.NavigatorState>? navigatorKey,
+      {_i14.GlobalKey<_i14.NavigatorState>? navigatorKey,
       required this.authGuard})
       : super(navigatorKey);
 
-  final _i12.AuthGuard authGuard;
+  final _i15.AuthGuard authGuard;
 
   @override
-  final Map<String, _i10.PageFactory> pagesMap = {
+  final Map<String, _i13.PageFactory> pagesMap = {
     OnboardScreen.name: (routeData) {
-      return _i10.AdaptivePage<dynamic>(
+      return _i13.AdaptivePage<dynamic>(
           routeData: routeData, child: const _i1.OnboardScreen());
     },
     LoginScreen.name: (routeData) {
-      final args = routeData.argsAs<LoginScreenArgs>(
-          orElse: () => const LoginScreenArgs());
-      return _i10.AdaptivePage<dynamic>(
-          routeData: routeData, child: _i2.LoginScreen(key: args.key));
+      return _i13.AdaptivePage<dynamic>(
+          routeData: routeData, child: const _i2.LoginScreen());
     },
     RegisterScreenStepOne.name: (routeData) {
       final args = routeData.argsAs<RegisterScreenStepOneArgs>(
           orElse: () => const RegisterScreenStepOneArgs());
-      return _i10.AdaptivePage<dynamic>(
+      return _i13.AdaptivePage<dynamic>(
           routeData: routeData,
           child: _i3.RegisterScreenStepOne(key: args.key));
     },
     RegisterScreenStepTwo.name: (routeData) {
-      return _i10.AdaptivePage<dynamic>(
+      return _i13.AdaptivePage<dynamic>(
           routeData: routeData, child: const _i4.RegisterScreenStepTwo());
     },
     RegisterStepThreeScreen.name: (routeData) {
       final args = routeData.argsAs<RegisterStepThreeScreenArgs>();
-      return _i10.AdaptivePage<dynamic>(
+      return _i13.AdaptivePage<dynamic>(
           routeData: routeData,
           child: _i5.RegisterStepThreeScreen(
               key: args.key, allowedChatMethods: args.allowedChatMethods));
     },
     RegisterScreenStepFour.name: (routeData) {
       final args = routeData.argsAs<RegisterScreenStepFourArgs>();
-      return _i10.AdaptivePage<dynamic>(
+      return _i13.AdaptivePage<dynamic>(
           routeData: routeData,
           child: _i6.RegisterScreenStepFour(
               key: args.key, email: args.email, username: args.username));
     },
     HomeScreen.name: (routeData) {
-      return _i10.AdaptivePage<dynamic>(
+      return _i13.AdaptivePage<dynamic>(
           routeData: routeData, child: const _i7.HomeScreen());
     },
+    Chat.name: (routeData) {
+      final args = routeData.argsAs<ChatArgs>();
+      return _i13.AdaptivePage<dynamic>(
+          routeData: routeData,
+          child: _i8.Chat(
+              key: args.key,
+              comingFromMatchedPage: args.comingFromMatchedPage,
+              connectedUser: args.connectedUser,
+              room: args.room));
+    },
+    MatchFound.name: (routeData) {
+      final args = routeData.argsAs<MatchFoundArgs>();
+      return _i13.AdaptivePage<dynamic>(
+          routeData: routeData,
+          child:
+              _i9.MatchFound(key: args.key, user: args.user, room: args.room),
+          fullscreenDialog: true);
+    },
     MatchScreen.name: (routeData) {
-      final args = routeData.argsAs<MatchScreenArgs>(
-          orElse: () => const MatchScreenArgs());
-      return _i10.AdaptivePage<dynamic>(
-          routeData: routeData, child: _i8.MatchScreen(key: args.key));
+      return _i13.AdaptivePage<dynamic>(
+          routeData: routeData, child: const _i10.MatchScreen());
     },
     ProfileScreen.name: (routeData) {
-      final args = routeData.argsAs<ProfileScreenArgs>(
-          orElse: () => const ProfileScreenArgs());
-      return _i10.AdaptivePage<dynamic>(
-          routeData: routeData, child: _i9.ProfileScreen(key: args.key));
+      return _i13.AdaptivePage<dynamic>(
+          routeData: routeData,
+          child: const _i11.ProfileScreen(),
+          fullscreenDialog: true);
+    },
+    ChatsScreen.name: (routeData) {
+      return _i13.AdaptivePage<dynamic>(
+          routeData: routeData, child: const _i12.ChatsScreen());
     }
   };
 
   @override
-  List<_i10.RouteConfig> get routes => [
-        _i10.RouteConfig(OnboardScreen.name, path: '/'),
-        _i10.RouteConfig(LoginScreen.name, path: '/login-screen'),
-        _i10.RouteConfig(RegisterScreenStepOne.name,
+  List<_i13.RouteConfig> get routes => [
+        _i13.RouteConfig(OnboardScreen.name, path: '/'),
+        _i13.RouteConfig(LoginScreen.name, path: '/login-screen'),
+        _i13.RouteConfig(RegisterScreenStepOne.name,
             path: '/register-screen-step-one'),
-        _i10.RouteConfig(RegisterScreenStepTwo.name,
+        _i13.RouteConfig(RegisterScreenStepTwo.name,
             path: '/register-screen-step-two'),
-        _i10.RouteConfig(RegisterStepThreeScreen.name,
+        _i13.RouteConfig(RegisterStepThreeScreen.name,
             path: '/register-step-three-screen'),
-        _i10.RouteConfig(RegisterScreenStepFour.name,
+        _i13.RouteConfig(RegisterScreenStepFour.name,
             path: '/register-screen-step-four'),
-        _i10.RouteConfig(HomeScreen.name, path: '/home-screen', guards: [
+        _i13.RouteConfig(HomeScreen.name, path: '/home-screen', guards: [
           authGuard
         ], children: [
-          _i10.RouteConfig(MatchScreen.name,
+          _i13.RouteConfig(MatchScreen.name,
               path: 'match-screen', parent: HomeScreen.name),
-          _i10.RouteConfig(ProfileScreen.name,
-              path: 'profile-screen', parent: HomeScreen.name)
-        ])
+          _i13.RouteConfig(ProfileScreen.name,
+              path: 'profile-screen', parent: HomeScreen.name),
+          _i13.RouteConfig(ChatsScreen.name,
+              path: 'chats-screen', parent: HomeScreen.name)
+        ]),
+        _i13.RouteConfig(Chat.name, path: '/Chat'),
+        _i13.RouteConfig(MatchFound.name, path: '/match-found')
       ];
 }
 
 /// generated route for
 /// [_i1.OnboardScreen]
-class OnboardScreen extends _i10.PageRouteInfo<void> {
+class OnboardScreen extends _i13.PageRouteInfo<void> {
   const OnboardScreen() : super(OnboardScreen.name, path: '/');
 
   static const String name = 'OnboardScreen';
@@ -119,30 +146,17 @@ class OnboardScreen extends _i10.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.LoginScreen]
-class LoginScreen extends _i10.PageRouteInfo<LoginScreenArgs> {
-  LoginScreen({_i11.Key? key})
-      : super(LoginScreen.name,
-            path: '/login-screen', args: LoginScreenArgs(key: key));
+class LoginScreen extends _i13.PageRouteInfo<void> {
+  const LoginScreen() : super(LoginScreen.name, path: '/login-screen');
 
   static const String name = 'LoginScreen';
-}
-
-class LoginScreenArgs {
-  const LoginScreenArgs({this.key});
-
-  final _i11.Key? key;
-
-  @override
-  String toString() {
-    return 'LoginScreenArgs{key: $key}';
-  }
 }
 
 /// generated route for
 /// [_i3.RegisterScreenStepOne]
 class RegisterScreenStepOne
-    extends _i10.PageRouteInfo<RegisterScreenStepOneArgs> {
-  RegisterScreenStepOne({_i11.Key? key})
+    extends _i13.PageRouteInfo<RegisterScreenStepOneArgs> {
+  RegisterScreenStepOne({_i14.Key? key})
       : super(RegisterScreenStepOne.name,
             path: '/register-screen-step-one',
             args: RegisterScreenStepOneArgs(key: key));
@@ -153,7 +167,7 @@ class RegisterScreenStepOne
 class RegisterScreenStepOneArgs {
   const RegisterScreenStepOneArgs({this.key});
 
-  final _i11.Key? key;
+  final _i14.Key? key;
 
   @override
   String toString() {
@@ -163,7 +177,7 @@ class RegisterScreenStepOneArgs {
 
 /// generated route for
 /// [_i4.RegisterScreenStepTwo]
-class RegisterScreenStepTwo extends _i10.PageRouteInfo<void> {
+class RegisterScreenStepTwo extends _i13.PageRouteInfo<void> {
   const RegisterScreenStepTwo()
       : super(RegisterScreenStepTwo.name, path: '/register-screen-step-two');
 
@@ -173,8 +187,8 @@ class RegisterScreenStepTwo extends _i10.PageRouteInfo<void> {
 /// generated route for
 /// [_i5.RegisterStepThreeScreen]
 class RegisterStepThreeScreen
-    extends _i10.PageRouteInfo<RegisterStepThreeScreenArgs> {
-  RegisterStepThreeScreen({_i11.Key? key, required dynamic allowedChatMethods})
+    extends _i13.PageRouteInfo<RegisterStepThreeScreenArgs> {
+  RegisterStepThreeScreen({_i14.Key? key, required dynamic allowedChatMethods})
       : super(RegisterStepThreeScreen.name,
             path: '/register-step-three-screen',
             args: RegisterStepThreeScreenArgs(
@@ -187,7 +201,7 @@ class RegisterStepThreeScreenArgs {
   const RegisterStepThreeScreenArgs(
       {this.key, required this.allowedChatMethods});
 
-  final _i11.Key? key;
+  final _i14.Key? key;
 
   final dynamic allowedChatMethods;
 
@@ -200,9 +214,9 @@ class RegisterStepThreeScreenArgs {
 /// generated route for
 /// [_i6.RegisterScreenStepFour]
 class RegisterScreenStepFour
-    extends _i10.PageRouteInfo<RegisterScreenStepFourArgs> {
+    extends _i13.PageRouteInfo<RegisterScreenStepFourArgs> {
   RegisterScreenStepFour(
-      {_i11.Key? key, required dynamic email, required dynamic username})
+      {_i14.Key? key, required dynamic email, required dynamic username})
       : super(RegisterScreenStepFour.name,
             path: '/register-screen-step-four',
             args: RegisterScreenStepFourArgs(
@@ -215,7 +229,7 @@ class RegisterScreenStepFourArgs {
   const RegisterScreenStepFourArgs(
       {this.key, required this.email, required this.username});
 
-  final _i11.Key? key;
+  final _i14.Key? key;
 
   final dynamic email;
 
@@ -229,51 +243,99 @@ class RegisterScreenStepFourArgs {
 
 /// generated route for
 /// [_i7.HomeScreen]
-class HomeScreen extends _i10.PageRouteInfo<void> {
-  const HomeScreen({List<_i10.PageRouteInfo>? children})
+class HomeScreen extends _i13.PageRouteInfo<void> {
+  const HomeScreen({List<_i13.PageRouteInfo>? children})
       : super(HomeScreen.name, path: '/home-screen', initialChildren: children);
 
   static const String name = 'HomeScreen';
 }
 
 /// generated route for
-/// [_i8.MatchScreen]
-class MatchScreen extends _i10.PageRouteInfo<MatchScreenArgs> {
-  MatchScreen({_i11.Key? key})
-      : super(MatchScreen.name,
-            path: 'match-screen', args: MatchScreenArgs(key: key));
+/// [_i8.Chat]
+class Chat extends _i13.PageRouteInfo<ChatArgs> {
+  Chat(
+      {_i14.Key? key,
+      required bool comingFromMatchedPage,
+      _i16.User? connectedUser,
+      _i17.Room? room})
+      : super(Chat.name,
+            path: '/Chat',
+            args: ChatArgs(
+                key: key,
+                comingFromMatchedPage: comingFromMatchedPage,
+                connectedUser: connectedUser,
+                room: room));
 
-  static const String name = 'MatchScreen';
+  static const String name = 'Chat';
 }
 
-class MatchScreenArgs {
-  const MatchScreenArgs({this.key});
+class ChatArgs {
+  const ChatArgs(
+      {this.key,
+      required this.comingFromMatchedPage,
+      this.connectedUser,
+      this.room});
 
-  final _i11.Key? key;
+  final _i14.Key? key;
+
+  final bool comingFromMatchedPage;
+
+  final _i16.User? connectedUser;
+
+  final _i17.Room? room;
 
   @override
   String toString() {
-    return 'MatchScreenArgs{key: $key}';
+    return 'ChatArgs{key: $key, comingFromMatchedPage: $comingFromMatchedPage, connectedUser: $connectedUser, room: $room}';
   }
 }
 
 /// generated route for
-/// [_i9.ProfileScreen]
-class ProfileScreen extends _i10.PageRouteInfo<ProfileScreenArgs> {
-  ProfileScreen({_i11.Key? key})
-      : super(ProfileScreen.name,
-            path: 'profile-screen', args: ProfileScreenArgs(key: key));
+/// [_i9.MatchFound]
+class MatchFound extends _i13.PageRouteInfo<MatchFoundArgs> {
+  MatchFound({_i14.Key? key, required _i16.User user, required _i17.Room room})
+      : super(MatchFound.name,
+            path: '/match-found',
+            args: MatchFoundArgs(key: key, user: user, room: room));
+
+  static const String name = 'MatchFound';
+}
+
+class MatchFoundArgs {
+  const MatchFoundArgs({this.key, required this.user, required this.room});
+
+  final _i14.Key? key;
+
+  final _i16.User user;
+
+  final _i17.Room room;
+
+  @override
+  String toString() {
+    return 'MatchFoundArgs{key: $key, user: $user, room: $room}';
+  }
+}
+
+/// generated route for
+/// [_i10.MatchScreen]
+class MatchScreen extends _i13.PageRouteInfo<void> {
+  const MatchScreen() : super(MatchScreen.name, path: 'match-screen');
+
+  static const String name = 'MatchScreen';
+}
+
+/// generated route for
+/// [_i11.ProfileScreen]
+class ProfileScreen extends _i13.PageRouteInfo<void> {
+  const ProfileScreen() : super(ProfileScreen.name, path: 'profile-screen');
 
   static const String name = 'ProfileScreen';
 }
 
-class ProfileScreenArgs {
-  const ProfileScreenArgs({this.key});
+/// generated route for
+/// [_i12.ChatsScreen]
+class ChatsScreen extends _i13.PageRouteInfo<void> {
+  const ChatsScreen() : super(ChatsScreen.name, path: 'chats-screen');
 
-  final _i11.Key? key;
-
-  @override
-  String toString() {
-    return 'ProfileScreenArgs{key: $key}';
-  }
+  static const String name = 'ChatsScreen';
 }

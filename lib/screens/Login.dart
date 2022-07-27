@@ -1,19 +1,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
+import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
-import 'package:scflutter/storage/auth.storage.dart';
-import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   _LoginState createState() => _LoginState();
@@ -38,9 +35,12 @@ class _LoginState extends ConsumerState<LoginScreen> {
   onCompleted(Map<String, dynamic>? result) async {
     if (result != null) {
       final data = Login$Mutation.fromJson(result);
-      final authState = ref.watch(userProvider.notifier);
+      final currentUser = User.fromJson(data.login.user.toJson());
+      final authState = ref.read(userProvider.notifier);
       final model = AuthStateModel(
-          accessToken: data.login.accessToken, user: data.login.user);
+          refreshToken: data.login.refreshToken,
+          accessToken: data.login.accessToken,
+          user: currentUser);
 
       await authState.setUser(model);
 

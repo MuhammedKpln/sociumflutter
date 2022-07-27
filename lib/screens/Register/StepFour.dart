@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,12 +6,12 @@ import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/main.dart';
+import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
-import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 class RegisterScreenStepFour extends ConsumerStatefulWidget {
-  RegisterScreenStepFour(
+  const RegisterScreenStepFour(
       {Key? key, required this.email, required this.username})
       : super(key: key);
 
@@ -42,8 +40,8 @@ class RegisterScreenStepFourState
       });
 
       if (result.exception != null) {
-        scaffoldKey.currentState?.showSnackBar(
-            SnackBar(content: Text("Lütfen daha sonra tekrar deneyiniz.")));
+        scaffoldKey.currentState?.showSnackBar(const SnackBar(
+            content: Text("Lütfen daha sonra tekrar deneyiniz.")));
 
         // Timer(Duration(milliseconds: 500), () {
         //   AutoRouter.of(context).popUntilRoot();
@@ -72,15 +70,20 @@ class RegisterScreenStepFourState
     final serializedData = Register$Mutation.fromJson(data);
     final userModel = Login$Mutation$Login$User.fromJson(
         serializedData.register.user.toJson());
-    ref.watch(userProvider.notifier).setUser(AuthStateModel(
-        user: userModel, accessToken: serializedData.register.accessToken));
 
-    context.router.replaceAll([HomeScreen()]);
+    final currentUser = User.fromJson(userModel.toJson());
+
+    ref.watch(userProvider.notifier).setUser(AuthStateModel(
+        refreshToken: serializedData.register.refreshToken,
+        user: currentUser,
+        accessToken: serializedData.register.accessToken));
+
+    context.router.replaceAll([const HomeScreen()]);
   }
 
   onErrorLoginAttempt(OperationException? error) {
     scaffoldKey.currentState?.showSnackBar(
-        SnackBar(content: Text("Lütfen daha sonra tekrar deneyiniz.")));
+        const SnackBar(content: Text("Lütfen daha sonra tekrar deneyiniz.")));
   }
 
   @override
@@ -170,7 +173,7 @@ class RegisterScreenStepFourState
                         margin: const EdgeInsets.all(30),
                         child: RoundedButton(
                             icon: result!.isLoading
-                                ? CircularProgressIndicator()
+                                ? const CircularProgressIndicator()
                                 : null,
                             child: const Text("Kayıt ol"),
                             onPressed: () {

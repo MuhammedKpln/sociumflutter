@@ -17,33 +17,26 @@ class RoundedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ButtonStyle _style = ButtonStyle(
+            backgroundColor: style?.backgroundColor == null
+                ? MaterialStateProperty.all(ColorPalette.primary)
+                : null,
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20))),
+            padding: MaterialStateProperty.all(EdgeInsets.all(15)),
+            textStyle: MaterialStateProperty.all(
+                TextStyle(fontWeight: FontWeight.normal, fontSize: 13)))
+        .merge(style);
+
     if (icon != null) {
       return ElevatedButton.icon(
-        icon: icon!,
-        label: child,
-        onPressed: onPressed,
-        style: ButtonStyle(
-                backgroundColor: style?.backgroundColor == null
-                    ? MaterialStateProperty.all(ColorPalette.primary)
-                    : null,
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20))),
-                padding: MaterialStateProperty.all(EdgeInsets.all(10)))
-            .merge(style),
-      );
+          icon: icon!, label: child, onPressed: onPressed, style: _style);
     }
 
     return ElevatedButton(
       child: child,
       onPressed: onPressed,
-      style: ButtonStyle(
-              backgroundColor: style?.backgroundColor == null
-                  ? MaterialStateProperty.all(ColorPalette.primary)
-                  : null,
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20))),
-              padding: MaterialStateProperty.all(EdgeInsets.all(10)))
-          .merge(style),
+      style: _style,
     );
   }
 }

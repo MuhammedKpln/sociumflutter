@@ -3,10 +3,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/state/auth.dart';
-import 'package:scflutter/storage.dart';
 import 'package:scflutter/storage/auth.storage.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
@@ -24,27 +22,23 @@ class _LoginScreenState extends ConsumerState<OnboardScreen> {
   void initState() {
     super.initState();
 
-    Hive.openLazyBox(StorageBoxes.Auth).then((box) {
-      print(box.keys);
-    });
-
     _login();
   }
 
   Future<void> _login() async {
     final accessToken = await getAccessToken();
-    // print("qlejqwe");
-    // print(user);
+    final refreshToken = await getRefreshToken();
 
     if (accessToken != null) {
       final user = await getUser();
 
       if (user != null) {
-        final model = AuthStateModel(accessToken: accessToken, user: user);
+        final model = AuthStateModel(
+            accessToken: accessToken, refreshToken: refreshToken, user: user);
         final authState = ref.watch(userProvider.notifier);
         authState.setUser(model);
 
-        context.router.replaceAll([HomeScreen()]);
+        context.router.replaceAll([const HomeScreen()]);
       }
     }
   }
@@ -106,7 +100,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreen> {
               RoundedButton(
                 icon: const Icon(Icons.mail_outline),
                 onPressed: () => !registering
-                    ? context.router.push(LoginScreen())
+                    ? context.router.push(const LoginScreen())
                     : context.router.push(RegisterScreenStepOne()),
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black)),
@@ -207,8 +201,8 @@ class _LoginScreenState extends ConsumerState<OnboardScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: RoundedButton(
-                          child: const Text("Başlıyalım"),
-                          onPressed: onPressRegister),
+                          onPressed: onPressRegister,
+                          child: const Text("Başlıyalım")),
                     ),
                     SizedBox(
                       width: double.infinity,

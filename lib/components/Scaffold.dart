@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 class AppScaffold extends StatefulWidget {
@@ -16,16 +17,23 @@ class AppScaffoldState extends State<AppScaffold> {
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
-      routes: [MatchScreen(), ProfileScreen()],
+      routes: const [
+        MatchScreen(),
+        ChatsScreen(),
+        ProfileScreen(),
+      ],
       bottomNavigationBuilder: (_, tabsRouter) {
         return BottomNavigationBar(
           currentIndex: tabsRouter.activeIndex,
           onTap: tabsRouter.setActiveIndex,
-          items: [
+          backgroundColor: ColorPalette.surface,
+          items: const [
             BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.home), label: "Home"),
+                icon: Icon(FeatherIcons.home), label: "Home"),
             BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.person), label: "Profile")
+                icon: Icon(FeatherIcons.messageCircle), label: "Chats"),
+            BottomNavigationBarItem(
+                icon: Icon(FeatherIcons.user), label: "Profile")
           ],
           showSelectedLabels: false,
           showUnselectedLabels: false,

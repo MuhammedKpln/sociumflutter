@@ -1,68 +1,80 @@
-import 'dart:math';
-import 'dart:ui' as ui;
-
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
-import 'package:scflutter/graphql/graphql_api.graphql.dart';
-import 'package:scflutter/utils/avatar.dart';
-import "package:eventify/eventify.dart";
+import 'package:scflutter/models/message.dart';
+import 'package:scflutter/models/user_model.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:scflutter/utils/router.gr.dart';
 
 class MatchFound extends StatelessWidget {
-  MatchFound({Key? key, required this.user, required this.onCancel})
+  MatchFound({Key? key, required this.user, required this.room})
       : super(key: key);
 
-  Login$Mutation$Login$User user;
-  Function onCancel;
+  User user;
+  Room room;
 
   @override
   Widget build(BuildContext context) {
-    final randomAvatar = generateRandomAvatar();
+    void closeDialog() {
+      context.router.pop();
+    }
 
-    return Positioned(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            child: Stack(alignment: Alignment.center, children: [
-              Lottie.asset("assets/animations/confetti.json"),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      Image.network(
-                        generateAvatarUrl(user.avatar ?? randomAvatar),
-                        width: 100,
-                        height: 100,
-                        scale: 0.6,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Text(
-                          user.username,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              decoration: TextDecoration.none),
-                        ),
-                      ),
-                    ],
+    void sendMessage() {
+      closeDialog();
+
+      context.router.navigate(
+          Chat(comingFromMatchedPage: true, connectedUser: user, room: room));
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.black.withOpacity(0.7),
+      body: Stack(alignment: Alignment.center, fit: StackFit.expand, children: [
+        Lottie.asset("assets/animations/confetti.json",
+            frameRate: FrameRate.max, height: 100),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    'Yeni bir eşleşme var!',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  Column(
-                    children: [
-                      RoundedButton(
-                        child: const Text("Esles"),
-                        onPressed: () => null,
-                      ),
-                      ElevatedButton(
-                          onPressed: () => onCancel(),
-                          child: const Text("Iptal"))
-                    ],
-                  )
-                ],
-              ),
-            ])));
+                ),
+                Avatar(
+                  avatarName: user.avatar,
+                  avatarSize: AvatarSize.large,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    user.username ?? "No username",
+                    style: const TextStyle(
+                        color: Colors.white, decoration: TextDecoration.none),
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                RoundedButton(
+                  onPressed: sendMessage,
+                  icon: const Icon(EvaIcons.messageCircleOutline, size: 20),
+                  child: const Text("Mesaj gönder"),
+                ),
+                TextButton(
+                    onPressed: () => AutoRouter.of(context).pop(),
+                    child: const Text("Kapat"))
+              ],
+            )
+          ],
+        ),
+      ]),
+    );
   }
 }

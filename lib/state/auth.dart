@@ -1,32 +1,39 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scflutter/graphql/graphql_api.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/storage/auth.storage.dart';
 
-class AuthStateModel {
-  late String accessToken;
-  late Login$Mutation$Login$User user;
+part 'auth.freezed.dart';
+part 'auth.g.dart';
 
-  AuthStateModel({required this.accessToken, required this.user});
+@freezed
+abstract class AuthStateModel with _$AuthStateModel {
+  const factory AuthStateModel(
+      {String? accessToken,
+      String? refreshToken,
+      User? user}) = _AuthStateModel;
+
+  factory AuthStateModel.fromJson(Map<String, dynamic> json) =>
+      _$AuthStateModelFromJson(json);
 }
 
 class UserModelNotifier extends StateNotifier<AuthStateModel> {
   UserModelNotifier()
-      : super(
-            AuthStateModel(accessToken: "", user: Login$Mutation$Login$User()));
+      : super(const AuthStateModel(accessToken: null, user: null));
 
-  Future<void> setUser(AuthStateModel user) async {
+  setUser(AuthStateModel user) async {
     await saveLogin(user);
 
     state = user;
   }
 
-  void clearUser() {
-    deleteUser();
-
-    state = AuthStateModel(accessToken: "", user: Login$Mutation$Login$User());
+  clearUser() async {
+    await deleteUser();
+    state = const AuthStateModel();
   }
 }
 
-final userProvider = StateNotifierProvider((ref) {
+final userProvider =
+    StateNotifierProvider<UserModelNotifier, AuthStateModel>((ref) {
   return UserModelNotifier();
 });

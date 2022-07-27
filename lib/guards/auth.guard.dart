@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scflutter/storage.dart';
-import 'package:scflutter/storage/auth.storage.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 class AuthGuard extends AutoRouteGuard {
@@ -14,7 +13,7 @@ class AuthGuard extends AutoRouteGuard {
         if (event.containsKey(StorageKeys.AccessToken)) {
           resolver.next();
         } else {
-          router.push(LoginScreen());
+          router.push(const LoginScreen());
         }
       });
     });

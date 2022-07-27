@@ -1,15 +1,19 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
-import 'package:scflutter/graphql/graphql_api.dart';
+import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/storage.dart';
 
-Future<void> saveLogin(AuthStateModel user) async {
+saveLogin(AuthStateModel user) async {
   final box = await Hive.openLazyBox(StorageBoxes.Auth);
 
   if (box.containsKey(StorageKeys.AccessToken)) {
     await box.delete(StorageKeys.AccessToken);
+  }
+
+  if (box.containsKey(StorageKeys.RefreshToken)) {
+    await box.delete(StorageKeys.RefreshToken);
   }
 
   if (box.containsKey(StorageKeys.User)) {
@@ -17,14 +21,31 @@ Future<void> saveLogin(AuthStateModel user) async {
   }
   await box.putAll({
     StorageKeys.AccessToken: user.accessToken,
+    StorageKeys.RefreshToken: user.refreshToken,
     StorageKeys.User: json.encode(user.user)
   });
+}
+
+Future<bool> isLoggedIn() async {
+  final box = await Hive.openLazyBox(StorageBoxes.Auth);
+
+  if (box.containsKey(StorageKeys.AccessToken)) {
+    return true;
+  }
+
+  return false;
 }
 
 getAccessToken() async {
   final box = await Hive.openLazyBox(StorageBoxes.Auth);
 
   return await box.get(StorageKeys.AccessToken);
+}
+
+getRefreshToken() async {
+  final box = await Hive.openLazyBox(StorageBoxes.Auth);
+
+  return await box.get(StorageKeys.RefreshToken);
 }
 
 getUser() async {
@@ -34,7 +55,7 @@ getUser() async {
     final user = await box.get(StorageKeys.User);
 
     if (user != null) {
-      return Login$Mutation$Login$User.fromJson(json.decode(user));
+      return User.fromJson(json.decode(user));
     }
   }
 }

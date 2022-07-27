@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:scflutter/components/Match/MatchFound.dart';
 import 'package:scflutter/guards/auth.guard.dart';
+import 'package:scflutter/screens/Chat.dart';
+import 'package:scflutter/screens/Chats.dart';
 import 'package:scflutter/screens/Home.dart';
 import 'package:scflutter/screens/Login.dart';
 import 'package:scflutter/screens/Match.dart';
@@ -23,8 +26,13 @@ import 'package:scflutter/screens/Register/StepTwo.dart';
       AuthGuard
     ], children: [
       AutoRoute(page: MatchScreen),
-      AutoRoute(page: ProfileScreen),
+      AutoRoute(page: ProfileScreen, fullscreenDialog: true),
+      AutoRoute(page: ChatsScreen),
     ]),
+    AutoRoute(
+      page: Chat,
+    ),
+    AutoRoute(page: MatchFound, fullscreenDialog: true),
   ],
 )
 class $AppRouter {}
