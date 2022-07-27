@@ -42,13 +42,16 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
           barrierColor: const Color(0x00ffffff),
           barrierDismissible: false,
           builder: (context) => MatchFound(
-              room: Room(
-                  roomAdress: formattedData.room,
-                  id: 0,
-                  created_at: DateTime.now(),
-                  expireDate: DateTime.now(),
-                  updated_at: DateTime.now()),
-              user: formattedData.user));
+                room: Room(
+                    roomAdress: formattedData.room,
+                    id: 0,
+                    created_at: DateTime.now(),
+                    expireDate: DateTime.now(),
+                    updated_at: DateTime.now()),
+                userUUID: formattedData.uuid,
+                user: formattedData.user,
+                socketService: sc,
+              ));
     });
   }
 

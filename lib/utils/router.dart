@@ -13,6 +13,8 @@ import 'package:scflutter/screens/Register/StepOne.dart';
 import 'package:scflutter/screens/Register/StepThree.dart';
 import 'package:scflutter/screens/Register/StepTwo.dart';
 
+import '../screens/Chat/CallComing.dart';
+
 @AdaptiveAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
@@ -22,11 +24,12 @@ import 'package:scflutter/screens/Register/StepTwo.dart';
     AutoRoute(page: RegisterScreenStepTwo),
     AutoRoute(page: RegisterStepThreeScreen),
     AutoRoute(page: RegisterScreenStepFour),
+    AutoRoute(page: CallComing, fullscreenDialog: true),
     AutoRoute(page: HomeScreen, guards: [
       AuthGuard
     ], children: [
       AutoRoute(page: MatchScreen),
-      AutoRoute(page: ProfileScreen, fullscreenDialog: true),
+      AutoRoute(page: ProfileScreen),
       AutoRoute(page: ChatsScreen),
     ]),
     AutoRoute(

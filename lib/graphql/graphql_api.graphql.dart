@@ -84,6 +84,46 @@ class GetUserProfile$Query extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
+class RefreshToken$Mutation$RefreshToken extends JsonSerializable
+    with EquatableMixin {
+  RefreshToken$Mutation$RefreshToken();
+
+  factory RefreshToken$Mutation$RefreshToken.fromJson(
+          Map<String, dynamic> json) =>
+      _$RefreshToken$Mutation$RefreshTokenFromJson(json);
+
+  @JsonKey(name: 'access_token')
+  late String accessToken;
+
+  @JsonKey(name: 'refresh_token')
+  late String refreshToken;
+
+  @JsonKey(name: 'expire_date')
+  late DateTime expireDate;
+
+  @override
+  List<Object?> get props => [accessToken, refreshToken, expireDate];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$RefreshToken$Mutation$RefreshTokenToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class RefreshToken$Mutation extends JsonSerializable with EquatableMixin {
+  RefreshToken$Mutation();
+
+  factory RefreshToken$Mutation.fromJson(Map<String, dynamic> json) =>
+      _$RefreshToken$MutationFromJson(json);
+
+  late RefreshToken$Mutation$RefreshToken refreshToken;
+
+  @override
+  List<Object?> get props => [refreshToken];
+  @override
+  Map<String, dynamic> toJson() => _$RefreshToken$MutationToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class FetchMessages$Query$Messages$Sender extends JsonSerializable
     with EquatableMixin {
   FetchMessages$Query$Messages$Sender();
@@ -328,6 +368,161 @@ class Register$Mutation extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
+class FetchRoomMessage$Query$MessagesFromRoom$Sender extends JsonSerializable
+    with EquatableMixin {
+  FetchRoomMessage$Query$MessagesFromRoom$Sender();
+
+  factory FetchRoomMessage$Query$MessagesFromRoom$Sender.fromJson(
+          Map<String, dynamic> json) =>
+      _$FetchRoomMessage$Query$MessagesFromRoom$SenderFromJson(json);
+
+  late String username;
+
+  late double id;
+
+  late String email;
+
+  double? gender;
+
+  String? avatar;
+
+  String? bio;
+
+  late bool isEmailConfirmed;
+
+  DateTime? birthday;
+
+  bool? blockIncomingCalls;
+
+  @override
+  List<Object?> get props => [
+        username,
+        id,
+        email,
+        gender,
+        avatar,
+        bio,
+        isEmailConfirmed,
+        birthday,
+        blockIncomingCalls
+      ];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$FetchRoomMessage$Query$MessagesFromRoom$SenderToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class FetchRoomMessage$Query$MessagesFromRoom$Receiver extends JsonSerializable
+    with EquatableMixin {
+  FetchRoomMessage$Query$MessagesFromRoom$Receiver();
+
+  factory FetchRoomMessage$Query$MessagesFromRoom$Receiver.fromJson(
+          Map<String, dynamic> json) =>
+      _$FetchRoomMessage$Query$MessagesFromRoom$ReceiverFromJson(json);
+
+  late String username;
+
+  late double id;
+
+  late String email;
+
+  double? gender;
+
+  String? avatar;
+
+  String? bio;
+
+  late bool isEmailConfirmed;
+
+  DateTime? birthday;
+
+  bool? blockIncomingCalls;
+
+  @override
+  List<Object?> get props => [
+        username,
+        id,
+        email,
+        gender,
+        avatar,
+        bio,
+        isEmailConfirmed,
+        birthday,
+        blockIncomingCalls
+      ];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$FetchRoomMessage$Query$MessagesFromRoom$ReceiverToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class FetchRoomMessage$Query$MessagesFromRoom$Room extends JsonSerializable
+    with EquatableMixin {
+  FetchRoomMessage$Query$MessagesFromRoom$Room();
+
+  factory FetchRoomMessage$Query$MessagesFromRoom$Room.fromJson(
+          Map<String, dynamic> json) =>
+      _$FetchRoomMessage$Query$MessagesFromRoom$RoomFromJson(json);
+
+  late double id;
+
+  late String roomAdress;
+
+  @override
+  List<Object?> get props => [id, roomAdress];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$FetchRoomMessage$Query$MessagesFromRoom$RoomToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class FetchRoomMessage$Query$MessagesFromRoom extends JsonSerializable
+    with EquatableMixin {
+  FetchRoomMessage$Query$MessagesFromRoom();
+
+  factory FetchRoomMessage$Query$MessagesFromRoom.fromJson(
+          Map<String, dynamic> json) =>
+      _$FetchRoomMessage$Query$MessagesFromRoomFromJson(json);
+
+  late FetchRoomMessage$Query$MessagesFromRoom$Sender sender;
+
+  late FetchRoomMessage$Query$MessagesFromRoom$Receiver receiver;
+
+  late FetchRoomMessage$Query$MessagesFromRoom$Room room;
+
+  late bool seen;
+
+  late String message;
+
+  @JsonKey(name: 'created_at')
+  late DateTime createdAt;
+
+  late double id;
+
+  @override
+  List<Object?> get props =>
+      [sender, receiver, room, seen, message, createdAt, id];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$FetchRoomMessage$Query$MessagesFromRoomToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class FetchRoomMessage$Query extends JsonSerializable with EquatableMixin {
+  FetchRoomMessage$Query();
+
+  factory FetchRoomMessage$Query.fromJson(Map<String, dynamic> json) =>
+      _$FetchRoomMessage$QueryFromJson(json);
+
+  late List<FetchRoomMessage$Query$MessagesFromRoom> messagesFromRoom;
+
+  @override
+  List<Object?> get props => [messagesFromRoom];
+  @override
+  Map<String, dynamic> toJson() => _$FetchRoomMessage$QueryToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class FetchPosts$Query$Posts$UserLike extends JsonSerializable
     with EquatableMixin {
   FetchPosts$Query$Posts$UserLike();
@@ -487,201 +682,6 @@ class FetchPosts$Query extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
-class RefreshToken$Mutation$RefreshToken extends JsonSerializable
-    with EquatableMixin {
-  RefreshToken$Mutation$RefreshToken();
-
-  factory RefreshToken$Mutation$RefreshToken.fromJson(
-          Map<String, dynamic> json) =>
-      _$RefreshToken$Mutation$RefreshTokenFromJson(json);
-
-  @JsonKey(name: 'access_token')
-  late String accessToken;
-
-  @JsonKey(name: 'refresh_token')
-  late String refreshToken;
-
-  @JsonKey(name: 'expire_date')
-  late DateTime expireDate;
-
-  @override
-  List<Object?> get props => [accessToken, refreshToken, expireDate];
-  @override
-  Map<String, dynamic> toJson() =>
-      _$RefreshToken$Mutation$RefreshTokenToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class RefreshToken$Mutation extends JsonSerializable with EquatableMixin {
-  RefreshToken$Mutation();
-
-  factory RefreshToken$Mutation.fromJson(Map<String, dynamic> json) =>
-      _$RefreshToken$MutationFromJson(json);
-
-  late RefreshToken$Mutation$RefreshToken refreshToken;
-
-  @override
-  List<Object?> get props => [refreshToken];
-  @override
-  Map<String, dynamic> toJson() => _$RefreshToken$MutationToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class FetchRoomMessage$Query$MessagesFromRoom$Sender extends JsonSerializable
-    with EquatableMixin {
-  FetchRoomMessage$Query$MessagesFromRoom$Sender();
-
-  factory FetchRoomMessage$Query$MessagesFromRoom$Sender.fromJson(
-          Map<String, dynamic> json) =>
-      _$FetchRoomMessage$Query$MessagesFromRoom$SenderFromJson(json);
-
-  late String username;
-
-  late double id;
-
-  late String email;
-
-  double? gender;
-
-  String? avatar;
-
-  String? bio;
-
-  late bool isEmailConfirmed;
-
-  DateTime? birthday;
-
-  bool? blockIncomingCalls;
-
-  @override
-  List<Object?> get props => [
-        username,
-        id,
-        email,
-        gender,
-        avatar,
-        bio,
-        isEmailConfirmed,
-        birthday,
-        blockIncomingCalls
-      ];
-  @override
-  Map<String, dynamic> toJson() =>
-      _$FetchRoomMessage$Query$MessagesFromRoom$SenderToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class FetchRoomMessage$Query$MessagesFromRoom$Receiver extends JsonSerializable
-    with EquatableMixin {
-  FetchRoomMessage$Query$MessagesFromRoom$Receiver();
-
-  factory FetchRoomMessage$Query$MessagesFromRoom$Receiver.fromJson(
-          Map<String, dynamic> json) =>
-      _$FetchRoomMessage$Query$MessagesFromRoom$ReceiverFromJson(json);
-
-  late String username;
-
-  late double id;
-
-  late String email;
-
-  double? gender;
-
-  String? avatar;
-
-  String? bio;
-
-  late bool isEmailConfirmed;
-
-  DateTime? birthday;
-
-  bool? blockIncomingCalls;
-
-  @override
-  List<Object?> get props => [
-        username,
-        id,
-        email,
-        gender,
-        avatar,
-        bio,
-        isEmailConfirmed,
-        birthday,
-        blockIncomingCalls
-      ];
-  @override
-  Map<String, dynamic> toJson() =>
-      _$FetchRoomMessage$Query$MessagesFromRoom$ReceiverToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class FetchRoomMessage$Query$MessagesFromRoom$Room extends JsonSerializable
-    with EquatableMixin {
-  FetchRoomMessage$Query$MessagesFromRoom$Room();
-
-  factory FetchRoomMessage$Query$MessagesFromRoom$Room.fromJson(
-          Map<String, dynamic> json) =>
-      _$FetchRoomMessage$Query$MessagesFromRoom$RoomFromJson(json);
-
-  late double id;
-
-  late String roomAdress;
-
-  @override
-  List<Object?> get props => [id, roomAdress];
-  @override
-  Map<String, dynamic> toJson() =>
-      _$FetchRoomMessage$Query$MessagesFromRoom$RoomToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class FetchRoomMessage$Query$MessagesFromRoom extends JsonSerializable
-    with EquatableMixin {
-  FetchRoomMessage$Query$MessagesFromRoom();
-
-  factory FetchRoomMessage$Query$MessagesFromRoom.fromJson(
-          Map<String, dynamic> json) =>
-      _$FetchRoomMessage$Query$MessagesFromRoomFromJson(json);
-
-  late FetchRoomMessage$Query$MessagesFromRoom$Sender sender;
-
-  late FetchRoomMessage$Query$MessagesFromRoom$Receiver receiver;
-
-  late FetchRoomMessage$Query$MessagesFromRoom$Room room;
-
-  late bool seen;
-
-  late String message;
-
-  @JsonKey(name: 'created_at')
-  late DateTime createdAt;
-
-  late double id;
-
-  @override
-  List<Object?> get props =>
-      [sender, receiver, room, seen, message, createdAt, id];
-  @override
-  Map<String, dynamic> toJson() =>
-      _$FetchRoomMessage$Query$MessagesFromRoomToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class FetchRoomMessage$Query extends JsonSerializable with EquatableMixin {
-  FetchRoomMessage$Query();
-
-  factory FetchRoomMessage$Query.fromJson(Map<String, dynamic> json) =>
-      _$FetchRoomMessage$QueryFromJson(json);
-
-  late List<FetchRoomMessage$Query$MessagesFromRoom> messagesFromRoom;
-
-  @override
-  List<Object?> get props => [messagesFromRoom];
-  @override
-  Map<String, dynamic> toJson() => _$FetchRoomMessage$QueryToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
 class GetUserProfileArguments extends JsonSerializable with EquatableMixin {
   GetUserProfileArguments({required this.username});
 
@@ -799,6 +799,100 @@ class GetUserProfileQuery
   @override
   GetUserProfile$Query parse(Map<String, dynamic> json) =>
       GetUserProfile$Query.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class RefreshTokenArguments extends JsonSerializable with EquatableMixin {
+  RefreshTokenArguments({required this.refreshToken, required this.userId});
+
+  @override
+  factory RefreshTokenArguments.fromJson(Map<String, dynamic> json) =>
+      _$RefreshTokenArgumentsFromJson(json);
+
+  late String refreshToken;
+
+  late double userId;
+
+  @override
+  List<Object?> get props => [refreshToken, userId];
+  @override
+  Map<String, dynamic> toJson() => _$RefreshTokenArgumentsToJson(this);
+}
+
+final REFRESH_TOKEN_MUTATION_DOCUMENT_OPERATION_NAME = 'REFRESH_TOKEN';
+final REFRESH_TOKEN_MUTATION_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'REFRESH_TOKEN'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'refreshToken')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'userId')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'Float'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'refreshToken'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'refreshToken'),
+                  value: VariableNode(name: NameNode(value: 'refreshToken'))),
+              ArgumentNode(
+                  name: NameNode(value: 'userId'),
+                  value: VariableNode(name: NameNode(value: 'userId')))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'access_token'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'refresh_token'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'expire_date'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ]))
+      ]))
+]);
+
+class RefreshTokenMutation
+    extends GraphQLQuery<RefreshToken$Mutation, RefreshTokenArguments> {
+  RefreshTokenMutation({required this.variables});
+
+  @override
+  final DocumentNode document = REFRESH_TOKEN_MUTATION_DOCUMENT;
+
+  @override
+  final String operationName = REFRESH_TOKEN_MUTATION_DOCUMENT_OPERATION_NAME;
+
+  @override
+  final RefreshTokenArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  RefreshToken$Mutation parse(Map<String, dynamic> json) =>
+      RefreshToken$Mutation.fromJson(json);
 }
 
 final FETCH_MESSAGES_QUERY_DOCUMENT_OPERATION_NAME = 'FETCH_MESSAGES';
@@ -1328,311 +1422,6 @@ class RegisterMutation
 }
 
 @JsonSerializable(explicitToJson: true)
-class FetchPostsArguments extends JsonSerializable with EquatableMixin {
-  FetchPostsArguments({this.limit, this.offset});
-
-  @override
-  factory FetchPostsArguments.fromJson(Map<String, dynamic> json) =>
-      _$FetchPostsArgumentsFromJson(json);
-
-  final double? limit;
-
-  final double? offset;
-
-  @override
-  List<Object?> get props => [limit, offset];
-  @override
-  Map<String, dynamic> toJson() => _$FetchPostsArgumentsToJson(this);
-}
-
-final FETCH_POSTS_QUERY_DOCUMENT_OPERATION_NAME = 'FETCH_POSTS';
-final FETCH_POSTS_QUERY_DOCUMENT = DocumentNode(definitions: [
-  OperationDefinitionNode(
-      type: OperationType.query,
-      name: NameNode(value: 'FETCH_POSTS'),
-      variableDefinitions: [
-        VariableDefinitionNode(
-            variable: VariableNode(name: NameNode(value: 'limit')),
-            type:
-                NamedTypeNode(name: NameNode(value: 'Float'), isNonNull: false),
-            defaultValue: DefaultValueNode(value: IntValueNode(value: '15')),
-            directives: []),
-        VariableDefinitionNode(
-            variable: VariableNode(name: NameNode(value: 'offset')),
-            type:
-                NamedTypeNode(name: NameNode(value: 'Float'), isNonNull: false),
-            defaultValue: DefaultValueNode(value: IntValueNode(value: '0')),
-            directives: [])
-      ],
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'posts'),
-            alias: null,
-            arguments: [
-              ArgumentNode(
-                  name: NameNode(value: 'pagination'),
-                  value: ObjectValueNode(fields: [
-                    ObjectFieldNode(
-                        name: NameNode(value: 'limit'),
-                        value: VariableNode(name: NameNode(value: 'limit'))),
-                    ObjectFieldNode(
-                        name: NameNode(value: 'offset'),
-                        value: VariableNode(name: NameNode(value: 'offset')))
-                  ]))
-            ],
-            directives: [],
-            selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                  name: NameNode(value: 'id'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'content'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'type'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'slug'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'created_at'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'postFromFollowers'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'additional'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'userLike'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: SelectionSetNode(selections: [
-                    FieldNode(
-                        name: NameNode(value: 'liked'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null)
-                  ])),
-              FieldNode(
-                  name: NameNode(value: 'postLike'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: SelectionSetNode(selections: [
-                    FieldNode(
-                        name: NameNode(value: 'likeCount'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null)
-                  ])),
-              FieldNode(
-                  name: NameNode(value: 'updated_at'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'user'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: SelectionSetNode(selections: [
-                    FieldNode(
-                        name: NameNode(value: 'username'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null),
-                    FieldNode(
-                        name: NameNode(value: 'avatar'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null),
-                    FieldNode(
-                        name: NameNode(value: 'id'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null)
-                  ])),
-              FieldNode(
-                  name: NameNode(value: '_count'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: SelectionSetNode(selections: [
-                    FieldNode(
-                        name: NameNode(value: 'comment'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null)
-                  ])),
-              FieldNode(
-                  name: NameNode(value: 'category'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: SelectionSetNode(selections: [
-                    FieldNode(
-                        name: NameNode(value: 'id'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null),
-                    FieldNode(
-                        name: NameNode(value: 'name'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null)
-                  ]))
-            ]))
-      ]))
-]);
-
-class FetchPostsQuery
-    extends GraphQLQuery<FetchPosts$Query, FetchPostsArguments> {
-  FetchPostsQuery({required this.variables});
-
-  @override
-  final DocumentNode document = FETCH_POSTS_QUERY_DOCUMENT;
-
-  @override
-  final String operationName = FETCH_POSTS_QUERY_DOCUMENT_OPERATION_NAME;
-
-  @override
-  final FetchPostsArguments variables;
-
-  @override
-  List<Object?> get props => [document, operationName, variables];
-  @override
-  FetchPosts$Query parse(Map<String, dynamic> json) =>
-      FetchPosts$Query.fromJson(json);
-}
-
-@JsonSerializable(explicitToJson: true)
-class RefreshTokenArguments extends JsonSerializable with EquatableMixin {
-  RefreshTokenArguments({required this.refreshToken, required this.userId});
-
-  @override
-  factory RefreshTokenArguments.fromJson(Map<String, dynamic> json) =>
-      _$RefreshTokenArgumentsFromJson(json);
-
-  late String refreshToken;
-
-  late double userId;
-
-  @override
-  List<Object?> get props => [refreshToken, userId];
-  @override
-  Map<String, dynamic> toJson() => _$RefreshTokenArgumentsToJson(this);
-}
-
-final REFRESH_TOKEN_MUTATION_DOCUMENT_OPERATION_NAME = 'REFRESH_TOKEN';
-final REFRESH_TOKEN_MUTATION_DOCUMENT = DocumentNode(definitions: [
-  OperationDefinitionNode(
-      type: OperationType.mutation,
-      name: NameNode(value: 'REFRESH_TOKEN'),
-      variableDefinitions: [
-        VariableDefinitionNode(
-            variable: VariableNode(name: NameNode(value: 'refreshToken')),
-            type:
-                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
-            defaultValue: DefaultValueNode(value: null),
-            directives: []),
-        VariableDefinitionNode(
-            variable: VariableNode(name: NameNode(value: 'userId')),
-            type:
-                NamedTypeNode(name: NameNode(value: 'Float'), isNonNull: true),
-            defaultValue: DefaultValueNode(value: null),
-            directives: [])
-      ],
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'refreshToken'),
-            alias: null,
-            arguments: [
-              ArgumentNode(
-                  name: NameNode(value: 'refreshToken'),
-                  value: VariableNode(name: NameNode(value: 'refreshToken'))),
-              ArgumentNode(
-                  name: NameNode(value: 'userId'),
-                  value: VariableNode(name: NameNode(value: 'userId')))
-            ],
-            directives: [],
-            selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                  name: NameNode(value: 'access_token'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'refresh_token'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'expire_date'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null)
-            ]))
-      ]))
-]);
-
-class RefreshTokenMutation
-    extends GraphQLQuery<RefreshToken$Mutation, RefreshTokenArguments> {
-  RefreshTokenMutation({required this.variables});
-
-  @override
-  final DocumentNode document = REFRESH_TOKEN_MUTATION_DOCUMENT;
-
-  @override
-  final String operationName = REFRESH_TOKEN_MUTATION_DOCUMENT_OPERATION_NAME;
-
-  @override
-  final RefreshTokenArguments variables;
-
-  @override
-  List<Object?> get props => [document, operationName, variables];
-  @override
-  RefreshToken$Mutation parse(Map<String, dynamic> json) =>
-      RefreshToken$Mutation.fromJson(json);
-}
-
-@JsonSerializable(explicitToJson: true)
 class FetchRoomMessageArguments extends JsonSerializable with EquatableMixin {
   FetchRoomMessageArguments({required this.roomId, this.offset, this.limit});
 
@@ -1886,4 +1675,215 @@ class FetchRoomMessageQuery
   @override
   FetchRoomMessage$Query parse(Map<String, dynamic> json) =>
       FetchRoomMessage$Query.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class FetchPostsArguments extends JsonSerializable with EquatableMixin {
+  FetchPostsArguments({this.limit, this.offset});
+
+  @override
+  factory FetchPostsArguments.fromJson(Map<String, dynamic> json) =>
+      _$FetchPostsArgumentsFromJson(json);
+
+  final double? limit;
+
+  final double? offset;
+
+  @override
+  List<Object?> get props => [limit, offset];
+  @override
+  Map<String, dynamic> toJson() => _$FetchPostsArgumentsToJson(this);
+}
+
+final FETCH_POSTS_QUERY_DOCUMENT_OPERATION_NAME = 'FETCH_POSTS';
+final FETCH_POSTS_QUERY_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.query,
+      name: NameNode(value: 'FETCH_POSTS'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'limit')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'Float'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: IntValueNode(value: '15')),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'offset')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'Float'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: IntValueNode(value: '0')),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'posts'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'pagination'),
+                  value: ObjectValueNode(fields: [
+                    ObjectFieldNode(
+                        name: NameNode(value: 'limit'),
+                        value: VariableNode(name: NameNode(value: 'limit'))),
+                    ObjectFieldNode(
+                        name: NameNode(value: 'offset'),
+                        value: VariableNode(name: NameNode(value: 'offset')))
+                  ]))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'content'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'type'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'slug'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'created_at'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'postFromFollowers'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'additional'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'userLike'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'liked'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null)
+                  ])),
+              FieldNode(
+                  name: NameNode(value: 'postLike'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'likeCount'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null)
+                  ])),
+              FieldNode(
+                  name: NameNode(value: 'updated_at'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'user'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'username'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'avatar'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'id'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null)
+                  ])),
+              FieldNode(
+                  name: NameNode(value: '_count'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'comment'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null)
+                  ])),
+              FieldNode(
+                  name: NameNode(value: 'category'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'id'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'name'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null)
+                  ]))
+            ]))
+      ]))
+]);
+
+class FetchPostsQuery
+    extends GraphQLQuery<FetchPosts$Query, FetchPostsArguments> {
+  FetchPostsQuery({required this.variables});
+
+  @override
+  final DocumentNode document = FETCH_POSTS_QUERY_DOCUMENT;
+
+  @override
+  final String operationName = FETCH_POSTS_QUERY_DOCUMENT_OPERATION_NAME;
+
+  @override
+  final FetchPostsArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  FetchPosts$Query parse(Map<String, dynamic> json) =>
+      FetchPosts$Query.fromJson(json);
 }

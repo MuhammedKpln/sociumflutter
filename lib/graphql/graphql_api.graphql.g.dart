@@ -58,6 +58,33 @@ Map<String, dynamic> _$GetUserProfile$QueryToJson(
       'getUser': instance.getUser.toJson(),
     };
 
+RefreshToken$Mutation$RefreshToken _$RefreshToken$Mutation$RefreshTokenFromJson(
+        Map<String, dynamic> json) =>
+    RefreshToken$Mutation$RefreshToken()
+      ..accessToken = json['access_token'] as String
+      ..refreshToken = json['refresh_token'] as String
+      ..expireDate = DateTime.parse(json['expire_date'] as String);
+
+Map<String, dynamic> _$RefreshToken$Mutation$RefreshTokenToJson(
+        RefreshToken$Mutation$RefreshToken instance) =>
+    <String, dynamic>{
+      'access_token': instance.accessToken,
+      'refresh_token': instance.refreshToken,
+      'expire_date': instance.expireDate.toIso8601String(),
+    };
+
+RefreshToken$Mutation _$RefreshToken$MutationFromJson(
+        Map<String, dynamic> json) =>
+    RefreshToken$Mutation()
+      ..refreshToken = RefreshToken$Mutation$RefreshToken.fromJson(
+          json['refreshToken'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$RefreshToken$MutationToJson(
+        RefreshToken$Mutation instance) =>
+    <String, dynamic>{
+      'refreshToken': instance.refreshToken.toJson(),
+    };
+
 FetchMessages$Query$Messages$Sender
     _$FetchMessages$Query$Messages$SenderFromJson(Map<String, dynamic> json) =>
         FetchMessages$Query$Messages$Sender()
@@ -263,147 +290,6 @@ Map<String, dynamic> _$Register$MutationToJson(Register$Mutation instance) =>
       'register': instance.register.toJson(),
     };
 
-FetchPosts$Query$Posts$UserLike _$FetchPosts$Query$Posts$UserLikeFromJson(
-        Map<String, dynamic> json) =>
-    FetchPosts$Query$Posts$UserLike()..liked = json['liked'] as bool;
-
-Map<String, dynamic> _$FetchPosts$Query$Posts$UserLikeToJson(
-        FetchPosts$Query$Posts$UserLike instance) =>
-    <String, dynamic>{
-      'liked': instance.liked,
-    };
-
-FetchPosts$Query$Posts$PostLike _$FetchPosts$Query$Posts$PostLikeFromJson(
-        Map<String, dynamic> json) =>
-    FetchPosts$Query$Posts$PostLike()
-      ..likeCount = (json['likeCount'] as num).toDouble();
-
-Map<String, dynamic> _$FetchPosts$Query$Posts$PostLikeToJson(
-        FetchPosts$Query$Posts$PostLike instance) =>
-    <String, dynamic>{
-      'likeCount': instance.likeCount,
-    };
-
-FetchPosts$Query$Posts$User _$FetchPosts$Query$Posts$UserFromJson(
-        Map<String, dynamic> json) =>
-    FetchPosts$Query$Posts$User()
-      ..username = json['username'] as String
-      ..avatar = json['avatar'] as String?
-      ..id = (json['id'] as num).toDouble();
-
-Map<String, dynamic> _$FetchPosts$Query$Posts$UserToJson(
-        FetchPosts$Query$Posts$User instance) =>
-    <String, dynamic>{
-      'username': instance.username,
-      'avatar': instance.avatar,
-      'id': instance.id,
-    };
-
-FetchPosts$Query$Posts$$count _$FetchPosts$Query$Posts$$countFromJson(
-        Map<String, dynamic> json) =>
-    FetchPosts$Query$Posts$$count()
-      ..comment = (json['comment'] as num).toDouble();
-
-Map<String, dynamic> _$FetchPosts$Query$Posts$$countToJson(
-        FetchPosts$Query$Posts$$count instance) =>
-    <String, dynamic>{
-      'comment': instance.comment,
-    };
-
-FetchPosts$Query$Posts$Category _$FetchPosts$Query$Posts$CategoryFromJson(
-        Map<String, dynamic> json) =>
-    FetchPosts$Query$Posts$Category()
-      ..id = (json['id'] as num).toDouble()
-      ..name = json['name'] as String;
-
-Map<String, dynamic> _$FetchPosts$Query$Posts$CategoryToJson(
-        FetchPosts$Query$Posts$Category instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-    };
-
-FetchPosts$Query$Posts _$FetchPosts$Query$PostsFromJson(
-        Map<String, dynamic> json) =>
-    FetchPosts$Query$Posts()
-      ..id = (json['id'] as num).toDouble()
-      ..content = json['content'] as String
-      ..type = (json['type'] as num).toDouble()
-      ..slug = json['slug'] as String
-      ..createdAt = DateTime.parse(json['created_at'] as String)
-      ..postFromFollowers = json['postFromFollowers'] as bool?
-      ..additional = json['additional'] as String?
-      ..userLike = json['userLike'] == null
-          ? null
-          : FetchPosts$Query$Posts$UserLike.fromJson(
-              json['userLike'] as Map<String, dynamic>)
-      ..postLike = FetchPosts$Query$Posts$PostLike.fromJson(
-          json['postLike'] as Map<String, dynamic>)
-      ..updatedAt = DateTime.parse(json['updated_at'] as String)
-      ..user = FetchPosts$Query$Posts$User.fromJson(
-          json['user'] as Map<String, dynamic>)
-      ..$count = FetchPosts$Query$Posts$$count.fromJson(
-          json['_count'] as Map<String, dynamic>)
-      ..category = FetchPosts$Query$Posts$Category.fromJson(
-          json['category'] as Map<String, dynamic>);
-
-Map<String, dynamic> _$FetchPosts$Query$PostsToJson(
-        FetchPosts$Query$Posts instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'content': instance.content,
-      'type': instance.type,
-      'slug': instance.slug,
-      'created_at': instance.createdAt.toIso8601String(),
-      'postFromFollowers': instance.postFromFollowers,
-      'additional': instance.additional,
-      'userLike': instance.userLike?.toJson(),
-      'postLike': instance.postLike.toJson(),
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'user': instance.user.toJson(),
-      '_count': instance.$count.toJson(),
-      'category': instance.category.toJson(),
-    };
-
-FetchPosts$Query _$FetchPosts$QueryFromJson(Map<String, dynamic> json) =>
-    FetchPosts$Query()
-      ..posts = (json['posts'] as List<dynamic>)
-          .map(
-              (e) => FetchPosts$Query$Posts.fromJson(e as Map<String, dynamic>))
-          .toList();
-
-Map<String, dynamic> _$FetchPosts$QueryToJson(FetchPosts$Query instance) =>
-    <String, dynamic>{
-      'posts': instance.posts.map((e) => e.toJson()).toList(),
-    };
-
-RefreshToken$Mutation$RefreshToken _$RefreshToken$Mutation$RefreshTokenFromJson(
-        Map<String, dynamic> json) =>
-    RefreshToken$Mutation$RefreshToken()
-      ..accessToken = json['access_token'] as String
-      ..refreshToken = json['refresh_token'] as String
-      ..expireDate = DateTime.parse(json['expire_date'] as String);
-
-Map<String, dynamic> _$RefreshToken$Mutation$RefreshTokenToJson(
-        RefreshToken$Mutation$RefreshToken instance) =>
-    <String, dynamic>{
-      'access_token': instance.accessToken,
-      'refresh_token': instance.refreshToken,
-      'expire_date': instance.expireDate.toIso8601String(),
-    };
-
-RefreshToken$Mutation _$RefreshToken$MutationFromJson(
-        Map<String, dynamic> json) =>
-    RefreshToken$Mutation()
-      ..refreshToken = RefreshToken$Mutation$RefreshToken.fromJson(
-          json['refreshToken'] as Map<String, dynamic>);
-
-Map<String, dynamic> _$RefreshToken$MutationToJson(
-        RefreshToken$Mutation instance) =>
-    <String, dynamic>{
-      'refreshToken': instance.refreshToken.toJson(),
-    };
-
 FetchRoomMessage$Query$MessagesFromRoom$Sender
     _$FetchRoomMessage$Query$MessagesFromRoom$SenderFromJson(
             Map<String, dynamic> json) =>
@@ -521,6 +407,120 @@ Map<String, dynamic> _$FetchRoomMessage$QueryToJson(
           instance.messagesFromRoom.map((e) => e.toJson()).toList(),
     };
 
+FetchPosts$Query$Posts$UserLike _$FetchPosts$Query$Posts$UserLikeFromJson(
+        Map<String, dynamic> json) =>
+    FetchPosts$Query$Posts$UserLike()..liked = json['liked'] as bool;
+
+Map<String, dynamic> _$FetchPosts$Query$Posts$UserLikeToJson(
+        FetchPosts$Query$Posts$UserLike instance) =>
+    <String, dynamic>{
+      'liked': instance.liked,
+    };
+
+FetchPosts$Query$Posts$PostLike _$FetchPosts$Query$Posts$PostLikeFromJson(
+        Map<String, dynamic> json) =>
+    FetchPosts$Query$Posts$PostLike()
+      ..likeCount = (json['likeCount'] as num).toDouble();
+
+Map<String, dynamic> _$FetchPosts$Query$Posts$PostLikeToJson(
+        FetchPosts$Query$Posts$PostLike instance) =>
+    <String, dynamic>{
+      'likeCount': instance.likeCount,
+    };
+
+FetchPosts$Query$Posts$User _$FetchPosts$Query$Posts$UserFromJson(
+        Map<String, dynamic> json) =>
+    FetchPosts$Query$Posts$User()
+      ..username = json['username'] as String
+      ..avatar = json['avatar'] as String?
+      ..id = (json['id'] as num).toDouble();
+
+Map<String, dynamic> _$FetchPosts$Query$Posts$UserToJson(
+        FetchPosts$Query$Posts$User instance) =>
+    <String, dynamic>{
+      'username': instance.username,
+      'avatar': instance.avatar,
+      'id': instance.id,
+    };
+
+FetchPosts$Query$Posts$$count _$FetchPosts$Query$Posts$$countFromJson(
+        Map<String, dynamic> json) =>
+    FetchPosts$Query$Posts$$count()
+      ..comment = (json['comment'] as num).toDouble();
+
+Map<String, dynamic> _$FetchPosts$Query$Posts$$countToJson(
+        FetchPosts$Query$Posts$$count instance) =>
+    <String, dynamic>{
+      'comment': instance.comment,
+    };
+
+FetchPosts$Query$Posts$Category _$FetchPosts$Query$Posts$CategoryFromJson(
+        Map<String, dynamic> json) =>
+    FetchPosts$Query$Posts$Category()
+      ..id = (json['id'] as num).toDouble()
+      ..name = json['name'] as String;
+
+Map<String, dynamic> _$FetchPosts$Query$Posts$CategoryToJson(
+        FetchPosts$Query$Posts$Category instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
+FetchPosts$Query$Posts _$FetchPosts$Query$PostsFromJson(
+        Map<String, dynamic> json) =>
+    FetchPosts$Query$Posts()
+      ..id = (json['id'] as num).toDouble()
+      ..content = json['content'] as String
+      ..type = (json['type'] as num).toDouble()
+      ..slug = json['slug'] as String
+      ..createdAt = DateTime.parse(json['created_at'] as String)
+      ..postFromFollowers = json['postFromFollowers'] as bool?
+      ..additional = json['additional'] as String?
+      ..userLike = json['userLike'] == null
+          ? null
+          : FetchPosts$Query$Posts$UserLike.fromJson(
+              json['userLike'] as Map<String, dynamic>)
+      ..postLike = FetchPosts$Query$Posts$PostLike.fromJson(
+          json['postLike'] as Map<String, dynamic>)
+      ..updatedAt = DateTime.parse(json['updated_at'] as String)
+      ..user = FetchPosts$Query$Posts$User.fromJson(
+          json['user'] as Map<String, dynamic>)
+      ..$count = FetchPosts$Query$Posts$$count.fromJson(
+          json['_count'] as Map<String, dynamic>)
+      ..category = FetchPosts$Query$Posts$Category.fromJson(
+          json['category'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$FetchPosts$Query$PostsToJson(
+        FetchPosts$Query$Posts instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'content': instance.content,
+      'type': instance.type,
+      'slug': instance.slug,
+      'created_at': instance.createdAt.toIso8601String(),
+      'postFromFollowers': instance.postFromFollowers,
+      'additional': instance.additional,
+      'userLike': instance.userLike?.toJson(),
+      'postLike': instance.postLike.toJson(),
+      'updated_at': instance.updatedAt.toIso8601String(),
+      'user': instance.user.toJson(),
+      '_count': instance.$count.toJson(),
+      'category': instance.category.toJson(),
+    };
+
+FetchPosts$Query _$FetchPosts$QueryFromJson(Map<String, dynamic> json) =>
+    FetchPosts$Query()
+      ..posts = (json['posts'] as List<dynamic>)
+          .map(
+              (e) => FetchPosts$Query$Posts.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+Map<String, dynamic> _$FetchPosts$QueryToJson(FetchPosts$Query instance) =>
+    <String, dynamic>{
+      'posts': instance.posts.map((e) => e.toJson()).toList(),
+    };
+
 GetUserProfileArguments _$GetUserProfileArgumentsFromJson(
         Map<String, dynamic> json) =>
     GetUserProfileArguments(
@@ -531,6 +531,20 @@ Map<String, dynamic> _$GetUserProfileArgumentsToJson(
         GetUserProfileArguments instance) =>
     <String, dynamic>{
       'username': instance.username,
+    };
+
+RefreshTokenArguments _$RefreshTokenArgumentsFromJson(
+        Map<String, dynamic> json) =>
+    RefreshTokenArguments(
+      refreshToken: json['refreshToken'] as String,
+      userId: (json['userId'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$RefreshTokenArgumentsToJson(
+        RefreshTokenArguments instance) =>
+    <String, dynamic>{
+      'refreshToken': instance.refreshToken,
+      'userId': instance.userId,
     };
 
 LoginArguments _$LoginArgumentsFromJson(Map<String, dynamic> json) =>
@@ -561,33 +575,6 @@ Map<String, dynamic> _$RegisterArgumentsToJson(RegisterArguments instance) =>
       'email': instance.email,
     };
 
-FetchPostsArguments _$FetchPostsArgumentsFromJson(Map<String, dynamic> json) =>
-    FetchPostsArguments(
-      limit: (json['limit'] as num?)?.toDouble(),
-      offset: (json['offset'] as num?)?.toDouble(),
-    );
-
-Map<String, dynamic> _$FetchPostsArgumentsToJson(
-        FetchPostsArguments instance) =>
-    <String, dynamic>{
-      'limit': instance.limit,
-      'offset': instance.offset,
-    };
-
-RefreshTokenArguments _$RefreshTokenArgumentsFromJson(
-        Map<String, dynamic> json) =>
-    RefreshTokenArguments(
-      refreshToken: json['refreshToken'] as String,
-      userId: (json['userId'] as num).toDouble(),
-    );
-
-Map<String, dynamic> _$RefreshTokenArgumentsToJson(
-        RefreshTokenArguments instance) =>
-    <String, dynamic>{
-      'refreshToken': instance.refreshToken,
-      'userId': instance.userId,
-    };
-
 FetchRoomMessageArguments _$FetchRoomMessageArgumentsFromJson(
         Map<String, dynamic> json) =>
     FetchRoomMessageArguments(
@@ -602,4 +589,17 @@ Map<String, dynamic> _$FetchRoomMessageArgumentsToJson(
       'roomId': instance.roomId,
       'offset': instance.offset,
       'limit': instance.limit,
+    };
+
+FetchPostsArguments _$FetchPostsArgumentsFromJson(Map<String, dynamic> json) =>
+    FetchPostsArguments(
+      limit: (json['limit'] as num?)?.toDouble(),
+      offset: (json['offset'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$FetchPostsArgumentsToJson(
+        FetchPostsArguments instance) =>
+    <String, dynamic>{
+      'limit': instance.limit,
+      'offset': instance.offset,
     };

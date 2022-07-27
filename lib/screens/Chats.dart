@@ -8,6 +8,7 @@ import 'package:scflutter/components/Loading.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/models/message.dart';
 import 'package:scflutter/models/user_model.dart';
+import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
@@ -23,6 +24,8 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
   final PageController pageController =
       PageController(initialPage: 0, keepPage: true);
   num? currentIndex = 0;
+
+  SocketService socketService = SocketService();
 
   @override
   void initState() {
@@ -81,7 +84,8 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
                     onTap: () => AutoRouter.of(context).navigate(Chat(
                         comingFromMatchedPage: false,
                         connectedUser: user,
-                        room: Room.fromJson(message.room.toJson()))),
+                        room: Room.fromJson(message.room.toJson()),
+                        socketService: socketService)),
                     child: Column(
                       children: [
                         Row(

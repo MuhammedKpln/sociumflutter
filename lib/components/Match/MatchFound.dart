@@ -6,14 +6,22 @@ import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/models/message.dart';
 import 'package:scflutter/models/user_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 class MatchFound extends StatelessWidget {
-  MatchFound({Key? key, required this.user, required this.room})
+  MatchFound(
+      {Key? key,
+      required this.user,
+      required this.room,
+      required this.userUUID,
+      required this.socketService})
       : super(key: key);
 
   User user;
   Room room;
+  String userUUID;
+  SocketService socketService;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +32,12 @@ class MatchFound extends StatelessWidget {
     void sendMessage() {
       closeDialog();
 
-      context.router.navigate(
-          Chat(comingFromMatchedPage: true, connectedUser: user, room: room));
+      context.router.navigate(Chat(
+          comingFromMatchedPage: true,
+          connectedUser: user,
+          room: room,
+          userUUID: userUUID,
+          socketService: socketService));
     }
 
     return Scaffold(

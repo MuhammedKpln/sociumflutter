@@ -76,7 +76,7 @@ Future<void> main() async {
 
   ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
-      link: Link.from([errorLink, authLink, httpLink]),
+      link: Link.from([authLink, httpLink]),
       // The default store is the InMemoryStore, which does NOT persist to disk
       cache: GraphQLCache(),
     ),
