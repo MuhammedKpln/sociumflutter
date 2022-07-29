@@ -128,7 +128,9 @@ class SociumApplication extends ConsumerWidget {
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10))),
             clipBehavior: Clip.antiAliasWithSaveLayer,
-          )),
+          ),
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: ColorPalette.primary)),
       routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),
     );

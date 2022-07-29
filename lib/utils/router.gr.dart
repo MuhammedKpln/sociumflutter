@@ -74,9 +74,14 @@ class AppRouter extends _i14.RootStackRouter {
               key: args.key, email: args.email, username: args.username));
     },
     CallComing.name: (routeData) {
+      final args = routeData.argsAs<CallComingArgs>();
       return _i14.AdaptivePage<dynamic>(
           routeData: routeData,
-          child: const _i7.CallComing(),
+          child: _i7.CallComing(
+              key: args.key,
+              username: args.username,
+              onAcceptCall: args.onAcceptCall,
+              onRejectCall: args.onRejectCall),
           fullscreenDialog: true);
     },
     HomeScreen.name: (routeData) {
@@ -256,10 +261,42 @@ class RegisterScreenStepFourArgs {
 
 /// generated route for
 /// [_i7.CallComing]
-class CallComing extends _i14.PageRouteInfo<void> {
-  const CallComing() : super(CallComing.name, path: '/call-coming');
+class CallComing extends _i14.PageRouteInfo<CallComingArgs> {
+  CallComing(
+      {_i15.Key? key,
+      required String username,
+      required Function onAcceptCall,
+      required Function onRejectCall})
+      : super(CallComing.name,
+            path: '/call-coming',
+            args: CallComingArgs(
+                key: key,
+                username: username,
+                onAcceptCall: onAcceptCall,
+                onRejectCall: onRejectCall));
 
   static const String name = 'CallComing';
+}
+
+class CallComingArgs {
+  const CallComingArgs(
+      {this.key,
+      required this.username,
+      required this.onAcceptCall,
+      required this.onRejectCall});
+
+  final _i15.Key? key;
+
+  final String username;
+
+  final Function onAcceptCall;
+
+  final Function onRejectCall;
+
+  @override
+  String toString() {
+    return 'CallComingArgs{key: $key, username: $username, onAcceptCall: $onAcceptCall, onRejectCall: $onRejectCall}';
+  }
 }
 
 /// generated route for

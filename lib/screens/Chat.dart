@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
@@ -48,13 +50,14 @@ class _ChatState extends ConsumerState<Chat> {
   bool mediaPermissionsAlllowed = false;
   bool audio = false;
   bool video = false;
+  double floatinActionButtonScale = 1;
 
-  late MediaStream localStream;
+  late MediaStream? localStream;
   late PeerConnection peerConnection;
+  late Timer? floatinActionButtonAnimatorTimer;
 
   @override
   void initState() {
-    print(widget.userUUID);
     super.initState();
     coreInit();
 
@@ -150,23 +153,21 @@ class _ChatState extends ConsumerState<Chat> {
       final offer =
           RTCSessionDescription(data.offer["sdp"], data.offer["type"]);
 
-      context.router.navigate(const rt.CallComing());
-
-      scaffoldKey.currentState?.showSnackBar(SnackBar(
-        content: const Text("Got call"),
-        action: SnackBarAction(
-          label: "Kabul et",
-          onPressed: () => answerCall(offer, data.uuid),
-        ),
-      ));
+      context.router.navigate(rt.CallComing(
+          username: widget.connectedUser!.username!,
+          onAcceptCall: () => answerCall(offer, data.uuid),
+          onRejectCall: () => context.router.pop()));
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  disposeEvents() {
+    if (localStream != null) {
+      localStream?.dispose();
+    }
+    if (floatinActionButtonAnimatorTimer != null) {
+      floatinActionButtonAnimatorTimer?.cancel();
+    }
 
-    localStream.dispose();
     peerConnection.peerConnection.close();
     widget.socketService.eventEmitter
         .removeAllByEvent(SocketListenerEvents.MESSAGE_RECEIVED.path);
@@ -176,6 +177,17 @@ class _ChatState extends ConsumerState<Chat> {
         .removeAllByEvent(SocketListenerEvents.CALL_MADE.path);
     widget.socketService.eventEmitter
         .removeAllByEvent(SocketListenerEvents.RECEIVED_ICE_CANDIDATE.path);
+    widget.socketService.eventEmitter
+        .removeAllByEvent(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path);
+    widget.socketService.eventEmitter
+        .removeAllByEvent(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    disposeEvents();
   }
 
   void onSendMessage(types.PartialText text) {
@@ -209,7 +221,7 @@ class _ChatState extends ConsumerState<Chat> {
   }
 
   makeCall() async {
-    //TODO: when not allowed error, cancel it and navigate user to the privacy settings
+    //TODO: when not allowed error, cancel it and navigate use§§r to the privacy settings
     final MediaStream stream = await peerConnection.getUserMedia();
 
     await peerConnection.addStream(stream);
@@ -337,11 +349,20 @@ class _ChatState extends ConsumerState<Chat> {
               child: Text(!askingForPermission
                   ? "Görüntülü sohbete izin ver"
                   : "Görüntülü sohbet izini iste")),
-          RoundedButton(
-              onPressed: handleActionButton,
-              child: Text(!askingForPermission
-                  ? "İsteği kabul et/reddet"
-                  : 'İsteği yolla'))
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              RoundedButton(
+                  onPressed: handleActionButton,
+                  child: Text(!askingForPermission
+                      ? "İsteği kabul et"
+                      : 'İsteği yolla')),
+              if (!askingForPermission)
+                RoundedButton(
+                    onPressed: () => context.router.pop(),
+                    child: const Text("İsteği reddet."))
+            ],
+          )
         ],
       ),
     ));
@@ -379,6 +400,31 @@ class _ChatState extends ConsumerState<Chat> {
         });
   }
 
+  Widget renderFloatingButton() {
+
+    //FIXME: memory leak?
+    floatinActionButtonAnimatorTimer =
+        Timer.periodic(const Duration(milliseconds: 700), (timer) {
+      if (floatinActionButtonScale == 1) {
+        setState(() {
+          floatinActionButtonScale = 0.5;
+        });
+      } else {
+        setState(() {
+          floatinActionButtonScale = 1;
+        });
+      }
+    });
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 500),
+      scale: floatinActionButtonScale,
+      child: FloatingActionButton(
+          enableFeedback: true,
+          onPressed: () => null,
+          child: const Icon(FeatherIcons.phoneOutgoing)),
+    );
+  }
+
   Widget renderChat() {
     return Scaffold(
       appBar: AppBar(
@@ -397,6 +443,7 @@ class _ChatState extends ConsumerState<Chat> {
         ]),
         actions: [askForPermissionsButton(), mic()],
       ),
+      floatingActionButton: connectedToCall ? renderFloatingButton() : null,
       body: chatUi.Chat(
         l10n: const chatUi.ChatL10nTr(),
         showUserNames: true,
@@ -418,6 +465,8 @@ class _ChatState extends ConsumerState<Chat> {
   }
 
   Widget askForPermissionsButton() {
+    if (connectedToCall) return Container();
+
     return IconButton(
         onPressed: callOrAskForPermission,
         icon: Icon(!mediaPermissionsAlllowed
@@ -433,9 +482,9 @@ class _ChatState extends ConsumerState<Chat> {
     return IconButton(
         onPressed: () {
           if (micMuted) {
-            localStream.getAudioTracks()[0].enabled = true;
+            localStream?.getAudioTracks()[0].enabled = true;
           } else {
-            localStream.getAudioTracks()[0].enabled = false;
+            localStream?.getAudioTracks()[0].enabled = false;
           }
         },
         icon: Icon(!micMuted ? FeatherIcons.micOff : FeatherIcons.mic));
