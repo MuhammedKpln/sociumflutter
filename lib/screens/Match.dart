@@ -10,6 +10,7 @@ import 'package:scflutter/models/client_paired.dart';
 import 'package:scflutter/models/message.dart';
 import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/utils/palette.dart';
 
@@ -169,9 +170,9 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
               crossFadeState: searchingForOpponent
                   ? CrossFadeState.showFirst
                   : CrossFadeState.showSecond,
-              duration: const Duration(
-                  milliseconds:
-                      300)) // Lottie.asset("assets/animations/search.json"),
+              duration: Duration(
+                  milliseconds: AnimationDurations.low
+                      .duration)) // Lottie.asset("assets/animations/search.json"),
         ],
       ),
     );

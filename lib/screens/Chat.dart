@@ -19,6 +19,7 @@ import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/services/webrtc.service.dart';
 import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/avatar.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart' as rt;
@@ -401,7 +402,6 @@ class _ChatState extends ConsumerState<Chat> {
   }
 
   Widget renderFloatingButton() {
-
     //FIXME: memory leak?
     floatinActionButtonAnimatorTimer =
         Timer.periodic(const Duration(milliseconds: 700), (timer) {
@@ -416,7 +416,7 @@ class _ChatState extends ConsumerState<Chat> {
       }
     });
     return AnimatedScale(
-      duration: const Duration(milliseconds: 500),
+      duration: Duration(milliseconds: AnimationDurations.medium.duration),
       scale: floatinActionButtonScale,
       child: FloatingActionButton(
           enableFeedback: true,
