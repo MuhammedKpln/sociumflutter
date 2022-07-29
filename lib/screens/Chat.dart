@@ -8,6 +8,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/Loading.dart';
+import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/main.dart';
 import 'package:scflutter/models/message.dart';
@@ -44,6 +45,10 @@ class _ChatState extends ConsumerState<Chat> {
   List<types.Message> messages = [];
   bool connectedToCall = false;
   bool micMuted = false;
+  bool mediaPermissionsAlllowed = false;
+  bool audio = false;
+  bool video = false;
+
   late MediaStream localStream;
   late PeerConnection peerConnection;
 
@@ -68,6 +73,28 @@ class _ChatState extends ConsumerState<Chat> {
           RTCSessionDescription(data.answer["sdp"], data.answer["type"]);
 
       await peerConnection.peerConnection.setRemoteDescription(answer);
+    });
+
+    widget.socketService.onMediaPermissionsAsked((response) {
+      audio = response.audio != null ? response.audio! : audio;
+      video = response.video != null ? response.video! : video;
+
+      showModalBottomSheet(
+          context: context,
+          builder: (context) => handlePermissionsModal(context, setState,
+              askingForPermission: false));
+    });
+
+    widget.socketService.onMediaPermissionAnswered((response) {
+      if (audio || video) {
+        setState(() {
+          mediaPermissionsAlllowed = true;
+        });
+      }
+
+      scaffoldKey.currentState?.showSnackBar(SnackBar(
+          content: Text(
+              "Permissions given audio: ${response.audio}, video: ${response.video}")));
     });
 
     peerConnection.peerConnection.onConnectionState = (state) {
@@ -182,7 +209,9 @@ class _ChatState extends ConsumerState<Chat> {
   }
 
   makeCall() async {
+    //TODO: when not allowed error, cancel it and navigate user to the privacy settings
     final MediaStream stream = await peerConnection.getUserMedia();
+
     await peerConnection.addStream(stream);
     localStream = stream;
     final RTCSessionDescription offer = await peerConnection.createOffer();
@@ -193,6 +222,137 @@ class _ChatState extends ConsumerState<Chat> {
 
     scaffoldKey.currentState
         ?.showSnackBar(const SnackBar(content: Text("Calling")));
+  }
+
+  void askForMediaPermissions() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: ((context, setState) => handlePermissionsModal(
+                  context, setState,
+                  askingForPermission: true)));
+        });
+  }
+
+  void sendPermissionsAsked() {
+    widget.socketService
+        .askForMediaPermissions(widget.userUUID!, audio: audio, video: video);
+  }
+
+  void acceptPermissionsAsked({bool audio = false, bool video = false}) {
+    widget.socketService
+        .giveMediaPermission(widget.userUUID!, audio: audio, video: video);
+  }
+
+  Widget handlePermissionsModal(BuildContext context, Function setState,
+      {bool askingForPermission = false}) {
+    handleAudioOnpress() {
+      if (!askingForPermission) {
+        return null;
+      }
+
+      setState(() {
+        audio = !audio;
+      });
+    }
+
+    handleVideoOnpress() {
+      if (!askingForPermission) {
+        return null;
+      }
+      setState(() {
+        if (!audio) {
+          audio = true;
+        }
+        video = !video;
+      });
+    }
+
+    handleActionButton() {
+      if (askingForPermission) {
+        if (!audio && !video) {
+          // If no permissions given, close the modal
+          context.router.pop();
+        }
+
+        if (audio || video) {
+          // Give/send permission to the user
+          // Send permission
+          sendPermissionsAsked();
+          context.router.pop();
+          scaffoldKey.currentState?.showSnackBar(SnackBar(
+              content: Text(askingForPermission
+                  ? 'İsteğiniz gönderildi!'
+                  : 'İstek kabul edildi, arama butonu aktif.')));
+        } else {
+          // Give permission
+        }
+      } else {
+        if (!audio && video) {
+          setState(() {
+            audio = true;
+            video = true;
+          });
+        }
+
+        setState(() {
+          mediaPermissionsAlllowed = true;
+        });
+
+        acceptPermissionsAsked(audio: audio, video: video);
+        context.router.pop();
+
+        scaffoldKey.currentState
+            ?.showSnackBar(const SnackBar(content: Text("Istek kabul edildi")));
+      }
+    }
+
+    return Scaffold(
+        body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+            !askingForPermission
+                ? '${widget.connectedUser?.username} sizi aramak için izin istedi.'
+                : 'İstek türü',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          RoundedButton(
+              style: ButtonStyle(
+                  backgroundColor: audio
+                      ? MaterialStateProperty.all(Colors.greenAccent)
+                      : MaterialStateProperty.all(Colors.grey)),
+              onPressed: handleAudioOnpress,
+              child: Text(!askingForPermission
+                  ? "Sesli sohbete izin ver"
+                  : "Sesli sohbet izini iste")),
+          RoundedButton(
+              style: ButtonStyle(
+                  backgroundColor: video
+                      ? MaterialStateProperty.all(Colors.indigoAccent)
+                      : MaterialStateProperty.all(Colors.grey)),
+              onPressed: handleVideoOnpress,
+              child: Text(!askingForPermission
+                  ? "Görüntülü sohbete izin ver"
+                  : "Görüntülü sohbet izini iste")),
+          RoundedButton(
+              onPressed: handleActionButton,
+              child: Text(!askingForPermission
+                  ? "İsteği kabul et/reddet"
+                  : 'İsteği yolla'))
+        ],
+      ),
+    ));
+  }
+
+  void callOrAskForPermission() {
+    if (mediaPermissionsAlllowed) {
+      makeCall();
+    } else {
+      askForMediaPermissions();
+    }
   }
 
   @override
@@ -235,25 +395,10 @@ class _ChatState extends ConsumerState<Chat> {
             ),
           ),
         ]),
-        actions: [
-          IconButton(
-              onPressed: () => makeCall(),
-              icon: const Icon(FeatherIcons.phoneCall)),
-          if (connectedToCall)
-            IconButton(
-                onPressed: () {
-                  if (micMuted) {
-                    localStream.getAudioTracks()[0].enabled = true;
-                  } else {
-                    localStream.getAudioTracks()[0].enabled = false;
-                  }
-                },
-                icon: Icon(!micMuted ? FeatherIcons.micOff : FeatherIcons.mic))
-        ],
+        actions: [askForPermissionsButton(), mic()],
       ),
       body: chatUi.Chat(
         l10n: const chatUi.ChatL10nTr(),
-        onMessageTap: (context, message) => print("selam"),
         showUserNames: true,
         onSendPressed: onSendMessage,
         theme: const chatUi.DarkChatTheme(
@@ -270,5 +415,29 @@ class _ChatState extends ConsumerState<Chat> {
         showUserAvatars: true,
       ),
     );
+  }
+
+  Widget askForPermissionsButton() {
+    return IconButton(
+        onPressed: callOrAskForPermission,
+        icon: Icon(!mediaPermissionsAlllowed
+            ? FeatherIcons.phoneOff
+            : FeatherIcons.phoneCall));
+  }
+
+  Widget mic() {
+    if (!connectedToCall) {
+      return Container();
+    }
+
+    return IconButton(
+        onPressed: () {
+          if (micMuted) {
+            localStream.getAudioTracks()[0].enabled = true;
+          } else {
+            localStream.getAudioTracks()[0].enabled = false;
+          }
+        },
+        icon: Icon(!micMuted ? FeatherIcons.micOff : FeatherIcons.mic));
   }
 }

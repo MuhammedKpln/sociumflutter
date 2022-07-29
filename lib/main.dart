@@ -95,33 +95,40 @@ class SociumApplication extends ConsumerWidget {
       title: 'Flutter Demo',
       scaffoldMessengerKey: scaffoldKey,
       theme: Theme.of(context).copyWith(
-        iconTheme: const IconThemeData(color: Colors.white),
-        appBarTheme: const AppBarTheme(
-            backgroundColor: ColorPalette.background,
-            elevation: 0,
-            iconTheme: IconThemeData(color: Colors.grey)),
-        scaffoldBackgroundColor: ColorPalette.background,
-        primaryColor: ColorPalette.primary,
-        buttonTheme: const ButtonThemeData(
-          buttonColor: ColorPalette.primary,
-        ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: ColorPalette.background,
-            selectedIconTheme: const IconThemeData(color: ColorPalette.primary),
-            unselectedItemColor: Colors.grey.shade500),
-        textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Colors.white,
-              displayColor: Colors.white,
-            ),
-        snackBarTheme:
-            const SnackBarThemeData(backgroundColor: ColorPalette.primary),
-        textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(ColorPalette.grey),
-                textStyle: MaterialStateProperty.all(const TextStyle(
-                  color: ColorPalette.grey,
-                )))),
-      ),
+          iconTheme: const IconThemeData(color: Colors.white),
+          appBarTheme: const AppBarTheme(
+              backgroundColor: ColorPalette.background,
+              elevation: 0,
+              iconTheme: IconThemeData(color: Colors.grey)),
+          scaffoldBackgroundColor: ColorPalette.background,
+          primaryColor: ColorPalette.primary,
+          buttonTheme: const ButtonThemeData(
+            buttonColor: ColorPalette.primary,
+          ),
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+              backgroundColor: ColorPalette.background,
+              selectedIconTheme:
+                  const IconThemeData(color: ColorPalette.primary),
+              unselectedItemColor: Colors.grey.shade500),
+          textTheme: Theme.of(context).textTheme.apply(
+                bodyColor: Colors.white,
+                displayColor: Colors.white,
+              ),
+          snackBarTheme:
+              const SnackBarThemeData(backgroundColor: ColorPalette.primary),
+          textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(ColorPalette.grey),
+                  textStyle: MaterialStateProperty.all(const TextStyle(
+                    color: ColorPalette.grey,
+                  )))),
+          bottomSheetTheme: const BottomSheetThemeData(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10))),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+          )),
       routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),
     );

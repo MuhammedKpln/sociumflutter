@@ -4,6 +4,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:scflutter/extensions/eventEmitter.dart';
 import 'package:scflutter/models/socket/answer_made_response.dart';
 import 'package:scflutter/models/socket/call_made_response.dart';
+import 'package:scflutter/models/socket/media_permissions_response.dart';
 import 'package:scflutter/models/socket/on_ice_candidate_response.dart';
 import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/services/websocket.service.dart';
@@ -18,6 +19,8 @@ enum SocketFireEvents {
   CallUser("call user"),
   MakeAnswer("make answer"),
   AddIceCandidate("add ice candidate"),
+  AskForMedia("ask for media permission"),
+  GiveMediaPermission("allow media controls"),
   SendMessage("send message");
 
   final String path;
@@ -29,6 +32,8 @@ enum SocketListenerEvents {
   MESSAGE_RECEIVED("MESSAGE_RECEIVED"),
   CALL_MADE("CALL_MADE"),
   RECEIVED_ICE_CANDIDATE("RECEIVED_ICE_CANDIDATE"),
+  MEDIA_PERMISSION_ASKED("MEDIA_PERMISSION_ASKED"),
+  MEDIA_PERMISSION_ANSWERED("MEDIA_PERMISSION_ANSWERED"),
   ANSWER_MADE('ANSWER_MADE');
 
   final String path;
@@ -39,6 +44,16 @@ class SocketService extends SocketCore {
   callUser(RTCSessionDescription offer, String userUUID) {
     emit(SocketFireEvents.CallUser.path,
         data: {"offer": offer.toMap(), "uuid": userUUID});
+  }
+
+  askForMediaPermissions(String userUUID, {bool? audio, bool? video}) {
+    emit(SocketFireEvents.AskForMedia.path,
+        data: {"audio": audio, "video": video, "uuid": userUUID});
+  }
+
+  giveMediaPermission(String userUUID, {bool? audio, bool? video}) {
+    emit(SocketFireEvents.GiveMediaPermission.path,
+        data: {"audio": audio, "video": video, "uuid": userUUID});
   }
 
   makeAnswer(RTCSessionDescription answer, String userUUID) {
@@ -97,6 +112,26 @@ class SocketService extends SocketCore {
         ((ev, context) {
       final mappedData = ev.toMap();
       final response = MessageReceivedResponse.fromJson(mappedData["data"]);
+
+      return callback(response);
+    }));
+  }
+
+  onMediaPermissionsAsked(void Function(MediaPermission response) callback) {
+    eventEmitter.on(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path, null,
+        ((ev, context) {
+      final mappedData = ev.toMap();
+      final response = MediaPermission.fromJson(mappedData["data"]);
+
+      return callback(response);
+    }));
+  }
+
+  onMediaPermissionAnswered(void Function(MediaPermission response) callback) {
+    eventEmitter.on(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path, null,
+        ((ev, context) {
+      final mappedData = ev.toMap();
+      final response = MediaPermission.fromJson(mappedData["data"]);
 
       return callback(response);
     }));
