@@ -36,15 +36,24 @@ GetUserProfile$Query$GetUser _$GetUserProfile$Query$GetUserFromJson(
           json['_count'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$GetUserProfile$Query$GetUserToJson(
-        GetUserProfile$Query$GetUser instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'username': instance.username,
-      'bio': instance.bio,
-      'avatar': instance.avatar,
-      'birthday': instance.birthday?.toIso8601String(),
-      '_count': instance.$count.toJson(),
-    };
+    GetUserProfile$Query$GetUser instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'username': instance.username,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('bio', instance.bio);
+  writeNotNull('avatar', instance.avatar);
+  writeNotNull('birthday', instance.birthday?.toIso8601String());
+  val['_count'] = instance.$count.toJson();
+  return val;
+}
 
 GetUserProfile$Query _$GetUserProfile$QueryFromJson(
         Map<String, dynamic> json) =>
@@ -94,13 +103,22 @@ FetchMessages$Query$Messages$Sender
           ..email = json['email'] as String;
 
 Map<String, dynamic> _$FetchMessages$Query$Messages$SenderToJson(
-        FetchMessages$Query$Messages$Sender instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'username': instance.username,
-      'avatar': instance.avatar,
-      'email': instance.email,
-    };
+    FetchMessages$Query$Messages$Sender instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'username': instance.username,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('avatar', instance.avatar);
+  val['email'] = instance.email;
+  return val;
+}
 
 FetchMessages$Query$Messages$Receiver
     _$FetchMessages$Query$Messages$ReceiverFromJson(
@@ -112,13 +130,22 @@ FetchMessages$Query$Messages$Receiver
           ..email = json['email'] as String;
 
 Map<String, dynamic> _$FetchMessages$Query$Messages$ReceiverToJson(
-        FetchMessages$Query$Messages$Receiver instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'username': instance.username,
-      'avatar': instance.avatar,
-      'email': instance.email,
-    };
+    FetchMessages$Query$Messages$Receiver instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'username': instance.username,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('avatar', instance.avatar);
+  val['email'] = instance.email;
+  return val;
+}
 
 FetchMessages$Query$Messages$Room _$FetchMessages$Query$Messages$RoomFromJson(
         Map<String, dynamic> json) =>
@@ -192,18 +219,27 @@ Login$Mutation$Login$User _$Login$Mutation$Login$UserFromJson(
       ..blockIncomingCalls = json['blockIncomingCalls'] as bool?;
 
 Map<String, dynamic> _$Login$Mutation$Login$UserToJson(
-        Login$Mutation$Login$User instance) =>
-    <String, dynamic>{
-      'username': instance.username,
-      'id': instance.id,
-      'email': instance.email,
-      'gender': instance.gender,
-      'avatar': instance.avatar,
-      'bio': instance.bio,
-      'isEmailConfirmed': instance.isEmailConfirmed,
-      'birthday': instance.birthday?.toIso8601String(),
-      'blockIncomingCalls': instance.blockIncomingCalls,
-    };
+    Login$Mutation$Login$User instance) {
+  final val = <String, dynamic>{
+    'username': instance.username,
+    'id': instance.id,
+    'email': instance.email,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('gender', instance.gender);
+  writeNotNull('avatar', instance.avatar);
+  writeNotNull('bio', instance.bio);
+  val['isEmailConfirmed'] = instance.isEmailConfirmed;
+  writeNotNull('birthday', instance.birthday?.toIso8601String());
+  writeNotNull('blockIncomingCalls', instance.blockIncomingCalls);
+  return val;
+}
 
 Login$Mutation$Login _$Login$Mutation$LoginFromJson(
         Map<String, dynamic> json) =>
@@ -249,18 +285,27 @@ Register$Mutation$Register$User _$Register$Mutation$Register$UserFromJson(
       ..blockIncomingCalls = json['blockIncomingCalls'] as bool?;
 
 Map<String, dynamic> _$Register$Mutation$Register$UserToJson(
-        Register$Mutation$Register$User instance) =>
-    <String, dynamic>{
-      'username': instance.username,
-      'id': instance.id,
-      'email': instance.email,
-      'gender': instance.gender,
-      'avatar': instance.avatar,
-      'bio': instance.bio,
-      'isEmailConfirmed': instance.isEmailConfirmed,
-      'birthday': instance.birthday?.toIso8601String(),
-      'blockIncomingCalls': instance.blockIncomingCalls,
-    };
+    Register$Mutation$Register$User instance) {
+  final val = <String, dynamic>{
+    'username': instance.username,
+    'id': instance.id,
+    'email': instance.email,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('gender', instance.gender);
+  writeNotNull('avatar', instance.avatar);
+  writeNotNull('bio', instance.bio);
+  val['isEmailConfirmed'] = instance.isEmailConfirmed;
+  writeNotNull('birthday', instance.birthday?.toIso8601String());
+  writeNotNull('blockIncomingCalls', instance.blockIncomingCalls);
+  return val;
+}
 
 Register$Mutation$Register _$Register$Mutation$RegisterFromJson(
         Map<String, dynamic> json) =>
@@ -307,18 +352,27 @@ FetchRoomMessage$Query$MessagesFromRoom$Sender
           ..blockIncomingCalls = json['blockIncomingCalls'] as bool?;
 
 Map<String, dynamic> _$FetchRoomMessage$Query$MessagesFromRoom$SenderToJson(
-        FetchRoomMessage$Query$MessagesFromRoom$Sender instance) =>
-    <String, dynamic>{
-      'username': instance.username,
-      'id': instance.id,
-      'email': instance.email,
-      'gender': instance.gender,
-      'avatar': instance.avatar,
-      'bio': instance.bio,
-      'isEmailConfirmed': instance.isEmailConfirmed,
-      'birthday': instance.birthday?.toIso8601String(),
-      'blockIncomingCalls': instance.blockIncomingCalls,
-    };
+    FetchRoomMessage$Query$MessagesFromRoom$Sender instance) {
+  final val = <String, dynamic>{
+    'username': instance.username,
+    'id': instance.id,
+    'email': instance.email,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('gender', instance.gender);
+  writeNotNull('avatar', instance.avatar);
+  writeNotNull('bio', instance.bio);
+  val['isEmailConfirmed'] = instance.isEmailConfirmed;
+  writeNotNull('birthday', instance.birthday?.toIso8601String());
+  writeNotNull('blockIncomingCalls', instance.blockIncomingCalls);
+  return val;
+}
 
 FetchRoomMessage$Query$MessagesFromRoom$Receiver
     _$FetchRoomMessage$Query$MessagesFromRoom$ReceiverFromJson(
@@ -337,18 +391,27 @@ FetchRoomMessage$Query$MessagesFromRoom$Receiver
           ..blockIncomingCalls = json['blockIncomingCalls'] as bool?;
 
 Map<String, dynamic> _$FetchRoomMessage$Query$MessagesFromRoom$ReceiverToJson(
-        FetchRoomMessage$Query$MessagesFromRoom$Receiver instance) =>
-    <String, dynamic>{
-      'username': instance.username,
-      'id': instance.id,
-      'email': instance.email,
-      'gender': instance.gender,
-      'avatar': instance.avatar,
-      'bio': instance.bio,
-      'isEmailConfirmed': instance.isEmailConfirmed,
-      'birthday': instance.birthday?.toIso8601String(),
-      'blockIncomingCalls': instance.blockIncomingCalls,
-    };
+    FetchRoomMessage$Query$MessagesFromRoom$Receiver instance) {
+  final val = <String, dynamic>{
+    'username': instance.username,
+    'id': instance.id,
+    'email': instance.email,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('gender', instance.gender);
+  writeNotNull('avatar', instance.avatar);
+  writeNotNull('bio', instance.bio);
+  val['isEmailConfirmed'] = instance.isEmailConfirmed;
+  writeNotNull('birthday', instance.birthday?.toIso8601String());
+  writeNotNull('blockIncomingCalls', instance.blockIncomingCalls);
+  return val;
+}
 
 FetchRoomMessage$Query$MessagesFromRoom$Room
     _$FetchRoomMessage$Query$MessagesFromRoom$RoomFromJson(
@@ -436,12 +499,21 @@ FetchPosts$Query$Posts$User _$FetchPosts$Query$Posts$UserFromJson(
       ..id = (json['id'] as num).toDouble();
 
 Map<String, dynamic> _$FetchPosts$Query$Posts$UserToJson(
-        FetchPosts$Query$Posts$User instance) =>
-    <String, dynamic>{
-      'username': instance.username,
-      'avatar': instance.avatar,
-      'id': instance.id,
-    };
+    FetchPosts$Query$Posts$User instance) {
+  final val = <String, dynamic>{
+    'username': instance.username,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('avatar', instance.avatar);
+  val['id'] = instance.id;
+  return val;
+}
 
 FetchPosts$Query$Posts$$count _$FetchPosts$Query$Posts$$countFromJson(
         Map<String, dynamic> json) =>
@@ -492,22 +564,31 @@ FetchPosts$Query$Posts _$FetchPosts$Query$PostsFromJson(
           json['category'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$FetchPosts$Query$PostsToJson(
-        FetchPosts$Query$Posts instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'content': instance.content,
-      'type': instance.type,
-      'slug': instance.slug,
-      'created_at': instance.createdAt.toIso8601String(),
-      'postFromFollowers': instance.postFromFollowers,
-      'additional': instance.additional,
-      'userLike': instance.userLike?.toJson(),
-      'postLike': instance.postLike.toJson(),
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'user': instance.user.toJson(),
-      '_count': instance.$count.toJson(),
-      'category': instance.category.toJson(),
-    };
+    FetchPosts$Query$Posts instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'content': instance.content,
+    'type': instance.type,
+    'slug': instance.slug,
+    'created_at': instance.createdAt.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('postFromFollowers', instance.postFromFollowers);
+  writeNotNull('additional', instance.additional);
+  writeNotNull('userLike', instance.userLike?.toJson());
+  val['postLike'] = instance.postLike.toJson();
+  val['updated_at'] = instance.updatedAt.toIso8601String();
+  val['user'] = instance.user.toJson();
+  val['_count'] = instance.$count.toJson();
+  val['category'] = instance.category.toJson();
+  return val;
+}
 
 FetchPosts$Query _$FetchPosts$QueryFromJson(Map<String, dynamic> json) =>
     FetchPosts$Query()
@@ -519,6 +600,56 @@ FetchPosts$Query _$FetchPosts$QueryFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$FetchPosts$QueryToJson(FetchPosts$Query instance) =>
     <String, dynamic>{
       'posts': instance.posts.map((e) => e.toJson()).toList(),
+    };
+
+EditProfile$Mutation$EditProfile _$EditProfile$Mutation$EditProfileFromJson(
+        Map<String, dynamic> json) =>
+    EditProfile$Mutation$EditProfile()
+      ..username = json['username'] as String
+      ..id = (json['id'] as num).toDouble()
+      ..email = json['email'] as String
+      ..gender = (json['gender'] as num?)?.toDouble()
+      ..avatar = json['avatar'] as String?
+      ..bio = json['bio'] as String?
+      ..isEmailConfirmed = json['isEmailConfirmed'] as bool
+      ..birthday = json['birthday'] == null
+          ? null
+          : DateTime.parse(json['birthday'] as String)
+      ..blockIncomingCalls = json['blockIncomingCalls'] as bool?;
+
+Map<String, dynamic> _$EditProfile$Mutation$EditProfileToJson(
+    EditProfile$Mutation$EditProfile instance) {
+  final val = <String, dynamic>{
+    'username': instance.username,
+    'id': instance.id,
+    'email': instance.email,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('gender', instance.gender);
+  writeNotNull('avatar', instance.avatar);
+  writeNotNull('bio', instance.bio);
+  val['isEmailConfirmed'] = instance.isEmailConfirmed;
+  writeNotNull('birthday', instance.birthday?.toIso8601String());
+  writeNotNull('blockIncomingCalls', instance.blockIncomingCalls);
+  return val;
+}
+
+EditProfile$Mutation _$EditProfile$MutationFromJson(
+        Map<String, dynamic> json) =>
+    EditProfile$Mutation()
+      ..editProfile = EditProfile$Mutation$EditProfile.fromJson(
+          json['editProfile'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$EditProfile$MutationToJson(
+        EditProfile$Mutation instance) =>
+    <String, dynamic>{
+      'editProfile': instance.editProfile.toJson(),
     };
 
 GetUserProfileArguments _$GetUserProfileArgumentsFromJson(
@@ -584,12 +715,21 @@ FetchRoomMessageArguments _$FetchRoomMessageArgumentsFromJson(
     );
 
 Map<String, dynamic> _$FetchRoomMessageArgumentsToJson(
-        FetchRoomMessageArguments instance) =>
-    <String, dynamic>{
-      'roomId': instance.roomId,
-      'offset': instance.offset,
-      'limit': instance.limit,
-    };
+    FetchRoomMessageArguments instance) {
+  final val = <String, dynamic>{
+    'roomId': instance.roomId,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('offset', instance.offset);
+  writeNotNull('limit', instance.limit);
+  return val;
+}
 
 FetchPostsArguments _$FetchPostsArgumentsFromJson(Map<String, dynamic> json) =>
     FetchPostsArguments(
@@ -597,9 +737,46 @@ FetchPostsArguments _$FetchPostsArgumentsFromJson(Map<String, dynamic> json) =>
       offset: (json['offset'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$FetchPostsArgumentsToJson(
-        FetchPostsArguments instance) =>
-    <String, dynamic>{
-      'limit': instance.limit,
-      'offset': instance.offset,
-    };
+Map<String, dynamic> _$FetchPostsArgumentsToJson(FetchPostsArguments instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('limit', instance.limit);
+  writeNotNull('offset', instance.offset);
+  return val;
+}
+
+EditProfileArguments _$EditProfileArgumentsFromJson(
+        Map<String, dynamic> json) =>
+    EditProfileArguments(
+      biography: json['biography'] as String?,
+      username: json['username'] as String?,
+      blockIncomingCalls: json['blockIncomingCalls'] as bool?,
+      birthday: json['birthday'] == null
+          ? null
+          : DateTime.parse(json['birthday'] as String),
+      avatar: json['avatar'] as String?,
+    );
+
+Map<String, dynamic> _$EditProfileArgumentsToJson(
+    EditProfileArguments instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('biography', instance.biography);
+  writeNotNull('username', instance.username);
+  writeNotNull('blockIncomingCalls', instance.blockIncomingCalls);
+  writeNotNull('birthday', instance.birthday?.toIso8601String());
+  writeNotNull('avatar', instance.avatar);
+  return val;
+}

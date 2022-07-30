@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/models/user_model.dart';
@@ -7,7 +6,7 @@ import 'package:scflutter/storage/auth.storage.dart';
 
 import '../state/auth.dart';
 
-Future<void> getNewToken() async {
+Future<String> getNewToken() async {
   final client = GraphQLClient(
       link: HttpLink(ApiService.GraphQLAPI.path), cache: GraphQLCache());
   final String refreshToken = await getRefreshToken();
@@ -30,5 +29,8 @@ Future<void> getNewToken() async {
 
   await saveLogin(userModel);
 
-  ProviderContainer().read(userProvider.notifier).setUser(userModel);
+  // ProviderContainer().read(userProvider.notifier).setUser(userModel);
+
+  print("data.refreshToken.accessToken");
+  return data.refreshToken.accessToken;
 }

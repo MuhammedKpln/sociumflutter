@@ -13,7 +13,7 @@ class HomeScreen extends ConsumerWidget {
     final notifier = ref.watch(userProvider);
 
     if (notifier.accessToken == null) {
-      AutoRouter.of(context).replaceAll([const OnboardScreen()]);
+      AutoRouter.of(context).replace(const OnboardScreen());
     }
 
     return AppScaffold(

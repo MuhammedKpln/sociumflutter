@@ -8,14 +8,17 @@ import 'package:scflutter/screens/Login.dart';
 import 'package:scflutter/screens/Match.dart';
 import 'package:scflutter/screens/Onboard.dart';
 import 'package:scflutter/screens/Profile.dart';
+import 'package:scflutter/screens/ProfileSettings/ProfileSettings.dart';
+import 'package:scflutter/screens/ProfileSettings/bio_settings.dart';
 import 'package:scflutter/screens/Register/StepFour.dart';
 import 'package:scflutter/screens/Register/StepOne.dart';
 import 'package:scflutter/screens/Register/StepThree.dart';
 import 'package:scflutter/screens/Register/StepTwo.dart';
+import 'package:scflutter/screens/testscreen.dart';
 
 import '../screens/Chat/CallComing.dart';
 
-@AdaptiveAutoRouter(
+@MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     AutoRoute(page: OnboardScreen, initial: true),
@@ -36,6 +39,9 @@ import '../screens/Chat/CallComing.dart';
       page: Chat,
     ),
     AutoRoute(page: MatchFound, fullscreenDialog: true),
+    AutoRoute(page: ProfileSettings),
+    AutoRoute(page: BioSettingsPage),
+    AutoRoute(page: TestScreen),
   ],
 )
 class $AppRouter {}

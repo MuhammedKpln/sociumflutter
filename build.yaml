@@ -4,6 +4,11 @@ targets:
       - lib/**
       - graphql/**
     builders:
+
+      json_serializable:
+        options:
+          include_if_null: false
+          
       artemis:
         options:
           fragments_glob: lib/graphql/fragments/*.graphql

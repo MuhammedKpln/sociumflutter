@@ -682,6 +682,65 @@ class FetchPosts$Query extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
+class EditProfile$Mutation$EditProfile extends JsonSerializable
+    with EquatableMixin {
+  EditProfile$Mutation$EditProfile();
+
+  factory EditProfile$Mutation$EditProfile.fromJson(
+          Map<String, dynamic> json) =>
+      _$EditProfile$Mutation$EditProfileFromJson(json);
+
+  late String username;
+
+  late double id;
+
+  late String email;
+
+  double? gender;
+
+  String? avatar;
+
+  String? bio;
+
+  late bool isEmailConfirmed;
+
+  DateTime? birthday;
+
+  bool? blockIncomingCalls;
+
+  @override
+  List<Object?> get props => [
+        username,
+        id,
+        email,
+        gender,
+        avatar,
+        bio,
+        isEmailConfirmed,
+        birthday,
+        blockIncomingCalls
+      ];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$EditProfile$Mutation$EditProfileToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class EditProfile$Mutation extends JsonSerializable with EquatableMixin {
+  EditProfile$Mutation();
+
+  factory EditProfile$Mutation.fromJson(Map<String, dynamic> json) =>
+      _$EditProfile$MutationFromJson(json);
+
+  late EditProfile$Mutation$EditProfile editProfile;
+
+  @override
+  List<Object?> get props => [editProfile];
+  @override
+  Map<String, dynamic> toJson() => _$EditProfile$MutationToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class GetUserProfileArguments extends JsonSerializable with EquatableMixin {
   GetUserProfileArguments({required this.username});
 
@@ -1886,4 +1945,179 @@ class FetchPostsQuery
   @override
   FetchPosts$Query parse(Map<String, dynamic> json) =>
       FetchPosts$Query.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class EditProfileArguments extends JsonSerializable with EquatableMixin {
+  EditProfileArguments(
+      {this.biography,
+      this.username,
+      this.blockIncomingCalls,
+      this.birthday,
+      this.avatar});
+
+  @override
+  factory EditProfileArguments.fromJson(Map<String, dynamic> json) =>
+      _$EditProfileArgumentsFromJson(json);
+
+  final String? biography;
+
+  final String? username;
+
+  final bool? blockIncomingCalls;
+
+  final DateTime? birthday;
+
+  final String? avatar;
+
+  @override
+  List<Object?> get props =>
+      [biography, username, blockIncomingCalls, birthday, avatar];
+  @override
+  Map<String, dynamic> toJson() => _$EditProfileArgumentsToJson(this);
+}
+
+final EDIT_PROFILE_MUTATION_DOCUMENT_OPERATION_NAME = 'EDIT_PROFILE';
+final EDIT_PROFILE_MUTATION_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'EDIT_PROFILE'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'biography')),
+            type: NamedTypeNode(
+                name: NameNode(value: 'String'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'username')),
+            type: NamedTypeNode(
+                name: NameNode(value: 'String'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'blockIncomingCalls')),
+            type: NamedTypeNode(
+                name: NameNode(value: 'Boolean'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'birthday')),
+            type: NamedTypeNode(
+                name: NameNode(value: 'DateTime'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'avatar')),
+            type: NamedTypeNode(
+                name: NameNode(value: 'String'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'editProfile'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'profile'),
+                  value: ObjectValueNode(fields: [
+                    ObjectFieldNode(
+                        name: NameNode(value: 'bio'),
+                        value:
+                            VariableNode(name: NameNode(value: 'biography'))),
+                    ObjectFieldNode(
+                        name: NameNode(value: 'username'),
+                        value: VariableNode(name: NameNode(value: 'username'))),
+                    ObjectFieldNode(
+                        name: NameNode(value: 'blockIncomingCalls'),
+                        value: VariableNode(
+                            name: NameNode(value: 'blockIncomingCalls'))),
+                    ObjectFieldNode(
+                        name: NameNode(value: 'birthday'),
+                        value: VariableNode(name: NameNode(value: 'birthday'))),
+                    ObjectFieldNode(
+                        name: NameNode(value: 'avatar'),
+                        value: VariableNode(name: NameNode(value: 'avatar')))
+                  ]))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'username'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'email'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'gender'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'avatar'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'bio'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'isEmailConfirmed'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'birthday'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'blockIncomingCalls'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ]))
+      ]))
+]);
+
+class EditProfileMutation
+    extends GraphQLQuery<EditProfile$Mutation, EditProfileArguments> {
+  EditProfileMutation({required this.variables});
+
+  @override
+  final DocumentNode document = EDIT_PROFILE_MUTATION_DOCUMENT;
+
+  @override
+  final String operationName = EDIT_PROFILE_MUTATION_DOCUMENT_OPERATION_NAME;
+
+  @override
+  final EditProfileArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  EditProfile$Mutation parse(Map<String, dynamic> json) =>
+      EditProfile$Mutation.fromJson(json);
 }

@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/palette.dart';
+import 'package:scflutter/utils/router.gr.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -17,18 +19,20 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  void onPressSettings() {
+    context.router.navigate(const ProfileSettings());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider.notifier).state.user;
+    final userNotifier = ref.watch(userProvider.notifier);
+    final user = ref.watch(userProvider).user;
+    final variables = GetUserProfileArguments(username: user?.username ?? "");
 
     return Query(
         options: QueryOptions(
-            document: GetUserProfileQuery(
-                    variables:
-                        GetUserProfileArguments(username: user?.username ?? ""))
-                .document,
-            variables: GetUserProfileArguments(username: user?.username ?? "")
-                .toJson()),
+            document: GetUserProfileQuery(variables: variables).document,
+            variables: variables.toJson()),
         builder: (QueryResult result,
             {VoidCallback? refetch, FetchMore? fetchMore}) {
           if (result.isLoading) {
@@ -39,8 +43,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
           return Scaffold(
               appBar: AppBar(
-                leading: const Icon(FeatherIcons.edit),
-                actions: const [Icon(FeatherIcons.settings)],
+                leading: IconButton(
+                    onPressed: onPressSettings,
+                    icon: const Icon(FeatherIcons.edit)),
+                actions: [
+                  IconButton(
+                      onPressed: onPressSettings,
+                      icon: const Icon(FeatherIcons.settings))
+                ],
               ),
               body: Padding(
                 padding: const EdgeInsets.all(20),

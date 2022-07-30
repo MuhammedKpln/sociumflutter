@@ -20,14 +20,23 @@ _$_User _$$_UserFromJson(Map<String, dynamic> json) => _$_User(
       blockIncomingCalls: json['blockIncomingCalls'] as bool?,
     );
 
-Map<String, dynamic> _$$_UserToJson(_$_User instance) => <String, dynamic>{
-      'username': instance.username,
-      'id': instance.id,
-      'email': instance.email,
-      'gender': instance.gender,
-      'avatar': instance.avatar,
-      'bio': instance.bio,
-      'isEmailConfirmed': instance.isEmailConfirmed,
-      'birthday': instance.birthday?.toIso8601String(),
-      'blockIncomingCalls': instance.blockIncomingCalls,
-    };
+Map<String, dynamic> _$$_UserToJson(_$_User instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('username', instance.username);
+  writeNotNull('id', instance.id);
+  writeNotNull('email', instance.email);
+  writeNotNull('gender', instance.gender);
+  writeNotNull('avatar', instance.avatar);
+  writeNotNull('bio', instance.bio);
+  writeNotNull('isEmailConfirmed', instance.isEmailConfirmed);
+  writeNotNull('birthday', instance.birthday?.toIso8601String());
+  writeNotNull('blockIncomingCalls', instance.blockIncomingCalls);
+  return val;
+}

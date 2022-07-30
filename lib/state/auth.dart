@@ -27,6 +27,12 @@ class UserModelNotifier extends StateNotifier<AuthStateModel> {
     state = user;
   }
 
+  setBio(String bio) async {
+    final authModel = state.copyWith(user: state.user?.copyWith(bio: bio));
+    await saveLogin(authModel);
+    state = authModel;
+  }
+
   clearUser() async {
     await deleteUser();
     state = const AuthStateModel();

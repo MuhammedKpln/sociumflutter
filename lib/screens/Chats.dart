@@ -46,12 +46,19 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
 
   Widget pageOne() {
     return Query(
-        options: QueryOptions(document: FetchMessagesQuery().document),
+        options: QueryOptions(
+          document: FetchMessagesQuery().document,
+        ),
         builder: (QueryResult result,
             {VoidCallback? refetch, FetchMore? fetchMore}) {
           if (result.isLoading) {
             return const Loading();
           }
+
+          if (result.data == null) {
+            return noDataExists();
+          }
+
           final messages = result.data?["messages"] as List;
           if (messages.isEmpty) {
             return noDataExists();

@@ -1,0 +1,27 @@
+mutation EDIT_PROFILE(
+  $biography: String
+  $username: String
+  $blockIncomingCalls: Boolean
+  $birthday: DateTime
+  $avatar: String
+) {
+  editProfile(
+    profile: {
+      bio: $biography
+      username: $username
+      blockIncomingCalls: $blockIncomingCalls
+      birthday: $birthday
+      avatar: $avatar
+    }
+  ) {
+    username
+    id
+    email
+    gender
+    avatar
+    bio
+    isEmailConfirmed
+    birthday
+    blockIncomingCalls
+  }
+}

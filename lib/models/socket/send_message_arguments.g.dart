@@ -17,11 +17,20 @@ _$_SendMessageArguments _$$_SendMessageArgumentsFromJson(
     );
 
 Map<String, dynamic> _$$_SendMessageArgumentsToJson(
-        _$_SendMessageArguments instance) =>
-    <String, dynamic>{
-      'room': instance.room,
-      'message': instance.message,
-      'user': instance.user,
-      'receiver': instance.receiver,
-      'repliedToId': instance.repliedToId,
-    };
+    _$_SendMessageArguments instance) {
+  final val = <String, dynamic>{
+    'room': instance.room,
+    'message': instance.message,
+    'user': instance.user,
+    'receiver': instance.receiver,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('repliedToId', instance.repliedToId);
+  return val;
+}
