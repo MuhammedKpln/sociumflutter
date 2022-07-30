@@ -27,12 +27,12 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
     final List<Map<String, dynamic>> pages = [
       {
         "label": "Biyografi",
-        "screen": router.BioSettingsRoute(),
+        "screen": const router.BioSettingsRoute(),
         "value": user?.bio
       },
       {
         "label": "Doğum tarihi",
-        "screen": const router.TestScreen(),
+        "screen": const router.BirthdaySettingsRoute(),
         "value": formatDate(user!.birthday!, [dd, ' ', MM, ' ', yyyy],
             locale: const TurkishDateLocale())
       },

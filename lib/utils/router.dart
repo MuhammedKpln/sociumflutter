@@ -8,6 +8,7 @@ import 'package:scflutter/screens/Login.dart';
 import 'package:scflutter/screens/Match.dart';
 import 'package:scflutter/screens/Onboard.dart';
 import 'package:scflutter/screens/Profile.dart';
+import 'package:scflutter/screens/ProfileSettings/BirthdaySettings.dart';
 import 'package:scflutter/screens/ProfileSettings/ProfileSettings.dart';
 import 'package:scflutter/screens/ProfileSettings/bio_settings.dart';
 import 'package:scflutter/screens/Register/StepFour.dart';
@@ -41,6 +42,7 @@ import '../screens/Chat/CallComing.dart';
     AutoRoute(page: MatchFound, fullscreenDialog: true),
     AutoRoute(page: ProfileSettings),
     AutoRoute(page: BioSettingsPage),
+    AutoRoute(page: BirthdaySettingsPage),
     AutoRoute(page: TestScreen),
   ],
 )
