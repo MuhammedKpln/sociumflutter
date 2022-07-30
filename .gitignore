@@ -50,4 +50,6 @@ app.*.map.json
 
 # Freezed object
 *.freezed.dart
+
+# Generated object
 *.g.dart
