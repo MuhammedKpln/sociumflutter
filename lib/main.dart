@@ -2,33 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/guards/auth.guard.dart';
+import 'package:scflutter/serivces.dart';
 import 'package:scflutter/services/token.service.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/storage/auth.storage.dart';
-import 'package:scflutter/utils/logger.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
+class AuthToken extends ContextEntry {
+  final String token;
+
+  const AuthToken({required this.token});
+
+  @override
+  List<Object> get fieldsForEquality => [];
+}
+
 final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
 Future<void> main() async {
-  List<Function> pendingRequests = [];
-  resolvePendingRequests() {
-    pendingRequests.map((e) => e());
-    pendingRequests = [];
-  }
-
-  bool isRefreshing = false;
-
   await initHiveForFlutter();
 
-  final httpLink = HttpLink("http://localhost:3000/graphql");
+  final httpLink = HttpLink(ApiService.GraphQLAPI.path);
   final authLink = AuthLink(getToken: (() async {
     final loggedIn = await isLoggedIn();
 
-    print(loggedIn);
     if (loggedIn) {
       final accessToken = await getAccessToken();
-      print(accessToken);
 
       return "Bearer $accessToken";
     }
@@ -37,46 +36,36 @@ Future<void> main() async {
   }));
 
   final errorLink = ErrorLink(
-    onGraphQLError: (request, forward, response) {
-      print("response.errors");
+    onGraphQLError: (request, forward, response) async* {
+      final error = response.errors?[0];
 
-      response.errors?.forEach((error) {
-        if (error.message == 'Refresh token mismatch') {
-          ProviderContainer().read(userProvider.notifier).clearUser();
+      if (error?.message == 'Refresh token mismatch') {
+        ProviderContainer().read(userProvider.notifier).clearUser();
+      }
+
+      if (error?.message == "JWT_EXPIRED" || error?.message == "jwt expired") {
+        try {
+          final token = await getNewToken();
+
+          final updatedRequest =
+              request.withContextEntry(AuthToken(token: token));
+
+          yield* forward(updatedRequest);
+        } catch (err) {
+          await deleteUser();
+          yield* forward(request);
         }
+      }
 
-        if (error.message == "JWT_EXPIRED") {
-          print("response asldkqlwe updating");
-
-          if (!isRefreshing) {
-            isRefreshing = true;
-
-            getNewToken().then((value) {
-              resolvePendingRequests();
-            }).catchError((error) {
-              Logger().error(error);
-              pendingRequests = [];
-            }).whenComplete(() {
-              isRefreshing = true;
-            });
-          } else {
-            pendingRequests.add(() => forward(request));
-          }
-        }
-
-        if (error.message == "jwt malformed") {
-          print("response asldkqlwe");
-          ProviderContainer().read(userProvider.notifier).clearUser();
-        }
-      });
-
-      return null;
+      if (error?.message == "jwt malformed") {
+        ProviderContainer().read(userProvider.notifier).clearUser();
+      }
     },
   );
 
   ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
-      link: Link.from([authLink, httpLink]),
+      link: Link.from([errorLink, authLink, httpLink]),
       // The default store is the InMemoryStore, which does NOT persist to disk
       cache: GraphQLCache(),
     ),
@@ -130,7 +119,10 @@ class SociumApplication extends ConsumerWidget {
             clipBehavior: Clip.antiAliasWithSaveLayer,
           ),
           floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              backgroundColor: ColorPalette.primary)),
+              backgroundColor: ColorPalette.primary),
+          inputDecorationTheme:
+              const InputDecorationTheme(border: InputBorder.none),
+          dividerColor: Colors.grey.shade700),
       routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),
     );
