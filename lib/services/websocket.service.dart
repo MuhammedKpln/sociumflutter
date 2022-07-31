@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:scflutter/serivces.dart';
 import 'package:scflutter/utils/logger.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:eventify/eventify.dart' as eventify;
@@ -10,7 +11,8 @@ class SocketCore {
   eventify.EventEmitter eventEmitter = eventify.EventEmitter();
 
   SocketCore() {
-    socket = IOWebSocketChannel.connect(Uri.parse('ws://localhost:3001'));
+    socket =
+        IOWebSocketChannel.connect(Uri.parse(ApiService.WebsocketAPI.path));
     _listen();
   }
 
