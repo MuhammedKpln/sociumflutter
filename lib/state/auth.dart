@@ -33,6 +33,20 @@ class UserModelNotifier extends StateNotifier<AuthStateModel> {
     state = authModel;
   }
 
+  setBirthday(DateTime birthday) async {
+    final authModel =
+        state.copyWith(user: state.user?.copyWith(birthday: birthday));
+    await saveLogin(authModel);
+    state = authModel;
+  }
+
+  setBlockIncomingCalls(bool blockIncomingCalls) async {
+    final authModel = state.copyWith(
+        user: state.user?.copyWith(blockIncomingCalls: blockIncomingCalls));
+    await saveLogin(authModel);
+    state = authModel;
+  }
+
   clearUser() async {
     await deleteUser();
     state = const AuthStateModel();

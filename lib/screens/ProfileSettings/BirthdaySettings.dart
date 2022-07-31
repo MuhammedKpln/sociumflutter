@@ -29,11 +29,11 @@ class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage> {
 
   onCompleted(Map<String, dynamic>? data) {
     if (data != null) {
-      final user = ref.read(userProvider);
       final userNotifer = ref.read(userProvider.notifier);
       final parsedData = EditProfile$Mutation.fromJson(data);
 
-      userNotifer.setBio(parsedData.editProfile.bio ?? "");
+      userNotifer
+          .setBirthday(parsedData.editProfile.birthday ?? DateTime.now());
 
       scaffoldKey.currentState
           ?.showSnackBar(const SnackBar(content: Text("Başarılı! ")));
