@@ -24,6 +24,8 @@ import 'package:scflutter/utils/avatar.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
+import '../components/Scaffold.dart';
+
 class ChatScreenPage extends ConsumerStatefulWidget {
   ChatScreenPage(
       {Key? key,
@@ -427,7 +429,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   Widget renderChat() {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [

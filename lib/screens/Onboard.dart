@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/storage/auth.storage.dart';
 import 'package:scflutter/utils/router.gr.dart';
@@ -135,7 +136,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
         appBar: AppBar(
           title: SvgPicture.asset('assets/logo.svg'),
           backgroundColor: const Color(0xFF212227),

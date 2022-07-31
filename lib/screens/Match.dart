@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/Match/Communities.dart';
 import 'package:scflutter/components/Match/MatchFound.dart';
+import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/models/client_paired.dart';
 import 'package:scflutter/models/message.dart';
 import 'package:scflutter/services/websocket.events.dart';
@@ -96,7 +97,7 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider.notifier);
 
-    return Scaffold(
+    return AppScaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(EvaIcons.moreHorizontal),

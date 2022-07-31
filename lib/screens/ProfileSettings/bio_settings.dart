@@ -7,6 +7,8 @@ import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/main.dart';
 import 'package:scflutter/state/auth.dart';
 
+import '../../components/Scaffold.dart';
+
 class BioSettingsPage extends ConsumerStatefulWidget {
   const BioSettingsPage({Key? key}) : super(key: key);
 
@@ -82,7 +84,7 @@ class _BioSettingsPageState extends ConsumerState<BioSettingsPage> {
     final mutationDocument =
         EditProfileMutation(variables: mutationVariables).document;
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Biyografini düzenle'),
       ),

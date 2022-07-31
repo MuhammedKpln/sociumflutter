@@ -9,6 +9,7 @@ import 'package:scflutter/main.dart';
 import 'package:scflutter/state/auth.dart';
 
 import '../../components/RoundedButton.dart';
+import '../../components/Scaffold.dart';
 
 class BirthdaySettingsPage extends ConsumerStatefulWidget {
   const BirthdaySettingsPage({Key? key}) : super(key: key);
@@ -89,7 +90,7 @@ class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage> {
     final mutationDocument =
         EditProfileMutation(variables: mutationVariables).document;
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text("Doğum günü"),
       ),

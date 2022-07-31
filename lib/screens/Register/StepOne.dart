@@ -5,6 +5,8 @@ import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
+import '../../components/Scaffold.dart';
+
 class RegisterScreenStepOnePage extends ConsumerStatefulWidget {
   const RegisterScreenStepOnePage({Key? key}) : super(key: key);
 
@@ -43,7 +45,7 @@ class RegisterScreenStepOneState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(),
       body: Container(
           padding: const EdgeInsets.all(10),

@@ -4,6 +4,8 @@ import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
+import '../../components/Scaffold.dart';
+
 class RegisterStepThreeScreenPage extends StatefulWidget {
   const RegisterStepThreeScreenPage(
       {Key? key, required this.allowedChatMethods})
@@ -56,7 +58,7 @@ class _RegisterStepThreeScreenState extends State<RegisterStepThreeScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(),
       body: Container(
           padding: const EdgeInsets.all(10),

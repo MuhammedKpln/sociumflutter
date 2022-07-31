@@ -9,6 +9,8 @@ import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
+import '../components/Scaffold.dart';
+
 class LoginScreenPage extends ConsumerStatefulWidget {
   const LoginScreenPage({Key? key}) : super(key: key);
 
@@ -57,7 +59,7 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(),
       body: Container(
           padding: const EdgeInsets.all(10),

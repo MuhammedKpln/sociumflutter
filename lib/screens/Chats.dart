@@ -13,6 +13,8 @@ import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
+import '../components/Scaffold.dart';
+
 class ChatsScreenPage extends ConsumerStatefulWidget {
   const ChatsScreenPage({Key? key}) : super(key: key);
 
@@ -152,57 +154,61 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: FutureBuilder(
-          future: Future.value(true),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(20)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () => pageController.jumpToPage(0),
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        width: 100,
-                        decoration: BoxDecoration(
-                            color:
-                                currentIndex == 0 ? ColorPalette.primary : null,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: const Icon(FeatherIcons.user,
-                            color: ColorPalette.grey, size: 15),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () => pageController.jumpToPage(1),
-                      child: Container(
-                        width: 100,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color:
-                                currentIndex == 1 ? ColorPalette.primary : null,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: const Icon(FeatherIcons.users,
-                            size: 15, color: ColorPalette.grey),
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ]);
-          },
-        ),
-      ),
+    return AppScaffold(
+      appBar: renderAppBar(),
       body: PageView(
           controller: pageController,
           physics: const NeverScrollableScrollPhysics(),
           children: [pageOne(), pageTwo()]),
+    );
+  }
+
+  AppBar renderAppBar() {
+    return AppBar(
+      centerTitle: true,
+      title: FutureBuilder(
+        future: Future.value(true),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(20)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () => pageController.jumpToPage(0),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      width: 100,
+                      decoration: BoxDecoration(
+                          color:
+                              currentIndex == 0 ? ColorPalette.primary : null,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: const Icon(FeatherIcons.user,
+                          color: ColorPalette.grey, size: 15),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => pageController.jumpToPage(1),
+                    child: Container(
+                      width: 100,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color:
+                              currentIndex == 1 ? ColorPalette.primary : null,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: const Icon(FeatherIcons.users,
+                          size: 15, color: ColorPalette.grey),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ]);
+        },
+      ),
     );
   }
 }

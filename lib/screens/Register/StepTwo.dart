@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
@@ -131,7 +132,7 @@ class _RegisterScreenStepTwoState extends State<RegisterScreenStepTwoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(),
       body: Container(
           padding: const EdgeInsets.all(10),

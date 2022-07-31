@@ -10,6 +10,8 @@ import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
+import '../../components/Scaffold.dart';
+
 class RegisterScreenStepFourPage extends ConsumerStatefulWidget {
   const RegisterScreenStepFourPage(
       {Key? key, required this.email, required this.username})
@@ -94,7 +96,7 @@ class RegisterScreenStepFourState
         password: passwordController.text,
         passwordConfirmation: passwordConfirmationController.text);
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(),
       body: Container(
           padding: const EdgeInsets.all(10),

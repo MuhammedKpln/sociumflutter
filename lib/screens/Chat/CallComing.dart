@@ -7,6 +7,8 @@ import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
+import '../../components/Scaffold.dart';
+
 class CallComingPage extends StatefulWidget {
   const CallComingPage(
       {Key? key,
@@ -52,7 +54,7 @@ class _CallComingState extends State<CallComingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(),
       body: Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         Column(

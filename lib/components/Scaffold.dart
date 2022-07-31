@@ -23,7 +23,8 @@ class AppScaffold extends StatelessWidget {
       floatingActionButton: floatingActionButton,
       floatingActionButtonAnimator: floatingActionButtonAnimator,
       floatingActionButtonLocation: floatingActionButtonLocation,
-      body: SafeArea(child: body),
+      body: SafeArea(
+          child: Padding(padding: const EdgeInsets.all(15), child: body)),
     );
   }
 }

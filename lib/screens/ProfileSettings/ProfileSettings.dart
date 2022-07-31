@@ -7,6 +7,8 @@ import 'package:scflutter/models/profile_settings_page.model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/router.gr.dart' as router;
 
+import '../../components/Scaffold.dart';
+
 class ProfileSettingsScreenPage extends ConsumerStatefulWidget {
   const ProfileSettingsScreenPage({Key? key}) : super(key: key);
 
@@ -43,7 +45,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
       },
     ];
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text("Profilini düzenle"),
       ),
