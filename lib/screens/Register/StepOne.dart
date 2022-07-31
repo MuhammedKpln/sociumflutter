@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
-import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-class RegisterScreenStepOne extends ConsumerStatefulWidget {
-  RegisterScreenStepOne({Key? key}) : super(key: key);
+class RegisterScreenStepOnePage extends ConsumerStatefulWidget {
+  const RegisterScreenStepOnePage({Key? key}) : super(key: key);
 
   @override
   RegisterScreenStepOneState createState() => RegisterScreenStepOneState();
 }
 
-class RegisterScreenStepOneState extends ConsumerState<RegisterScreenStepOne> {
+class RegisterScreenStepOneState
+    extends ConsumerState<RegisterScreenStepOnePage> {
   final List<String> topics = [
     'İlgi alanlarınızı seçin',
   ];
@@ -69,8 +69,8 @@ class RegisterScreenStepOneState extends ConsumerState<RegisterScreenStepOne> {
                   margin: const EdgeInsets.all(30),
                   child: RoundedButton(
                       child: const Text("Devam et"),
-                      onPressed: () =>
-                          context.router.navigate(RegisterScreenStepTwo())))
+                      onPressed: () => context.router
+                          .navigate(const RegisterScreenStepTwoRoute())))
             ],
           )),
     );

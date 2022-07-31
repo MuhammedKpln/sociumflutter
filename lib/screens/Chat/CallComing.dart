@@ -7,8 +7,8 @@ import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
-class CallComing extends StatefulWidget {
-  const CallComing(
+class CallComingPage extends StatefulWidget {
+  const CallComingPage(
       {Key? key,
       required this.username,
       required this.onAcceptCall,
@@ -20,10 +20,10 @@ class CallComing extends StatefulWidget {
   final Function onRejectCall;
 
   @override
-  State<CallComing> createState() => _CallComingState();
+  State<CallComingPage> createState() => _CallComingState();
 }
 
-class _CallComingState extends State<CallComing> {
+class _CallComingState extends State<CallComingPage> {
   late Timer hapticTimer;
   late Timer ringtoneTimer;
 

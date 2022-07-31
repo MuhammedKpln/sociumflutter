@@ -8,14 +8,14 @@ import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/storage/auth.storage.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-class OnboardScreen extends ConsumerStatefulWidget {
-  const OnboardScreen({Key? key}) : super(key: key);
+class OnboardScreenPage extends ConsumerStatefulWidget {
+  const OnboardScreenPage({Key? key}) : super(key: key);
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<OnboardScreen> {
+class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
   int carouselIndex = 0;
 
   @override
@@ -38,7 +38,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreen> {
         final authState = ref.read(userProvider.notifier);
         authState.setUser(model);
 
-        context.router.replace(const HomeScreen());
+        context.router.replace(const HomeScreenRoute());
       }
     }
   }
@@ -100,8 +100,8 @@ class _LoginScreenState extends ConsumerState<OnboardScreen> {
               RoundedButton(
                 icon: const Icon(Icons.mail_outline),
                 onPressed: () => !registering
-                    ? context.router.push(const LoginScreen())
-                    : context.router.push(RegisterScreenStepOne()),
+                    ? context.router.push(const LoginScreenRoute())
+                    : context.router.push(const RegisterScreenStepOneRoute()),
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black)),
                 child: Text(!registering

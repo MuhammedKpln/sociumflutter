@@ -32,7 +32,7 @@ class MatchFound extends StatelessWidget {
     void sendMessage() {
       closeDialog();
 
-      context.router.navigate(Chat(
+      context.router.navigate(ChatScreenRoute(
           comingFromMatchedPage: true,
           connectedUser: user,
           room: room,

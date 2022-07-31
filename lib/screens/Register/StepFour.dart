@@ -10,8 +10,8 @@ import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-class RegisterScreenStepFour extends ConsumerStatefulWidget {
-  const RegisterScreenStepFour(
+class RegisterScreenStepFourPage extends ConsumerStatefulWidget {
+  const RegisterScreenStepFourPage(
       {Key? key, required this.email, required this.username})
       : super(key: key);
 
@@ -23,7 +23,7 @@ class RegisterScreenStepFour extends ConsumerStatefulWidget {
 }
 
 class RegisterScreenStepFourState
-    extends ConsumerState<RegisterScreenStepFour> {
+    extends ConsumerState<RegisterScreenStepFourPage> {
   final passwordController = TextEditingController();
   final passwordConfirmationController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -78,7 +78,7 @@ class RegisterScreenStepFourState
         user: currentUser,
         accessToken: serializedData.register.accessToken));
 
-    context.router.replaceAll([const HomeScreen()]);
+    context.router.replaceAll([const HomeScreenRoute()]);
   }
 
   onErrorLoginAttempt(OperationException? error) {

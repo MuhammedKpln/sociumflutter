@@ -6,21 +6,22 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/Loading.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfilePage extends ConsumerStatefulWidget {
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfilePage> {
   void onPressSettings() {
-    context.router.navigate(const ProfileSettings());
+    context.router.navigate(const ProfileSettingsScreenRoute());
   }
 
   @override
@@ -41,7 +42,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
           final data = GetUserProfile$Query.fromJson(result.data!);
 
-          return Scaffold(
+          return AppScaffold(
               appBar: AppBar(
                 leading: IconButton(
                     onPressed: onPressSettings,

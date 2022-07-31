@@ -2,21 +2,21 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
-import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-class RegisterStepThreeScreen extends StatefulWidget {
-  const RegisterStepThreeScreen({Key? key, required this.allowedChatMethods})
+class RegisterStepThreeScreenPage extends StatefulWidget {
+  const RegisterStepThreeScreenPage(
+      {Key? key, required this.allowedChatMethods})
       : super(key: key);
 
   final allowedChatMethods;
 
   @override
-  State<RegisterStepThreeScreen> createState() =>
+  State<RegisterStepThreeScreenPage> createState() =>
       _RegisterStepThreeScreenState();
 }
 
-class _RegisterStepThreeScreenState extends State<RegisterStepThreeScreen> {
+class _RegisterStepThreeScreenState extends State<RegisterStepThreeScreenPage> {
   final emailFieldController = TextEditingController();
   final usernameFieldController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -24,7 +24,7 @@ class _RegisterStepThreeScreenState extends State<RegisterStepThreeScreen> {
 
   onPressNext() {
     if (_formKey.currentState!.validate()) {
-      AutoRouter.of(context).navigate(RegisterScreenStepFour(
+      AutoRouter.of(context).navigate(RegisterScreenStepFourRoute(
           email: emailFieldController.text,
           username: usernameFieldController.text));
     }

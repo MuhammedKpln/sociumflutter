@@ -9,14 +9,14 @@ import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginScreenPage extends ConsumerStatefulWidget {
+  const LoginScreenPage({Key? key}) : super(key: key);
 
   @override
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends ConsumerState<LoginScreen> {
+class _LoginState extends ConsumerState<LoginScreenPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -44,7 +44,7 @@ class _LoginState extends ConsumerState<LoginScreen> {
 
       await authState.setUser(model);
 
-      AutoRouter.of(context).replaceAll([const HomeScreen()]);
+      AutoRouter.of(context).replaceAll([const HomeScreenRoute()]);
     }
   }
 

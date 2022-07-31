@@ -5,14 +5,15 @@ import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-class RegisterScreenStepTwo extends StatefulWidget {
-  const RegisterScreenStepTwo({Key? key}) : super(key: key);
+class RegisterScreenStepTwoPage extends StatefulWidget {
+  const RegisterScreenStepTwoPage({Key? key}) : super(key: key);
 
   @override
-  State<RegisterScreenStepTwo> createState() => _RegisterScreenStepTwoState();
+  State<RegisterScreenStepTwoPage> createState() =>
+      _RegisterScreenStepTwoState();
 }
 
-class _RegisterScreenStepTwoState extends State<RegisterScreenStepTwo> {
+class _RegisterScreenStepTwoState extends State<RegisterScreenStepTwoPage> {
   List<int> selectedItems = [1];
 
   final List<Map<String, dynamic>> items = [
@@ -160,7 +161,7 @@ class _RegisterScreenStepTwoState extends State<RegisterScreenStepTwo> {
                   child: RoundedButton(
                       child: const Text("Devam et"),
                       onPressed: () => AutoRouter.of(context).navigate(
-                          RegisterStepThreeScreen(
+                          RegisterStepThreeScreenRoute(
                               allowedChatMethods: selectedItems))))
             ],
           )),

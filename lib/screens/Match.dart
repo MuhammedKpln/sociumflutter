@@ -14,14 +14,14 @@ import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/utils/palette.dart';
 
-class MatchScreen extends ConsumerStatefulWidget {
-  const MatchScreen({Key? key}) : super(key: key);
+class MatchScreenPage extends ConsumerStatefulWidget {
+  const MatchScreenPage({Key? key}) : super(key: key);
 
   @override
   _MatchScreenState createState() => _MatchScreenState();
 }
 
-class _MatchScreenState extends ConsumerState<MatchScreen> {
+class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   final sc = SocketService();
   late OverlayEntry overlayEntry;
   bool searchingForOpponent = false;

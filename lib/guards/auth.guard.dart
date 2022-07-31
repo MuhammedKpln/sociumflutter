@@ -13,7 +13,7 @@ class AuthGuard extends AutoRouteGuard {
         if (event.containsKey(StorageKeys.AccessToken)) {
           resolver.next();
         } else {
-          router.push(const LoginScreen());
+          router.push(const LoginScreenRoute());
         }
       });
     });

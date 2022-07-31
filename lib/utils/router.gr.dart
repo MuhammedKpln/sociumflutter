@@ -45,59 +45,56 @@ class AppRouter extends _i18.RootStackRouter {
 
   @override
   final Map<String, _i18.PageFactory> pagesMap = {
-    OnboardScreen.name: (routeData) {
+    OnboardScreenRoute.name: (routeData) {
       return _i18.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i1.OnboardScreen());
+          routeData: routeData, child: const _i1.OnboardScreenPage());
     },
-    LoginScreen.name: (routeData) {
+    LoginScreenRoute.name: (routeData) {
       return _i18.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i2.LoginScreen());
+          routeData: routeData, child: const _i2.LoginScreenPage());
     },
-    RegisterScreenStepOne.name: (routeData) {
-      final args = routeData.argsAs<RegisterScreenStepOneArgs>(
-          orElse: () => const RegisterScreenStepOneArgs());
+    RegisterScreenStepOneRoute.name: (routeData) {
+      return _i18.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i3.RegisterScreenStepOnePage());
+    },
+    RegisterScreenStepTwoRoute.name: (routeData) {
+      return _i18.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i4.RegisterScreenStepTwoPage());
+    },
+    RegisterStepThreeScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<RegisterStepThreeScreenRouteArgs>();
       return _i18.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i3.RegisterScreenStepOne(key: args.key));
-    },
-    RegisterScreenStepTwo.name: (routeData) {
-      return _i18.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i4.RegisterScreenStepTwo());
-    },
-    RegisterStepThreeScreen.name: (routeData) {
-      final args = routeData.argsAs<RegisterStepThreeScreenArgs>();
-      return _i18.MaterialPageX<dynamic>(
-          routeData: routeData,
-          child: _i5.RegisterStepThreeScreen(
+          child: _i5.RegisterStepThreeScreenPage(
               key: args.key, allowedChatMethods: args.allowedChatMethods));
     },
-    RegisterScreenStepFour.name: (routeData) {
-      final args = routeData.argsAs<RegisterScreenStepFourArgs>();
+    RegisterScreenStepFourRoute.name: (routeData) {
+      final args = routeData.argsAs<RegisterScreenStepFourRouteArgs>();
       return _i18.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i6.RegisterScreenStepFour(
+          child: _i6.RegisterScreenStepFourPage(
               key: args.key, email: args.email, username: args.username));
     },
-    CallComing.name: (routeData) {
-      final args = routeData.argsAs<CallComingArgs>();
+    CallComingRoute.name: (routeData) {
+      final args = routeData.argsAs<CallComingRouteArgs>();
       return _i18.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i7.CallComing(
+          child: _i7.CallComingPage(
               key: args.key,
               username: args.username,
               onAcceptCall: args.onAcceptCall,
               onRejectCall: args.onRejectCall),
           fullscreenDialog: true);
     },
-    HomeScreen.name: (routeData) {
+    HomeScreenRoute.name: (routeData) {
       return _i18.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i8.HomeScreen());
+          routeData: routeData, child: const _i8.HomeScreenPage());
     },
-    Chat.name: (routeData) {
-      final args = routeData.argsAs<ChatArgs>();
+    ChatScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ChatScreenRouteArgs>();
       return _i18.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i9.Chat(
+          child: _i9.ChatScreenPage(
               key: args.key,
               comingFromMatchedPage: args.comingFromMatchedPage,
               socketService: args.socketService,
@@ -117,9 +114,9 @@ class AppRouter extends _i18.RootStackRouter {
               socketService: args.socketService),
           fullscreenDialog: true);
     },
-    ProfileSettings.name: (routeData) {
+    ProfileSettingsScreenRoute.name: (routeData) {
       return _i18.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i11.ProfileSettings());
+          routeData: routeData, child: const _i11.ProfileSettingsScreenPage());
     },
     BioSettingsRoute.name: (routeData) {
       return _i18.MaterialPageX<dynamic>(
@@ -133,46 +130,50 @@ class AppRouter extends _i18.RootStackRouter {
       return _i18.MaterialPageX<dynamic>(
           routeData: routeData, child: const _i14.TestScreen());
     },
-    MatchScreen.name: (routeData) {
+    MatchScreenRoute.name: (routeData) {
       return _i18.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i15.MatchScreen());
+          routeData: routeData, child: const _i15.MatchScreenPage());
     },
-    ProfileScreen.name: (routeData) {
+    ProfileRoute.name: (routeData) {
       return _i18.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i16.ProfileScreen());
+          routeData: routeData, child: const _i16.ProfilePage());
     },
-    ChatsScreen.name: (routeData) {
+    ChatsScreenRoute.name: (routeData) {
       return _i18.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i17.ChatsScreen());
+          routeData: routeData, child: const _i17.ChatsScreenPage());
     }
   };
 
   @override
   List<_i18.RouteConfig> get routes => [
-        _i18.RouteConfig(OnboardScreen.name, path: '/'),
-        _i18.RouteConfig(LoginScreen.name, path: '/login-screen'),
-        _i18.RouteConfig(RegisterScreenStepOne.name,
-            path: '/register-screen-step-one'),
-        _i18.RouteConfig(RegisterScreenStepTwo.name,
-            path: '/register-screen-step-two'),
-        _i18.RouteConfig(RegisterStepThreeScreen.name,
-            path: '/register-step-three-screen'),
-        _i18.RouteConfig(RegisterScreenStepFour.name,
-            path: '/register-screen-step-four'),
-        _i18.RouteConfig(CallComing.name, path: '/call-coming'),
-        _i18.RouteConfig(HomeScreen.name, path: '/home-screen', guards: [
-          authGuard
-        ], children: [
-          _i18.RouteConfig(MatchScreen.name,
-              path: 'match-screen', parent: HomeScreen.name),
-          _i18.RouteConfig(ProfileScreen.name,
-              path: 'profile-screen', parent: HomeScreen.name),
-          _i18.RouteConfig(ChatsScreen.name,
-              path: 'chats-screen', parent: HomeScreen.name)
-        ]),
-        _i18.RouteConfig(Chat.name, path: '/Chat'),
+        _i18.RouteConfig(OnboardScreenRoute.name, path: '/'),
+        _i18.RouteConfig(LoginScreenRoute.name, path: '/login-screen-page'),
+        _i18.RouteConfig(RegisterScreenStepOneRoute.name,
+            path: '/register-screen-step-one-page'),
+        _i18.RouteConfig(RegisterScreenStepTwoRoute.name,
+            path: '/register-screen-step-two-page'),
+        _i18.RouteConfig(RegisterStepThreeScreenRoute.name,
+            path: '/register-step-three-screen-page'),
+        _i18.RouteConfig(RegisterScreenStepFourRoute.name,
+            path: '/register-screen-step-four-page'),
+        _i18.RouteConfig(CallComingRoute.name, path: '/call-coming-page'),
+        _i18.RouteConfig(HomeScreenRoute.name,
+            path: '/home-screen-page',
+            guards: [
+              authGuard
+            ],
+            children: [
+              _i18.RouteConfig(MatchScreenRoute.name,
+                  path: 'match-screen-page', parent: HomeScreenRoute.name),
+              _i18.RouteConfig(ProfileRoute.name,
+                  path: 'profile-page', parent: HomeScreenRoute.name),
+              _i18.RouteConfig(ChatsScreenRoute.name,
+                  path: 'chats-screen-page', parent: HomeScreenRoute.name)
+            ]),
+        _i18.RouteConfig(ChatScreenRoute.name, path: '/chat-screen-page'),
         _i18.RouteConfig(MatchFound.name, path: '/match-found'),
-        _i18.RouteConfig(ProfileSettings.name, path: '/profile-settings'),
+        _i18.RouteConfig(ProfileSettingsScreenRoute.name,
+            path: '/profile-settings-screen-page'),
         _i18.RouteConfig(BioSettingsRoute.name, path: '/bio-settings-page'),
         _i18.RouteConfig(BirthdaySettingsRoute.name,
             path: '/birthday-settings-page'),
@@ -181,68 +182,58 @@ class AppRouter extends _i18.RootStackRouter {
 }
 
 /// generated route for
-/// [_i1.OnboardScreen]
-class OnboardScreen extends _i18.PageRouteInfo<void> {
-  const OnboardScreen() : super(OnboardScreen.name, path: '/');
+/// [_i1.OnboardScreenPage]
+class OnboardScreenRoute extends _i18.PageRouteInfo<void> {
+  const OnboardScreenRoute() : super(OnboardScreenRoute.name, path: '/');
 
-  static const String name = 'OnboardScreen';
+  static const String name = 'OnboardScreenRoute';
 }
 
 /// generated route for
-/// [_i2.LoginScreen]
-class LoginScreen extends _i18.PageRouteInfo<void> {
-  const LoginScreen() : super(LoginScreen.name, path: '/login-screen');
+/// [_i2.LoginScreenPage]
+class LoginScreenRoute extends _i18.PageRouteInfo<void> {
+  const LoginScreenRoute()
+      : super(LoginScreenRoute.name, path: '/login-screen-page');
 
-  static const String name = 'LoginScreen';
+  static const String name = 'LoginScreenRoute';
 }
 
 /// generated route for
-/// [_i3.RegisterScreenStepOne]
-class RegisterScreenStepOne
-    extends _i18.PageRouteInfo<RegisterScreenStepOneArgs> {
-  RegisterScreenStepOne({_i19.Key? key})
-      : super(RegisterScreenStepOne.name,
-            path: '/register-screen-step-one',
-            args: RegisterScreenStepOneArgs(key: key));
+/// [_i3.RegisterScreenStepOnePage]
+class RegisterScreenStepOneRoute extends _i18.PageRouteInfo<void> {
+  const RegisterScreenStepOneRoute()
+      : super(RegisterScreenStepOneRoute.name,
+            path: '/register-screen-step-one-page');
 
-  static const String name = 'RegisterScreenStepOne';
-}
-
-class RegisterScreenStepOneArgs {
-  const RegisterScreenStepOneArgs({this.key});
-
-  final _i19.Key? key;
-
-  @override
-  String toString() {
-    return 'RegisterScreenStepOneArgs{key: $key}';
-  }
+  static const String name = 'RegisterScreenStepOneRoute';
 }
 
 /// generated route for
-/// [_i4.RegisterScreenStepTwo]
-class RegisterScreenStepTwo extends _i18.PageRouteInfo<void> {
-  const RegisterScreenStepTwo()
-      : super(RegisterScreenStepTwo.name, path: '/register-screen-step-two');
+/// [_i4.RegisterScreenStepTwoPage]
+class RegisterScreenStepTwoRoute extends _i18.PageRouteInfo<void> {
+  const RegisterScreenStepTwoRoute()
+      : super(RegisterScreenStepTwoRoute.name,
+            path: '/register-screen-step-two-page');
 
-  static const String name = 'RegisterScreenStepTwo';
+  static const String name = 'RegisterScreenStepTwoRoute';
 }
 
 /// generated route for
-/// [_i5.RegisterStepThreeScreen]
-class RegisterStepThreeScreen
-    extends _i18.PageRouteInfo<RegisterStepThreeScreenArgs> {
-  RegisterStepThreeScreen({_i19.Key? key, required dynamic allowedChatMethods})
-      : super(RegisterStepThreeScreen.name,
-            path: '/register-step-three-screen',
-            args: RegisterStepThreeScreenArgs(
+/// [_i5.RegisterStepThreeScreenPage]
+class RegisterStepThreeScreenRoute
+    extends _i18.PageRouteInfo<RegisterStepThreeScreenRouteArgs> {
+  RegisterStepThreeScreenRoute(
+      {_i19.Key? key, required dynamic allowedChatMethods})
+      : super(RegisterStepThreeScreenRoute.name,
+            path: '/register-step-three-screen-page',
+            args: RegisterStepThreeScreenRouteArgs(
                 key: key, allowedChatMethods: allowedChatMethods));
 
-  static const String name = 'RegisterStepThreeScreen';
+  static const String name = 'RegisterStepThreeScreenRoute';
 }
 
-class RegisterStepThreeScreenArgs {
-  const RegisterStepThreeScreenArgs(
+class RegisterStepThreeScreenRouteArgs {
+  const RegisterStepThreeScreenRouteArgs(
       {this.key, required this.allowedChatMethods});
 
   final _i19.Key? key;
@@ -251,26 +242,26 @@ class RegisterStepThreeScreenArgs {
 
   @override
   String toString() {
-    return 'RegisterStepThreeScreenArgs{key: $key, allowedChatMethods: $allowedChatMethods}';
+    return 'RegisterStepThreeScreenRouteArgs{key: $key, allowedChatMethods: $allowedChatMethods}';
   }
 }
 
 /// generated route for
-/// [_i6.RegisterScreenStepFour]
-class RegisterScreenStepFour
-    extends _i18.PageRouteInfo<RegisterScreenStepFourArgs> {
-  RegisterScreenStepFour(
+/// [_i6.RegisterScreenStepFourPage]
+class RegisterScreenStepFourRoute
+    extends _i18.PageRouteInfo<RegisterScreenStepFourRouteArgs> {
+  RegisterScreenStepFourRoute(
       {_i19.Key? key, required dynamic email, required dynamic username})
-      : super(RegisterScreenStepFour.name,
-            path: '/register-screen-step-four',
-            args: RegisterScreenStepFourArgs(
+      : super(RegisterScreenStepFourRoute.name,
+            path: '/register-screen-step-four-page',
+            args: RegisterScreenStepFourRouteArgs(
                 key: key, email: email, username: username));
 
-  static const String name = 'RegisterScreenStepFour';
+  static const String name = 'RegisterScreenStepFourRoute';
 }
 
-class RegisterScreenStepFourArgs {
-  const RegisterScreenStepFourArgs(
+class RegisterScreenStepFourRouteArgs {
+  const RegisterScreenStepFourRouteArgs(
       {this.key, required this.email, required this.username});
 
   final _i19.Key? key;
@@ -281,31 +272,31 @@ class RegisterScreenStepFourArgs {
 
   @override
   String toString() {
-    return 'RegisterScreenStepFourArgs{key: $key, email: $email, username: $username}';
+    return 'RegisterScreenStepFourRouteArgs{key: $key, email: $email, username: $username}';
   }
 }
 
 /// generated route for
-/// [_i7.CallComing]
-class CallComing extends _i18.PageRouteInfo<CallComingArgs> {
-  CallComing(
+/// [_i7.CallComingPage]
+class CallComingRoute extends _i18.PageRouteInfo<CallComingRouteArgs> {
+  CallComingRoute(
       {_i19.Key? key,
       required String username,
       required Function onAcceptCall,
       required Function onRejectCall})
-      : super(CallComing.name,
-            path: '/call-coming',
-            args: CallComingArgs(
+      : super(CallComingRoute.name,
+            path: '/call-coming-page',
+            args: CallComingRouteArgs(
                 key: key,
                 username: username,
                 onAcceptCall: onAcceptCall,
                 onRejectCall: onRejectCall));
 
-  static const String name = 'CallComing';
+  static const String name = 'CallComingRoute';
 }
 
-class CallComingArgs {
-  const CallComingArgs(
+class CallComingRouteArgs {
+  const CallComingRouteArgs(
       {this.key,
       required this.username,
       required this.onAcceptCall,
@@ -321,32 +312,33 @@ class CallComingArgs {
 
   @override
   String toString() {
-    return 'CallComingArgs{key: $key, username: $username, onAcceptCall: $onAcceptCall, onRejectCall: $onRejectCall}';
+    return 'CallComingRouteArgs{key: $key, username: $username, onAcceptCall: $onAcceptCall, onRejectCall: $onRejectCall}';
   }
 }
 
 /// generated route for
-/// [_i8.HomeScreen]
-class HomeScreen extends _i18.PageRouteInfo<void> {
-  const HomeScreen({List<_i18.PageRouteInfo>? children})
-      : super(HomeScreen.name, path: '/home-screen', initialChildren: children);
+/// [_i8.HomeScreenPage]
+class HomeScreenRoute extends _i18.PageRouteInfo<void> {
+  const HomeScreenRoute({List<_i18.PageRouteInfo>? children})
+      : super(HomeScreenRoute.name,
+            path: '/home-screen-page', initialChildren: children);
 
-  static const String name = 'HomeScreen';
+  static const String name = 'HomeScreenRoute';
 }
 
 /// generated route for
-/// [_i9.Chat]
-class Chat extends _i18.PageRouteInfo<ChatArgs> {
-  Chat(
+/// [_i9.ChatScreenPage]
+class ChatScreenRoute extends _i18.PageRouteInfo<ChatScreenRouteArgs> {
+  ChatScreenRoute(
       {_i19.Key? key,
       required bool comingFromMatchedPage,
       required _i21.SocketService socketService,
       _i22.User? connectedUser,
       _i23.Room? room,
       String? userUUID})
-      : super(Chat.name,
-            path: '/Chat',
-            args: ChatArgs(
+      : super(ChatScreenRoute.name,
+            path: '/chat-screen-page',
+            args: ChatScreenRouteArgs(
                 key: key,
                 comingFromMatchedPage: comingFromMatchedPage,
                 socketService: socketService,
@@ -354,11 +346,11 @@ class Chat extends _i18.PageRouteInfo<ChatArgs> {
                 room: room,
                 userUUID: userUUID));
 
-  static const String name = 'Chat';
+  static const String name = 'ChatScreenRoute';
 }
 
-class ChatArgs {
-  const ChatArgs(
+class ChatScreenRouteArgs {
+  const ChatScreenRouteArgs(
       {this.key,
       required this.comingFromMatchedPage,
       required this.socketService,
@@ -380,7 +372,7 @@ class ChatArgs {
 
   @override
   String toString() {
-    return 'ChatArgs{key: $key, comingFromMatchedPage: $comingFromMatchedPage, socketService: $socketService, connectedUser: $connectedUser, room: $room, userUUID: $userUUID}';
+    return 'ChatScreenRouteArgs{key: $key, comingFromMatchedPage: $comingFromMatchedPage, socketService: $socketService, connectedUser: $connectedUser, room: $room, userUUID: $userUUID}';
   }
 }
 
@@ -430,12 +422,13 @@ class MatchFoundArgs {
 }
 
 /// generated route for
-/// [_i11.ProfileSettings]
-class ProfileSettings extends _i18.PageRouteInfo<void> {
-  const ProfileSettings()
-      : super(ProfileSettings.name, path: '/profile-settings');
+/// [_i11.ProfileSettingsScreenPage]
+class ProfileSettingsScreenRoute extends _i18.PageRouteInfo<void> {
+  const ProfileSettingsScreenRoute()
+      : super(ProfileSettingsScreenRoute.name,
+            path: '/profile-settings-screen-page');
 
-  static const String name = 'ProfileSettings';
+  static const String name = 'ProfileSettingsScreenRoute';
 }
 
 /// generated route for
@@ -465,25 +458,27 @@ class TestScreen extends _i18.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i15.MatchScreen]
-class MatchScreen extends _i18.PageRouteInfo<void> {
-  const MatchScreen() : super(MatchScreen.name, path: 'match-screen');
+/// [_i15.MatchScreenPage]
+class MatchScreenRoute extends _i18.PageRouteInfo<void> {
+  const MatchScreenRoute()
+      : super(MatchScreenRoute.name, path: 'match-screen-page');
 
-  static const String name = 'MatchScreen';
+  static const String name = 'MatchScreenRoute';
 }
 
 /// generated route for
-/// [_i16.ProfileScreen]
-class ProfileScreen extends _i18.PageRouteInfo<void> {
-  const ProfileScreen() : super(ProfileScreen.name, path: 'profile-screen');
+/// [_i16.ProfilePage]
+class ProfileRoute extends _i18.PageRouteInfo<void> {
+  const ProfileRoute() : super(ProfileRoute.name, path: 'profile-page');
 
-  static const String name = 'ProfileScreen';
+  static const String name = 'ProfileRoute';
 }
 
 /// generated route for
-/// [_i17.ChatsScreen]
-class ChatsScreen extends _i18.PageRouteInfo<void> {
-  const ChatsScreen() : super(ChatsScreen.name, path: 'chats-screen');
+/// [_i17.ChatsScreenPage]
+class ChatsScreenRoute extends _i18.PageRouteInfo<void> {
+  const ChatsScreenRoute()
+      : super(ChatsScreenRoute.name, path: 'chats-screen-page');
 
-  static const String name = 'ChatsScreen';
+  static const String name = 'ChatsScreenRoute';
 }

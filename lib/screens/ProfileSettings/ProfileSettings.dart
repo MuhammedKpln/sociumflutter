@@ -7,14 +7,14 @@ import 'package:scflutter/models/profile_settings_page.model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/router.gr.dart' as router;
 
-class ProfileSettings extends ConsumerStatefulWidget {
-  const ProfileSettings({Key? key}) : super(key: key);
+class ProfileSettingsScreenPage extends ConsumerStatefulWidget {
+  const ProfileSettingsScreenPage({Key? key}) : super(key: key);
 
   @override
   _ProfileSettingsState createState() => _ProfileSettingsState();
 }
 
-class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
+class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
   void navigateToScreen(dynamic screen) {
     AutoRouter.of(context).push(screen);
   }

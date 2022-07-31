@@ -22,25 +22,25 @@ import '../screens/Chat/CallComing.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
-    AutoRoute(page: OnboardScreen, initial: true),
-    AutoRoute(page: LoginScreen),
-    AutoRoute(page: RegisterScreenStepOne),
-    AutoRoute(page: RegisterScreenStepTwo),
-    AutoRoute(page: RegisterStepThreeScreen),
-    AutoRoute(page: RegisterScreenStepFour),
-    AutoRoute(page: CallComing, fullscreenDialog: true),
-    AutoRoute(page: HomeScreen, guards: [
+    AutoRoute(page: OnboardScreenPage, initial: true),
+    AutoRoute(page: LoginScreenPage),
+    AutoRoute(page: RegisterScreenStepOnePage),
+    AutoRoute(page: RegisterScreenStepTwoPage),
+    AutoRoute(page: RegisterStepThreeScreenPage),
+    AutoRoute(page: RegisterScreenStepFourPage),
+    AutoRoute(page: CallComingPage, fullscreenDialog: true),
+    AutoRoute(page: HomeScreenPage, guards: [
       AuthGuard
     ], children: [
-      AutoRoute(page: MatchScreen),
-      AutoRoute(page: ProfileScreen),
-      AutoRoute(page: ChatsScreen),
+      AutoRoute(page: MatchScreenPage),
+      AutoRoute(page: ProfilePage),
+      AutoRoute(page: ChatsScreenPage),
     ]),
     AutoRoute(
-      page: Chat,
+      page: ChatScreenPage,
     ),
     AutoRoute(page: MatchFound, fullscreenDialog: true),
-    AutoRoute(page: ProfileSettings),
+    AutoRoute(page: ProfileSettingsScreenPage),
     AutoRoute(page: BioSettingsPage),
     AutoRoute(page: BirthdaySettingsPage),
     AutoRoute(page: TestScreen),

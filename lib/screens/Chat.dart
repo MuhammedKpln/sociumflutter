@@ -22,10 +22,10 @@ import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/avatar.dart';
 import 'package:scflutter/utils/palette.dart';
-import 'package:scflutter/utils/router.gr.dart' as rt;
+import 'package:scflutter/utils/router.gr.dart';
 
-class Chat extends ConsumerStatefulWidget {
-  Chat(
+class ChatScreenPage extends ConsumerStatefulWidget {
+  ChatScreenPage(
       {Key? key,
       required this.comingFromMatchedPage,
       required this.socketService,
@@ -44,7 +44,8 @@ class Chat extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _ChatState();
 }
 
-class _ChatState extends ConsumerState<Chat> {
+//TODO call button is visible on non matching chat.
+class _ChatState extends ConsumerState<ChatScreenPage> {
   List<types.Message> messages = [];
   bool connectedToCall = false;
   bool micMuted = false;
@@ -154,7 +155,7 @@ class _ChatState extends ConsumerState<Chat> {
       final offer =
           RTCSessionDescription(data.offer["sdp"], data.offer["type"]);
 
-      context.router.navigate(rt.CallComing(
+      context.router.navigate(CallComingRoute(
           username: widget.connectedUser!.username!,
           onAcceptCall: () => answerCall(offer, data.uuid),
           onRejectCall: () => context.router.pop()));

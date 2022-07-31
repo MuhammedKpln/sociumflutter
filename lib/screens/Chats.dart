@@ -13,14 +13,14 @@ import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-class ChatsScreen extends ConsumerStatefulWidget {
-  const ChatsScreen({Key? key}) : super(key: key);
+class ChatsScreenPage extends ConsumerStatefulWidget {
+  const ChatsScreenPage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ChatsScreenState();
 }
 
-class _ChatsScreenState extends ConsumerState<ChatsScreen> {
+class _ChatsScreenState extends ConsumerState<ChatsScreenPage> {
   final PageController pageController =
       PageController(initialPage: 0, keepPage: true);
   num? currentIndex = 0;
@@ -88,11 +88,12 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
                   }
 
                   return InkWell(
-                    onTap: () => AutoRouter.of(context).navigate(Chat(
-                        comingFromMatchedPage: false,
-                        connectedUser: user,
-                        room: Room.fromJson(message.room.toJson()),
-                        socketService: socketService)),
+                    onTap: () => AutoRouter.of(context).navigate(
+                        ChatScreenRoute(
+                            comingFromMatchedPage: false,
+                            connectedUser: user,
+                            room: Room.fromJson(message.room.toJson()),
+                            socketService: socketService)),
                     child: Column(
                       children: [
                         Row(
