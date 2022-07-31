@@ -46,7 +46,6 @@ class ChatScreenPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _ChatState();
 }
 
-//TODO call button is visible on non matching chat.
 class _ChatState extends ConsumerState<ChatScreenPage> {
   List<types.Message> messages = [];
   bool connectedToCall = false;
@@ -324,7 +323,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       }
     }
 
-    return Scaffold(
+    return AppScaffold(
         body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -468,6 +467,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   Widget askForPermissionsButton() {
+    if (!widget.comingFromMatchedPage) return Container();
     if (connectedToCall) return Container();
 
     return IconButton(
