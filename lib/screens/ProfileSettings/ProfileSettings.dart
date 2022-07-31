@@ -40,8 +40,8 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
       },
       {
         "label": "Gelen aramaları engelle",
-        "screen": const router.TestScreen(),
-        "value": user.blockIncomingCalls! ? "Kapalı" : 'Açık'
+        "screen": const router.BlockIncomingCallsScreenRoute(),
+        "value": user.blockIncomingCalls! ? "Engelli" : "İzin verilmiş"
       },
     ];
 
