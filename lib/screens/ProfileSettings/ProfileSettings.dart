@@ -56,7 +56,8 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
                 itemBuilder: ((context, index) {
                   final page = ProfileSettingsPageModal(
                       label: pages[index]["label"]!,
-                      value: pages[index]["value"]!,
+                      value: pages[index]["value"] ??
+                          "Herhangi bir bilgi bulunmamakta.",
                       screen: pages[index]["screen"]);
 
                   return ListTile(
