@@ -35,13 +35,14 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
       {
         "label": "Doğum tarihi",
         "screen": const router.BirthdaySettingsRoute(),
-        "value": formatDate(user!.birthday!, [dd, ' ', MM, ' ', yyyy],
+        "value": formatDate(
+            user?.birthday ?? DateTime.now(), [dd, ' ', MM, ' ', yyyy],
             locale: const TurkishDateLocale())
       },
       {
         "label": "Gelen aramaları engelle",
         "screen": const router.BlockIncomingCallsScreenRoute(),
-        "value": user.blockIncomingCalls! ? "Engelli" : "İzin verilmiş"
+        "value": user!.blockIncomingCalls! ? "Engelli" : "İzin verilmiş"
       },
     ];
 
