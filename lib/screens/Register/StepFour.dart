@@ -68,19 +68,21 @@ class RegisterScreenStepFourState
     return null;
   }
 
-  onSuccessfullLoginAttempt(Map<String, dynamic> data) {
-    final serializedData = Register$Mutation.fromJson(data);
-    final userModel = Login$Mutation$Login$User.fromJson(
-        serializedData.register.user.toJson());
+  onSuccessfullLoginAttempt(Map<String, dynamic>? data) {
+    if (data != null) {
+      final serializedData = Register$Mutation.fromJson(data);
+      final userModel = Login$Mutation$Login$User.fromJson(
+          serializedData.register.user.toJson());
 
-    final currentUser = User.fromJson(userModel.toJson());
+      final currentUser = User.fromJson(userModel.toJson());
 
-    ref.watch(userProvider.notifier).setUser(AuthStateModel(
-        refreshToken: serializedData.register.refreshToken,
-        user: currentUser,
-        accessToken: serializedData.register.accessToken));
+      ref.watch(userProvider.notifier).setUser(AuthStateModel(
+          refreshToken: serializedData.register.refreshToken,
+          user: currentUser,
+          accessToken: serializedData.register.accessToken));
 
-    context.router.replaceAll([const HomeScreenRoute()]);
+      context.router.replaceAll([const HomeScreenRoute()]);
+    }
   }
 
   onErrorLoginAttempt(OperationException? error) {
@@ -166,7 +168,7 @@ class RegisterScreenStepFourState
                   options: MutationOptions(
                     document:
                         RegisterMutation(variables: registerArguments).document,
-                    onCompleted: (data) => onSuccessfullLoginAttempt(data!),
+                    onCompleted: (data) => onSuccessfullLoginAttempt(data),
                     onError: (error) => onErrorLoginAttempt(error),
                   ),
                   builder: (runMutation, result) {
