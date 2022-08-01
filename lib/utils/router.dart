@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:scflutter/components/Match/MatchFound.dart';
 import 'package:scflutter/guards/auth.guard.dart';
 import 'package:scflutter/screens/Chat.dart';
+import 'package:scflutter/screens/Chat/InCallManager.dart';
 import 'package:scflutter/screens/Chats.dart';
 import 'package:scflutter/screens/Home.dart';
 import 'package:scflutter/screens/Login.dart';
@@ -45,6 +46,7 @@ import '../screens/Chat/CallComing.dart';
     AutoRoute(page: BioSettingsPage),
     AutoRoute(page: BirthdaySettingsPage),
     AutoRoute(page: BlockIncomingCallsScreenPage),
+    AutoRoute(page: InCallManagerScreenPage, fullscreenDialog: true),
     AutoRoute(page: TestScreen),
   ],
 )
