@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:scflutter/extensions/eventEmitter.dart';
 import 'package:scflutter/models/socket/answer_made_response.dart';
 import 'package:scflutter/models/socket/call_made_response.dart';
 import 'package:scflutter/models/socket/media_permissions_response.dart';
@@ -84,64 +83,54 @@ class SocketService extends SocketCore {
   }
 
   onClientPaired(void Function(dynamic data) callback) {
-    eventEmitter.on(SocketListenerEvents.CLIENT_PAIRED.path, null,
-        ((ev, context) => callback(ev.eventData)));
+    socket.on(SocketListenerEvents.CLIENT_PAIRED.path, (data) {
+      callback(data);
+    });
   }
 
   onCallMade(void Function(CallMadeResponse data) callback) {
-    eventEmitter.on(SocketListenerEvents.CALL_MADE.path, null, ((ev, context) {
-      final mappedData = ev.toMap();
-      final response = CallMadeResponse.fromJson(mappedData["data"]);
+    socket.on(SocketListenerEvents.CALL_MADE.path, ((data) {
+      final response = CallMadeResponse.fromJson(data);
 
       return callback(response);
     }));
   }
 
   onAnswerMade(void Function(AnswerMadeResponse data) callback) {
-    eventEmitter.on(SocketListenerEvents.ANSWER_MADE.path, null,
-        ((ev, context) {
-      final mappedData = ev.toMap();
-      final response = AnswerMadeResponse.fromJson(mappedData["data"]);
+    socket.on(SocketListenerEvents.ANSWER_MADE.path, ((data) {
+      final response = AnswerMadeResponse.fromJson(data);
 
       return callback(response);
     }));
   }
 
   onMessageReceived(void Function(MessageReceivedResponse response) callback) {
-    eventEmitter.on(SocketListenerEvents.MESSAGE_RECEIVED.path, null,
-        ((ev, context) {
-      final mappedData = ev.toMap();
-      final response = MessageReceivedResponse.fromJson(mappedData["data"]);
+    socket.on(SocketListenerEvents.MESSAGE_RECEIVED.path, ((data) {
+      final response = MessageReceivedResponse.fromJson(data);
 
       return callback(response);
     }));
   }
 
   onMediaPermissionsAsked(void Function(MediaPermission response) callback) {
-    eventEmitter.on(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path, null,
-        ((ev, context) {
-      final mappedData = ev.toMap();
-      final response = MediaPermission.fromJson(mappedData["data"]);
+    socket.on(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path, ((data) {
+      final response = MediaPermission.fromJson(data);
 
       return callback(response);
     }));
   }
 
   onMediaPermissionAnswered(void Function(MediaPermission response) callback) {
-    eventEmitter.on(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path, null,
-        ((ev, context) {
-      final mappedData = ev.toMap();
-      final response = MediaPermission.fromJson(mappedData["data"]);
+    socket.on(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path, ((data) {
+      final response = MediaPermission.fromJson(data);
 
       return callback(response);
     }));
   }
 
   onIceCandidate(void Function(OnIceCandidateResponse response) callback) {
-    eventEmitter.on(SocketListenerEvents.RECEIVED_ICE_CANDIDATE.path, null,
-        ((ev, context) {
-      final mappedData = ev.toMap();
-      final response = OnIceCandidateResponse.fromJson(mappedData["data"]);
+    socket.on(SocketListenerEvents.RECEIVED_ICE_CANDIDATE.path, ((data) {
+      final response = OnIceCandidateResponse.fromJson(data);
 
       return callback(response);
     }));

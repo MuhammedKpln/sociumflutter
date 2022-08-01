@@ -1,42 +1,22 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:scflutter/serivces.dart';
-import 'package:scflutter/utils/logger.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:eventify/eventify.dart' as eventify;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketCore {
-  late IOWebSocketChannel socket;
-  eventify.EventEmitter eventEmitter = eventify.EventEmitter();
+  late IO.Socket socket;
 
   SocketCore() {
-    socket =
-        IOWebSocketChannel.connect(Uri.parse(ApiService.WebsocketAPI.path));
-    _listen();
+    final uri = ApiService.WebsocketAPI.path;
+    final options = IO.OptionBuilder().setTransports(["websocket"]).build();
+    socket = IO.io(uri, options);
+
+    socket.onConnect((data) {
+      print(data);
+    });
   }
 
   @protected
   emit(String event, {Map<String, dynamic>? data}) {
-    final mappedData = {"event": event, "data": data};
-    final encodedData = json.encode(mappedData);
-
-    socket.sink.add(encodedData);
-  }
-
-  _listen() {
-    socket.stream.listen((message) {
-      try {
-        final parsedMessage = json.decode(message);
-        final eventName = parsedMessage["event"];
-        final eventData = parsedMessage["data"];
-
-        if (eventName != null && eventData != null) {
-          eventEmitter.emit(eventName, null, eventData);
-        }
-      } catch (e) {
-        Logger().error(e);
-      }
-    });
+    socket.emit(event, data);
   }
 }
