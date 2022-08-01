@@ -32,14 +32,10 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   void initState() {
     super.initState();
 
-    sc.onClientPaired((data) {
-      setState(() {
-        searchingForOpponent = false;
-      });
-
+    sc.onClientPaired((data) async {
       ClientPaired formattedData = ClientPaired.fromJson(data);
 
-      showDialog(
+      await showDialog(
           context: context,
           barrierColor: const Color(0x00ffffff),
           barrierDismissible: false,
@@ -54,6 +50,9 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
                 user: formattedData.user,
                 socketService: sc,
               ));
+      setState(() {
+        searchingForOpponent = false;
+      });
     });
   }
 
@@ -61,7 +60,7 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   void dispose() {
     super.dispose();
 
-    sc.eventEmitter.removeAllByEvent(SocketListenerEvents.CLIENT_PAIRED.path);
+    sc.socket.off(SocketListenerEvents.CLIENT_PAIRED.path);
   }
 
   void onCancel() {
