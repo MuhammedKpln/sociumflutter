@@ -48,7 +48,7 @@ class ChatScreenPage extends ConsumerStatefulWidget {
 
 class _ChatState extends ConsumerState<ChatScreenPage> {
   List<types.Message> messages = [];
-  bool connectedToCall = false;
+  ValueNotifier connectedToCall = ValueNotifier<bool>(false);
   bool micMuted = false;
   bool mediaPermissionsAlllowed = false;
   bool audio = false;
@@ -67,6 +67,23 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     if (widget.comingFromMatchedPage) {
       initCallFeature();
     }
+
+    connectedToCall.addListener(() {
+      if (connectedToCall.value) {
+        floatinActionButtonAnimatorTimer =
+            Timer.periodic(const Duration(milliseconds: 700), (timer) {
+          if (floatinActionButtonScale == 1) {
+            setState(() {
+              floatinActionButtonScale = 0.5;
+            });
+          } else {
+            setState(() {
+              floatinActionButtonScale = 1;
+            });
+          }
+        });
+      }
+    });
   }
 
   void initCallFeature() async {
@@ -105,9 +122,10 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
 
     peerConnection.peerConnection.onConnectionState = (state) {
       if (state == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
-        setState(() {
-          connectedToCall = true;
-        });
+        connectedToCall.value = true;
+      }
+      if (state == RTCPeerConnectionState.RTCPeerConnectionStateClosed) {
+        connectedToCall.value = false;
       }
     };
 
@@ -124,12 +142,14 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   void answerCall(RTCSessionDescription offer, String uuid) async {
-    print("answered");
     final stream = await peerConnection.getUserMedia();
+    localStream = stream;
     await peerConnection.addStream(stream);
     final answer = await peerConnection.createAnswer(offer);
 
     widget.socketService.makeAnswer(answer, uuid);
+
+    context.router.pop();
   }
 
   void coreInit() {
@@ -164,26 +184,27 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   disposeEvents() {
-    if (localStream != null) {
-      localStream?.dispose();
-    }
-    if (floatinActionButtonAnimatorTimer != null) {
-      floatinActionButtonAnimatorTimer?.cancel();
-    }
+    try {
+      if (localStream != null) {
+        localStream?.dispose();
+      }
+      if (floatinActionButtonAnimatorTimer != null) {
+        floatinActionButtonAnimatorTimer?.cancel();
+      }
+    } catch (err) {}
+
+    connectedToCall.dispose();
 
     peerConnection.peerConnection.close();
-    widget.socketService.eventEmitter
-        .removeAllByEvent(SocketListenerEvents.MESSAGE_RECEIVED.path);
-    widget.socketService.eventEmitter
-        .removeAllByEvent(SocketListenerEvents.ANSWER_MADE.path);
-    widget.socketService.eventEmitter
-        .removeAllByEvent(SocketListenerEvents.CALL_MADE.path);
-    widget.socketService.eventEmitter
-        .removeAllByEvent(SocketListenerEvents.RECEIVED_ICE_CANDIDATE.path);
-    widget.socketService.eventEmitter
-        .removeAllByEvent(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path);
-    widget.socketService.eventEmitter
-        .removeAllByEvent(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path);
+    widget.socketService.socket.off(SocketListenerEvents.MESSAGE_RECEIVED.path);
+    widget.socketService.socket.off(SocketListenerEvents.ANSWER_MADE.path);
+    widget.socketService.socket.off(SocketListenerEvents.CALL_MADE.path);
+    widget.socketService.socket
+        .off(SocketListenerEvents.RECEIVED_ICE_CANDIDATE.path);
+    widget.socketService.socket
+        .off(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path);
+    widget.socketService.socket
+        .off(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path);
   }
 
   @override
@@ -194,8 +215,8 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   void onSendMessage(types.PartialText text) {
-    final provider = ref.read(userProvider.notifier);
-    final localUser = provider.state.user;
+    final provider = ref.read(userProvider);
+    final localUser = provider.user;
 
     widget.socketService.sendMessage(SendMessageArguments(
         room: widget.room!.roomAdress,
@@ -404,19 +425,6 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   Widget renderFloatingButton() {
-    //FIXME: memory leak?
-    floatinActionButtonAnimatorTimer =
-        Timer.periodic(const Duration(milliseconds: 700), (timer) {
-      if (floatinActionButtonScale == 1) {
-        setState(() {
-          floatinActionButtonScale = 0.5;
-        });
-      } else {
-        setState(() {
-          floatinActionButtonScale = 1;
-        });
-      }
-    });
     return AnimatedScale(
       duration: Duration(milliseconds: AnimationDurations.medium.duration),
       scale: floatinActionButtonScale,
@@ -445,7 +453,8 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
         ]),
         actions: [askForPermissionsButton(), mic()],
       ),
-      floatingActionButton: connectedToCall ? renderFloatingButton() : null,
+      floatingActionButton:
+          connectedToCall.value ? renderFloatingButton() : null,
       body: chatUi.Chat(
         l10n: const chatUi.ChatL10nTr(),
         showUserNames: true,
@@ -461,14 +470,13 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
         messages: messages,
         groupMessagesThreshold: 1,
         emojiEnlargementBehavior: chatUi.EmojiEnlargementBehavior.multi,
-        showUserAvatars: true,
       ),
     );
   }
 
   Widget askForPermissionsButton() {
     if (!widget.comingFromMatchedPage) return Container();
-    if (connectedToCall) return Container();
+    if (connectedToCall.value) return Container();
 
     return IconButton(
         onPressed: callOrAskForPermission,
@@ -478,7 +486,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   Widget mic() {
-    if (!connectedToCall) {
+    if (!connectedToCall.value) {
       return Container();
     }
 
@@ -486,8 +494,14 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
         onPressed: () {
           if (micMuted) {
             localStream?.getAudioTracks()[0].enabled = true;
+            setState(() {
+              micMuted = false;
+            });
           } else {
             localStream?.getAudioTracks()[0].enabled = false;
+            setState(() {
+              micMuted = true;
+            });
           }
         },
         icon: Icon(!micMuted ? FeatherIcons.micOff : FeatherIcons.mic));
