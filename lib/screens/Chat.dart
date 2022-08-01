@@ -157,7 +157,6 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
 
     widget.socketService.onMessageReceived((response) {
       Message message = response.message;
-
       setState(() {
         messages.insert(
             0,
@@ -436,6 +435,9 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   Widget renderChat() {
+    final provider = ref.watch(userProvider);
+    final localUser = provider.user;
+
     return AppScaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -465,7 +467,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
             secondaryColor: ColorPalette.surface,
             inputBackgroundColor: ColorPalette.surface),
         user: types.User(
-            id: widget.connectedUser?.id.toString() ?? "qwel",
+            id: localUser?.id.toString() ?? "qwel",
             firstName: widget.connectedUser?.username ?? ""),
         messages: messages,
         groupMessagesThreshold: 1,
