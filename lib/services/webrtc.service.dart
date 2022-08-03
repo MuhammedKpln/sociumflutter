@@ -7,32 +7,40 @@ final rtcConfig = {
 };
 
 class PeerConnection {
-  wrc.RTCPeerConnection peerConnection;
-  PeerConnection(this.peerConnection);
+  final wrc.RTCPeerConnection _peerConnection;
+  PeerConnection(this._peerConnection);
 
-  Future<wrc.MediaStream> getUserMedia() async {
-    return await wrc.navigator.mediaDevices
-        .getUserMedia({"audio": true, "video": false});
+  get events => _peerConnection;
+
+  Future<wrc.MediaStream> getUserMedia({bool turnVideoOn = false}) async {
+    const videoCons = {"facingMode": "user"};
+
+    return await wrc.navigator.mediaDevices.getUserMedia(
+        {"audio": true, "video": turnVideoOn ? videoCons : false});
   }
 
   Future<void> addStream(wrc.MediaStream stream) async {
-    await peerConnection.addStream(stream);
+    await _peerConnection.addStream(stream);
   }
 
   Future<wrc.RTCSessionDescription> createOffer() async {
-    final description = await peerConnection.createOffer();
+    final description = await _peerConnection.createOffer();
 
-    await peerConnection.setLocalDescription(description);
+    await _peerConnection.setLocalDescription(description);
 
     return description;
   }
 
   Future<wrc.RTCSessionDescription> createAnswer(
       wrc.RTCSessionDescription offer) async {
-    await peerConnection.setRemoteDescription(offer);
-    final answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+    await _peerConnection.setRemoteDescription(offer);
+    final answer = await _peerConnection.createAnswer();
+    await _peerConnection.setLocalDescription(answer);
 
     return answer;
+  }
+
+  Future<void> setRemoteDescription(wrc.RTCSessionDescription answer) async {
+    await _peerConnection.setRemoteDescription(answer);
   }
 }
