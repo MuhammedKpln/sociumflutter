@@ -189,7 +189,10 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
       children: [
         Column(
           children: [
-            Avatar(avatarSize: AvatarSize.large),
+            Avatar(
+              avatarSize: AvatarSize.large,
+              username: widget.username,
+            ),
             Text(widget.username),
             Text(callTimer)
           ],

@@ -100,7 +100,10 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage> {
                       children: [
                         Row(
                           children: [
-                            Avatar(avatarSize: AvatarSize.mediumish),
+                            Avatar(
+                              avatarSize: AvatarSize.mediumish,
+                              username: user.username!,
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 10),
                               child: Column(
@@ -118,6 +121,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage> {
                                     child: Row(
                                       children: [
                                         Avatar(
+                                            username: user.username!,
                                             avatarSize: AvatarSize.extraSmall),
                                         Padding(
                                           padding:

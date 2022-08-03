@@ -540,8 +540,9 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       centerTitle: true,
       title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Avatar(
-            avatarSize: AvatarSize.small,
-            avatarName: widget.connectedUser?.username),
+          avatarSize: AvatarSize.small,
+          username: widget.connectedUser!.username!,
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Text(

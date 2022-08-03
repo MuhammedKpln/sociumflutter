@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:scflutter/utils/avatar.dart';
 import 'package:scflutter/utils/palette.dart';
 
 enum AvatarSize { extraSmall, small, medium, mediumish, large }
 
 class Avatar extends StatelessWidget {
-  Avatar({Key? key, this.avatarName, required this.avatarSize})
+  const Avatar(
+      {Key? key, required this.username, this.avatarSize = AvatarSize.small})
       : super(key: key);
 
-  String? avatarName;
-  AvatarSize avatarSize = AvatarSize.small;
+  final String username;
+  final AvatarSize avatarSize;
 
   @override
   Widget build(BuildContext context) {
-    final randomAvatar = generateRandomAvatar();
     double? width;
     double? height;
+
+    final bool isLargeAvatar = avatarSize == AvatarSize.large;
 
     switch (avatarSize) {
       case AvatarSize.extraSmall:
@@ -50,8 +51,9 @@ class Avatar extends StatelessWidget {
               : BorderRadius.circular(5)),
       child: Center(
         child: Text(
-          avatarName?[0] ?? "M",
-          style: const TextStyle(fontSize: 10),
+          username[0],
+          style:
+              isLargeAvatar ? Theme.of(context).textTheme.headlineSmall : null,
         ),
       ),
     );

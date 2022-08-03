@@ -34,24 +34,9 @@ class RoundedButton extends StatelessWidget {
     }
 
     return ElevatedButton(
-      style: ButtonStyle(
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(80.0))),
-          padding: MaterialStateProperty.all(const EdgeInsets.all(0))),
       onPressed: onPressed,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: ColorPalette.bgLinearGradient,
-          borderRadius: const BorderRadius.all(Radius.circular(80.0)),
-        ),
-        child: Container(
-          constraints: const BoxConstraints(
-              minWidth: 88.0,
-              minHeight: 36.0), // min sizes for Material buttons
-          alignment: Alignment.center,
-          child: child,
-        ),
-      ),
+      style: sstyle,
+      child: child,
     );
   }
 }

@@ -59,7 +59,7 @@ class MatchFound extends StatelessWidget {
                   ),
                 ),
                 Avatar(
-                  avatarName: user.avatar,
+                  username: user.username!,
                   avatarSize: AvatarSize.large,
                 ),
                 Padding(

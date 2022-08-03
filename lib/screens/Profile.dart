@@ -112,7 +112,9 @@ class _ProfileScreenState extends ConsumerState<ProfilePage> {
                               child: Container(
                                   transform:
                                       Matrix4.translationValues(0.0, -50, 0.0),
-                                  child: Avatar(avatarSize: AvatarSize.large)),
+                                  child: Avatar(
+                                      username: user!.username!,
+                                      avatarSize: AvatarSize.large)),
                             ),
                           ],
                         ),

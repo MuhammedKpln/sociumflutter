@@ -59,7 +59,7 @@ class _CallComingState extends State<CallComingPage> {
       body: Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         Column(
           children: [
-            Avatar(avatarSize: AvatarSize.large),
+            Avatar(username: widget.username, avatarSize: AvatarSize.large),
             Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Text(
