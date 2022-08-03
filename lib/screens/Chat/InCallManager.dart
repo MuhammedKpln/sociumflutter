@@ -6,10 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/screens/Chat.dart';
 import 'package:scflutter/utils/palette.dart';
 
 class InCallManagerScreenPage extends StatefulWidget {
-  const InCallManagerScreenPage({Key? key}) : super(key: key);
+  InCallManagerScreenPage(
+      {Key? key, required this.username, required this.onPressHangup})
+      : super(key: key);
+
+  String username;
+  VoidCallback onPressHangup;
 
   @override
   State<InCallManagerScreenPage> createState() =>
@@ -19,8 +25,8 @@ class InCallManagerScreenPage extends StatefulWidget {
 class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
   DateTime date = DateTime(DateTime.now().year, 0, 0, 0, 0, 0, 0, 0);
   late Timer timer;
-  RTCVideoRenderer renderer = RTCVideoRenderer();
-  late MediaStream stream;
+  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
+  RTCVideoRenderer localRenderer = RTCVideoRenderer();
   bool fullScreen = false;
   bool inVideoCall = false;
   Offset cameraOffset = const Offset(0, 0);
@@ -29,13 +35,31 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    renderer.initialize();
-    navigator.mediaDevices.getUserMedia({
-      "audio": true,
-      "video": {"facingMode": 'user'}
-    }).then((value) {
-      stream = value;
-      renderer.srcObject = stream;
+    remoteRenderer.initialize();
+    localRenderer.initialize();
+
+    localStream.addListener(() {
+      localRenderer.srcObject = localStream.value;
+    });
+
+    remoteStream.addListener(() {
+      print(remoteStream);
+      remoteRenderer.srcObject = remoteStream.value;
+      setState(() {
+        inVideoCall = true;
+      });
+    });
+
+    chatCameraOpened.addListener(() {
+      if (chatCameraOpened.value) {
+        setState(() {
+          inVideoCall = true;
+        });
+      } else {
+        setState(() {
+          inVideoCall = false;
+        });
+      }
     });
 
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -55,23 +79,27 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
   }
 
   void switchCamera() {
-    Helper.switchCamera(stream.getVideoTracks()[0]);
+    // Helper.switchCamera(stream.getVideoTracks()[0]);
   }
 
   openCamera() async {
-    final cameras = await Helper.cameras;
-    stream = await Helper.openCamera({
-      'audio': true,
-      'video': {
-        "facingMode": "user",
-        "height": MediaQuery.of(context).size.height,
-        "width": MediaQuery.of(context).size.width
-      }
-    });
-    renderer.srcObject = stream;
+    chatCameraOpened.value = true;
     setState(() {
       inVideoCall = true;
     });
+    // final cameras = await Helper.cameras;
+    // stream = await Helper.openCamera({
+    //   'audio': true,
+    //   'video': {
+    //     "facingMode": "user",
+    //     "height": MediaQuery.of(context).size.height,
+    //     "width": MediaQuery.of(context).size.width
+    //   }
+    // });
+    // renderer.srcObject = stream;
+    // setState(() {
+    //   inVideoCall = true;
+    // });
   }
 
   Widget actionButtons() {
@@ -82,11 +110,30 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           RoundedButton(
-              onPressed: () => null,
+              onPressed: () {
+                chatMicMuted.value = !chatMicMuted.value;
+                // widget.micMuted.value = !widget.micMuted.value;
+              },
               icon: const Icon(FeatherIcons.mic),
               child: const Text("")),
           RoundedButton(
               onPressed: inVideoCall ? switchCamera : openCamera,
+              icon: inVideoCall
+                  ? const Icon(Icons.flip_camera_ios_outlined)
+                  : const Icon(FeatherIcons.camera),
+              child: const Text("")),
+          RoundedButton(
+              onPressed: () {
+                chatCameraOpened.value = false;
+              },
+              icon: inVideoCall
+                  ? const Icon(Icons.flip_camera_ios_outlined)
+                  : const Icon(FeatherIcons.camera),
+              child: const Text("")),
+          RoundedButton(
+              onPressed: () {
+                chatCameraOpened.value = true;
+              },
               icon: inVideoCall
                   ? const Icon(Icons.flip_camera_ios_outlined)
                   : const Icon(FeatherIcons.camera),
@@ -109,8 +156,15 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
       });
     }
 
-    final userCamera = RTCVideoView(
-      renderer,
+    final localCamera = RTCVideoView(
+      localRenderer,
+      mirror: true,
+      filterQuality: FilterQuality.high,
+      objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+    );
+
+    final remoteCamera = RTCVideoView(
+      remoteRenderer,
       mirror: true,
       filterQuality: FilterQuality.high,
       objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
@@ -121,7 +175,7 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
       child: SizedBox(
         width: 150,
         height: 200,
-        child: userCamera,
+        child: localCamera,
       ),
     );
 
@@ -132,7 +186,7 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
             fullScreen = !fullScreen;
           });
         },
-        child: userCamera,
+        child: remoteCamera,
       ),
       Positioned(
         top: cameraOffset.dy,
@@ -160,7 +214,7 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
         Column(
           children: [
             Avatar(avatarSize: AvatarSize.large),
-            const Text("username"),
+            Text(widget.username),
             Text(callTimer)
           ],
         ),

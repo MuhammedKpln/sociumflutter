@@ -12,7 +12,7 @@ class PeerConnection {
 
   Future<wrc.MediaStream> getUserMedia() async {
     return await wrc.navigator.mediaDevices
-        .getUserMedia({"audio": true, "video": true});
+        .getUserMedia({"audio": true, "video": false});
   }
 
   Future<void> addStream(wrc.MediaStream stream) async {

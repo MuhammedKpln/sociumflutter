@@ -31,7 +31,6 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   @override
   void initState() {
     super.initState();
-
     sc.onClientPaired((data) async {
       ClientPaired formattedData = ClientPaired.fromJson(data);
 

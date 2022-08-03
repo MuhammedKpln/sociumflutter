@@ -26,6 +26,11 @@ import 'package:scflutter/utils/router.gr.dart';
 
 import '../components/Scaffold.dart';
 
+ValueNotifier<bool> chatMicMuted = ValueNotifier<bool>(false);
+ValueNotifier<bool> chatCameraOpened = ValueNotifier<bool>(false);
+ValueNotifier<MediaStream?> remoteStream = ValueNotifier(null);
+ValueNotifier<MediaStream?> localStream = ValueNotifier(null);
+
 class ChatScreenPage extends ConsumerStatefulWidget {
   ChatScreenPage(
       {Key? key,
@@ -48,14 +53,12 @@ class ChatScreenPage extends ConsumerStatefulWidget {
 
 class _ChatState extends ConsumerState<ChatScreenPage> {
   List<types.Message> messages = [];
-  ValueNotifier connectedToCall = ValueNotifier<bool>(false);
-  bool micMuted = false;
+  ValueNotifier<bool> connectedToCall = ValueNotifier<bool>(false);
   bool mediaPermissionsAlllowed = false;
   bool audio = false;
   bool video = false;
   double floatinActionButtonScale = 1;
 
-  late MediaStream? localStream;
   late PeerConnection peerConnection;
   late Timer? floatinActionButtonAnimatorTimer;
 
@@ -67,6 +70,64 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     if (widget.comingFromMatchedPage) {
       initCallFeature();
     }
+  }
+
+  onPressHangup() async {
+    localStream.value?.getTracks().forEach((track) => track.stop());
+    await peerConnection.peerConnection.close();
+  }
+
+  navigateToCallManager() {
+    context.router.navigate(InCallManagerScreenRoute(
+        username: widget.connectedUser?.username ?? "null",
+        onPressHangup: onPressHangup));
+  }
+
+  void initCallFeature() async {
+    chatMicMuted = ValueNotifier(false);
+    chatCameraOpened = ValueNotifier(false);
+    localStream = ValueNotifier(null);
+    remoteStream = ValueNotifier(null);
+
+    chatMicMuted.addListener(() {
+      if (!chatMicMuted.value) {
+        localStream.value
+            ?.getAudioTracks()
+            .forEach((track) => track.enabled = true);
+        // remoteStream.value
+        //     ?.getAudioTracks()
+        //     .forEach((track) => track.enabled = true);
+      } else {
+        localStream.value
+            ?.getAudioTracks()
+            .forEach((track) => track.enabled = false);
+        // remoteStream.value
+        //     ?.getAudioTracks()
+        //     .forEach((track) => track.enabled = false);
+      }
+    });
+
+    chatCameraOpened.addListener(() async {
+      if (chatCameraOpened.value) {
+        final MediaStream stream = await navigator.mediaDevices.getUserMedia({
+          "video": {"facingMode": "user"},
+          "audio": true
+        });
+
+        localStream.value = stream;
+        final videoTrack = localStream.value?.getVideoTracks()[0];
+
+        // localStream?.getVideoTracks().forEach((track) async {
+        await localStream.value?.addTrack(videoTrack!);
+        await localStream.value?.addTrack(videoTrack!);
+        await peerConnection.peerConnection
+            .addTrack(videoTrack!, localStream.value!);
+        // });
+
+        final offer = await peerConnection.createOffer();
+        widget.socketService.callUser(offer, widget.userUUID!);
+      }
+    });
 
     connectedToCall.addListener(() {
       if (connectedToCall.value) {
@@ -82,11 +143,11 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
             });
           }
         });
+
+        navigateToCallManager();
       }
     });
-  }
 
-  void initCallFeature() async {
     final webRtcService = await createPeerConnection(rtcConfig);
     peerConnection = PeerConnection(webRtcService);
 
@@ -132,6 +193,26 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     peerConnection.peerConnection.onIceCandidate = (candidate) {
       widget.socketService.addIceCandidate(candidate, widget.userUUID!);
     };
+    bool makingOffer = false;
+    peerConnection.peerConnection.onRenegotiationNeeded = () async {
+      print("regenating");
+      print(connectedToCall.value);
+      // await Future.delayed(const Duration(seconds: 1));
+      // // if (!makingOffer) {
+      // final offer = await peerConnection.createOffer();
+      // widget.socketService.callUser(offer, widget.userUUID!);
+      //   makingOffer = true;
+      // } else {}
+    };
+    peerConnection.peerConnection.onAddStream = ((stream) async {
+      final videoTracksLength = stream.getVideoTracks().length;
+      print("QWe");
+      print(videoTracksLength);
+
+      if (videoTracksLength > 0) {
+        remoteStream.value = stream;
+      }
+    });
 
     widget.socketService.onIceCandidate((response) async {
       final candidate = RTCIceCandidate(response.candidate["candidate"],
@@ -142,14 +223,25 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   void answerCall(RTCSessionDescription offer, String uuid) async {
-    final stream = await peerConnection.getUserMedia();
-    localStream = stream;
+    final cons = connectedToCall.value
+        ? {"audio": true, "video": true}
+        : {"audio": true, "video": false};
+    final stream = await navigator.mediaDevices.getUserMedia(cons);
+
+    // if (connectedToCall.value) {
+    //   localStream?.getTracks().forEach((track) =>
+    //       peerConnection.peerConnection.addTrack(track, localStream!));
+    // } else {
     await peerConnection.addStream(stream);
+    // }
+
     final answer = await peerConnection.createAnswer(offer);
 
     widget.socketService.makeAnswer(answer, uuid);
 
-    context.router.pop();
+    if (!connectedToCall.value) {
+      context.router.pop();
+    }
   }
 
   void coreInit() {
@@ -170,10 +262,30 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       });
     });
 
-    widget.socketService.onCallMade((data) {
+    widget.socketService.onCallMade((data) async {
       print("call made");
       final offer =
           RTCSessionDescription(data.offer["sdp"], data.offer["type"]);
+
+      if (connectedToCall.value) {
+        final MediaStream stream = await navigator.mediaDevices.getUserMedia({
+          "video": {"facingMode": "user"},
+          "audio": true
+        });
+
+        localStream.value = stream;
+        final videoTrack = localStream.value?.getVideoTracks()[0];
+
+        await localStream.value?.addTrack(videoTrack!);
+        await localStream.value?.addTrack(videoTrack!);
+        await peerConnection.peerConnection
+            .addTrack(videoTrack!, localStream.value!);
+        final answer = await peerConnection.createAnswer(offer);
+
+        widget.socketService.makeAnswer(answer, widget.userUUID!);
+
+        return;
+      }
 
       context.router.navigate(CallComingRoute(
           username: widget.connectedUser!.username!,
@@ -184,15 +296,17 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
 
   disposeEvents() {
     try {
-      if (localStream != null) {
-        localStream?.dispose();
-      }
+      localStream.dispose();
       if (floatinActionButtonAnimatorTimer != null) {
         floatinActionButtonAnimatorTimer?.cancel();
       }
     } catch (err) {}
 
     connectedToCall.dispose();
+    chatMicMuted.dispose();
+    chatCameraOpened.dispose();
+    remoteStream.dispose();
+    localStream.dispose();
 
     peerConnection.peerConnection.close();
     widget.socketService.socket.off(SocketListenerEvents.MESSAGE_RECEIVED.path);
@@ -248,7 +362,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     final MediaStream stream = await peerConnection.getUserMedia();
 
     await peerConnection.addStream(stream);
-    localStream = stream;
+    localStream.value = stream;
     final RTCSessionDescription offer = await peerConnection.createOffer();
 
     if (widget.userUUID != null) {
@@ -429,7 +543,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       scale: floatinActionButtonScale,
       child: FloatingActionButton(
           enableFeedback: true,
-          onPressed: () => null,
+          onPressed: navigateToCallManager,
           child: const Icon(FeatherIcons.phoneOutgoing)),
     );
   }
@@ -439,22 +553,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     final localUser = provider.user;
 
     return AppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Avatar(
-              avatarSize: AvatarSize.small,
-              avatarName: widget.connectedUser?.username),
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Text(
-              widget.connectedUser?.username ?? "",
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-        ]),
-        actions: [askForPermissionsButton(), mic()],
-      ),
+      appBar: renderAppBar(),
       floatingActionButton:
           connectedToCall.value ? renderFloatingButton() : null,
       body: chatUi.Chat(
@@ -476,6 +575,28 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     );
   }
 
+  AppBar renderAppBar() {
+    return AppBar(
+      centerTitle: true,
+      title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Avatar(
+            avatarSize: AvatarSize.small,
+            avatarName: widget.connectedUser?.username),
+        Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Text(
+            widget.connectedUser?.username ?? "",
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+      ]),
+      actions: [
+        askForPermissionsButton(),
+        ElevatedButton(onPressed: () => makeCall(), child: const Text("Qwe"))
+      ],
+    );
+  }
+
   Widget askForPermissionsButton() {
     if (!widget.comingFromMatchedPage) return Container();
     if (connectedToCall.value) return Container();
@@ -485,27 +606,5 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
         icon: Icon(!mediaPermissionsAlllowed
             ? FeatherIcons.phoneOff
             : FeatherIcons.phoneCall));
-  }
-
-  Widget mic() {
-    if (!connectedToCall.value) {
-      return Container();
-    }
-
-    return IconButton(
-        onPressed: () {
-          if (micMuted) {
-            localStream?.getAudioTracks()[0].enabled = true;
-            setState(() {
-              micMuted = false;
-            });
-          } else {
-            localStream?.getAudioTracks()[0].enabled = false;
-            setState(() {
-              micMuted = true;
-            });
-          }
-        },
-        icon: Icon(!micMuted ? FeatherIcons.micOff : FeatherIcons.mic));
   }
 }
