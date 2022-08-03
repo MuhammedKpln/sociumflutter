@@ -11,32 +11,41 @@ class RoundedButton extends StatelessWidget {
       : super(key: key);
 
   final Widget child;
-  final Function() onPressed;
+  final VoidCallback onPressed;
   final ButtonStyle? style;
   final Widget? icon;
 
   @override
   Widget build(BuildContext context) {
-    ButtonStyle sstyle = ButtonStyle(
-            backgroundColor: style?.backgroundColor == null
-                ? MaterialStateProperty.all(ColorPalette.primary)
-                : null,
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20))),
-            padding: MaterialStateProperty.all(const EdgeInsets.all(15)),
-            textStyle: MaterialStateProperty.all(
-                const TextStyle(fontWeight: FontWeight.normal, fontSize: 13)))
-        .merge(style);
-
     if (icon != null) {
       return ElevatedButton.icon(
-          icon: icon!, label: child, onPressed: onPressed, style: sstyle);
+        icon: icon!,
+        label: child,
+        onPressed: onPressed,
+        style: style,
+      );
     }
 
     return ElevatedButton(
       onPressed: onPressed,
-      style: sstyle,
-      child: child,
+      style: ButtonStyle(
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(80.0))),
+              padding: MaterialStateProperty.all(const EdgeInsets.all(0)))
+          .merge(style),
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: style == null ? ColorPalette.bgLinearGradient : null,
+          borderRadius: const BorderRadius.all(Radius.circular(80.0)),
+        ),
+        child: Container(
+          constraints: const BoxConstraints(
+              minWidth: 88.0,
+              minHeight: 36.0), // min sizes for Material buttons
+          alignment: Alignment.center,
+          child: child,
+        ),
+      ),
     );
   }
 }

@@ -97,9 +97,19 @@ class SociumApplication extends ConsumerWidget {
               iconTheme: IconThemeData(color: Colors.grey)),
           scaffoldBackgroundColor: ColorPalette.background,
           primaryColor: ColorPalette.primary,
-          buttonTheme: const ButtonThemeData(
-            buttonColor: ColorPalette.primary,
-          ),
+          buttonTheme: ButtonThemeData(
+              buttonColor: ColorPalette.primary,
+              padding: const EdgeInsets.all(15),
+              textTheme: ButtonTextTheme.normal,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20))),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(ColorPalette.primary),
+                  padding: MaterialStateProperty.all(const EdgeInsets.all(10)),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20))))),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
               backgroundColor: ColorPalette.background,
               selectedIconTheme:
