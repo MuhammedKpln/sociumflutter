@@ -7,6 +7,7 @@ import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/storage/auth.storage.dart';
+import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 class OnboardScreenPage extends ConsumerStatefulWidget {
@@ -49,7 +50,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
 
     for (var i = 0; i < 3; i++) {
       list.add(AnimatedContainer(
-        duration: const Duration(milliseconds: 100),
+        duration: Duration(milliseconds: AnimationDurations.low.duration),
         padding: EdgeInsets.all(carouselIndex == i ? 5 : 3),
         margin: const EdgeInsets.only(right: 10),
         decoration: BoxDecoration(
@@ -139,94 +140,90 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
     return AppScaffold(
         appBar: AppBar(
           title: SvgPicture.asset('assets/logo.svg'),
-          backgroundColor: const Color(0xFF212227),
           elevation: 0,
         ),
-        body: Container(
-          color: const Color(0xFF212227),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            renderCarousel(),
+            renderCarouselCurrentPage(),
+            Column(
               children: [
-                CarouselSlider.builder(
-                  itemBuilder: (context, int index, int pageViewIndex) {
-                    String image = "assets/meet.svg";
-                    String description =
-                        "Ortak ilgi alanlarınıza göre çevrenizdeki yeni insanlarla tanışın";
-
-                    switch (index) {
-                      case 1:
-                        image = "assets/explore.svg";
-                        description =
-                            "Harika toplulukları keşfedin ve heyecan verici etkinliklere katılın";
-                        break;
-
-                      case 2:
-                        image = "assets/touch.svg";
-                        description = "Arkadaşlarınızla iletişimde kalın";
-                    }
-
-                    return (Column(
-                      children: [
-                        SvgPicture.asset(
-                          image,
-                          height: 300,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: Text(
-                            description,
-                            style: const TextStyle(
-                                fontSize: 20, color: Colors.white),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ));
-                  },
-                  itemCount: 3,
-                  options: CarouselOptions(
-                      autoPlay: false,
-                      enableInfiniteScroll: false,
-                      aspectRatio: 1,
-                      height: 400,
-                      viewportFraction: 1,
-                      onPageChanged: (index, reason) =>
-                          setState(() => carouselIndex = index)),
+                SizedBox(
+                  width: double.infinity,
+                  child: RoundedButton(
+                      onPressed: onPressRegister,
+                      child: const Text("Başlıyalım")),
                 ),
-                renderCarouselCurrentPage(),
-                Column(
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      child: RoundedButton(
-                          onPressed: onPressRegister,
-                          child: const Text("Başlıyalım")),
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: RoundedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              foregroundColor:
-                                  MaterialStateProperty.all(Colors.white),
-                              side: MaterialStateProperty.all(
-                                  const BorderSide(color: Colors.white))),
-                          onPressed: onPressLogin,
-                          child: const Text("Giriş yap")),
-                    ),
-                  ],
+                SizedBox(
+                  width: double.infinity,
+                  child: RoundedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                          side: MaterialStateProperty.all(
+                              const BorderSide(color: Colors.white))),
+                      onPressed: onPressLogin,
+                      child: const Text("Giriş yap")),
                 ),
-                const Text(
-                  "Devam ederek, Hizmet Şartlarımızı ve Gizlilik Politikamızı kabul etmiş olursunuz.",
-                  style: TextStyle(color: Colors.grey, fontSize: 13),
-                )
               ],
             ),
-          ),
+            const Text(
+              "Devam ederek, Hizmet Şartlarımızı ve Gizlilik Politikamızı kabul etmiş olursunuz.",
+              style: TextStyle(color: Colors.grey, fontSize: 13),
+            )
+          ],
         ));
+  }
+
+  CarouselSlider renderCarousel() {
+    return CarouselSlider.builder(
+      itemBuilder: (context, int index, int pageViewIndex) {
+        String image = "assets/meet.svg";
+        String description =
+            "Ortak ilgi alanlarınıza göre çevrenizdeki yeni insanlarla tanışın";
+
+        switch (index) {
+          case 1:
+            image = "assets/explore.svg";
+            description =
+                "Harika toplulukları keşfedin ve heyecan verici etkinliklere katılın";
+            break;
+
+          case 2:
+            image = "assets/touch.svg";
+            description = "Arkadaşlarınızla iletişimde kalın";
+        }
+
+        return (Column(
+          children: [
+            SvgPicture.asset(
+              image,
+              height: 300,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 30),
+              child: Text(
+                description,
+                style: const TextStyle(fontSize: 20, color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ));
+      },
+      itemCount: 3,
+      options: CarouselOptions(
+          autoPlay: false,
+          enableInfiniteScroll: false,
+          aspectRatio: 1,
+          height: 400,
+          viewportFraction: 1,
+          onPageChanged: (index, reason) =>
+              setState(() => carouselIndex = index)),
+    );
   }
 }
