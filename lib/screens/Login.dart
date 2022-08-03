@@ -24,8 +24,6 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
 
   @override
   void initState() {
-    //FIXME: remove after testing.
-    context.router.navigate(const InCallManagerScreenRoute());
     super.initState();
   }
 
