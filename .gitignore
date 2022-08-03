@@ -53,3 +53,4 @@ app.*.map.json
 
 # Generated object
 *.g.dart
+*.gr.dart
