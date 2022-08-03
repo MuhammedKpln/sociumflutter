@@ -37,7 +37,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
         final model = AuthStateModel(
             accessToken: accessToken, refreshToken: refreshToken, user: user);
         final authState = ref.read(userProvider.notifier);
-        authState.setUser(model);
+        await authState.setUser(model);
 
         context.router.replace(const HomeScreenRoute());
       }

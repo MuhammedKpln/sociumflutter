@@ -21,7 +21,7 @@ class UserModelNotifier extends StateNotifier<AuthStateModel> {
   UserModelNotifier()
       : super(const AuthStateModel(accessToken: null, user: null));
 
-  setUser(AuthStateModel user) async {
+  Future<void> setUser(AuthStateModel user) async {
     await saveLogin(user);
 
     state = user;
