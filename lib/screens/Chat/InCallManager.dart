@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/main.dart';
 import 'package:scflutter/screens/Chat.dart';
 import 'package:scflutter/utils/palette.dart';
 
@@ -33,7 +34,6 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     remoteRenderer.initialize();
     localRenderer.initialize();
@@ -43,8 +43,8 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
     });
 
     remoteStream.addListener(() {
-      print(remoteStream);
       remoteRenderer.srcObject = remoteStream.value;
+
       setState(() {
         inVideoCall = true;
       });
@@ -63,7 +63,6 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
     });
 
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      print("ticklendim");
       setState(() {
         date = date.add(const Duration(seconds: 1));
       });
@@ -74,32 +73,24 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    remoteRenderer.dispose();
+    localRenderer.dispose();
 
     timer.cancel();
   }
 
   void switchCamera() {
+    scaffoldKey.currentState
+        ?.showSnackBar(const SnackBar(content: Text("In progress")));
     // Helper.switchCamera(stream.getVideoTracks()[0]);
   }
 
   openCamera() async {
     chatCameraOpened.value = true;
+
     setState(() {
       inVideoCall = true;
     });
-    // final cameras = await Helper.cameras;
-    // stream = await Helper.openCamera({
-    //   'audio': true,
-    //   'video': {
-    //     "facingMode": "user",
-    //     "height": MediaQuery.of(context).size.height,
-    //     "width": MediaQuery.of(context).size.width
-    //   }
-    // });
-    // renderer.srcObject = stream;
-    // setState(() {
-    //   inVideoCall = true;
-    // });
   }
 
   Widget actionButtons() {
@@ -114,7 +105,8 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
                 chatMicMuted.value = !chatMicMuted.value;
                 // widget.micMuted.value = !widget.micMuted.value;
               },
-              icon: const Icon(FeatherIcons.mic),
+              icon: Icon(
+                  chatMicMuted.value ? FeatherIcons.micOff : FeatherIcons.mic),
               child: const Text("")),
           RoundedButton(
               onPressed: inVideoCall ? switchCamera : openCamera,
@@ -123,25 +115,9 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
                   : const Icon(FeatherIcons.camera),
               child: const Text("")),
           RoundedButton(
-              onPressed: () {
-                chatCameraOpened.value = false;
-              },
-              icon: inVideoCall
-                  ? const Icon(Icons.flip_camera_ios_outlined)
-                  : const Icon(FeatherIcons.camera),
-              child: const Text("")),
-          RoundedButton(
-              onPressed: () {
-                chatCameraOpened.value = true;
-              },
-              icon: inVideoCall
-                  ? const Icon(Icons.flip_camera_ios_outlined)
-                  : const Icon(FeatherIcons.camera),
-              child: const Text("")),
-          RoundedButton(
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(ColorPalette.red)),
-              onPressed: () => null,
+              onPressed: widget.onPressHangup,
               icon: const Icon(FeatherIcons.phoneOff),
               child: const Text("")),
         ],
