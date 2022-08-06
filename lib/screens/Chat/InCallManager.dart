@@ -142,7 +142,6 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
     final remoteCamera = RTCVideoView(
       remoteRenderer,
       mirror: true,
-      filterQuality: FilterQuality.high,
       objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
     );
 
