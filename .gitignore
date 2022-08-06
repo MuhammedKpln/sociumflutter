@@ -55,3 +55,7 @@ app.*.map.json
 *.gr.dart
 *.graphql.dart
 *.sksl.json
+firebase_options.dart
+google-services.json
+firebase_app_id_file.json
+GoogleService-Info.plist

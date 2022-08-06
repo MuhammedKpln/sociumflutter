@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +12,8 @@ import 'package:scflutter/storage/auth.storage.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
+import 'firebase_options.dart';
+
 class AuthToken extends ContextEntry {
   final String token;
 
@@ -21,7 +25,10 @@ class AuthToken extends ContextEntry {
 
 final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initHiveForFlutter();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   final httpLink = HttpLink(ApiService.GraphQLAPI.path);
   final authLink = AuthLink(getToken: (() async {
