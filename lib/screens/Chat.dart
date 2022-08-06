@@ -11,6 +11,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/Loading.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/main.dart';
 import 'package:scflutter/models/message.dart';
@@ -192,6 +193,11 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
 
       await peerConnection.events.addCandidate(candidate);
     });
+
+    widget.socketService.onClientDisconnected(() async {
+      context.toast.showToast("Kullanıcı çıkış yaptı");
+      await context.router.pop();
+    });
   }
 
   void answerCall(RTCSessionDescription offer, String uuid) async {
@@ -257,16 +263,14 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   disposeEvents() {
     try {
       localStream.dispose();
+      connectedToCall.dispose();
+      chatMicMuted.dispose();
+      chatCameraOpened.dispose();
+      remoteStream.dispose();
       if (floatinActionButtonAnimatorTimer != null) {
         floatinActionButtonAnimatorTimer?.cancel();
       }
     } catch (err) {}
-
-    connectedToCall.dispose();
-    chatMicMuted.dispose();
-    chatCameraOpened.dispose();
-    remoteStream.dispose();
-    localStream.dispose();
 
     peerConnection.events.close();
     widget.socketService.socket.off(SocketListenerEvents.MESSAGE_RECEIVED.path);
@@ -278,13 +282,19 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
         .off(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path);
     widget.socketService.socket
         .off(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path);
+    widget.socketService.socket
+        .off(SocketListenerEvents.CLIENT_DISCONNECTED.path);
   }
 
   @override
   void dispose() {
     super.dispose();
+    leaveRoom().then((value) => disposeEvents());
+  }
 
-    disposeEvents();
+  Future<void> leaveRoom() async {
+    await Future.value(
+        widget.socketService.leaveRoom(widget.room?.roomAdress ?? ""));
   }
 
   void onSendMessage(types.PartialText text) {

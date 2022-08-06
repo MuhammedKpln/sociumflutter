@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:scflutter/models/socket/answer_made_response.dart';
 import 'package:scflutter/models/socket/call_made_response.dart';
@@ -20,7 +21,8 @@ enum SocketFireEvents {
   AddIceCandidate("add ice candidate"),
   AskForMedia("ask for media permission"),
   GiveMediaPermission("allow media controls"),
-  SendMessage("send message");
+  SendMessage("send message"),
+  LeaveRoom("leave room");
 
   final String path;
   const SocketFireEvents(this.path);
@@ -33,7 +35,8 @@ enum SocketListenerEvents {
   RECEIVED_ICE_CANDIDATE("RECEIVED_ICE_CANDIDATE"),
   MEDIA_PERMISSION_ASKED("MEDIA_PERMISSION_ASKED"),
   MEDIA_PERMISSION_ANSWERED("MEDIA_PERMISSION_ANSWERED"),
-  ANSWER_MADE('ANSWER_MADE');
+  ANSWER_MADE('ANSWER_MADE'),
+  CLIENT_DISCONNECTED('CLIENT_DISCONNECTED');
 
   final String path;
   const SocketListenerEvents(this.path);
@@ -80,6 +83,10 @@ class SocketService extends SocketCore {
 
   leaveQueue() {
     emit(SocketFireEvents.LeaveQueue.path);
+  }
+
+  leaveRoom(String roomName) {
+    emit(SocketFireEvents.LeaveRoom.path, data: {"room": roomName});
   }
 
   onClientPaired(void Function(dynamic data) callback) {
@@ -134,5 +141,10 @@ class SocketService extends SocketCore {
 
       return callback(response);
     }));
+  }
+
+  onClientDisconnected(VoidCallback callback) {
+    socket.on(
+        SocketListenerEvents.CLIENT_DISCONNECTED.path, ((data) => callback()));
   }
 }
