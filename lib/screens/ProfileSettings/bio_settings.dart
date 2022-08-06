@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/main.dart';
 import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/theme/toast.dart';
 
 import '../../components/Scaffold.dart';
 
@@ -36,8 +38,8 @@ class _BioSettingsPageState extends ConsumerState<BioSettingsPage> {
 
   onError(OperationException? error) {
     print(error);
-    scaffoldKey.currentState?.showSnackBar(
-        const SnackBar(content: Text("Lütfen daha sonra tekrar deneyiniz.")));
+    context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
+        toastType: ToastType.Error);
   }
 
   onCompleted(Map<String, dynamic>? data) {

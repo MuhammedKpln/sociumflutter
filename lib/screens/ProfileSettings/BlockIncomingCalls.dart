@@ -2,12 +2,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/main.dart';
 import 'package:scflutter/state/auth.dart';
 
 import '../../components/RoundedButton.dart';
 import '../../components/Scaffold.dart';
+import '../../theme/toast.dart';
 
 class BlockIncomingCallsScreenPage extends ConsumerStatefulWidget {
   const BlockIncomingCallsScreenPage({Key? key}) : super(key: key);
@@ -33,8 +35,8 @@ class _BlockIncomingCallsScreenPageState
 
   onError(OperationException? error) {
     print(error);
-    scaffoldKey.currentState?.showSnackBar(
-        const SnackBar(content: Text("Lütfen daha sonra tekrar deneyiniz.")));
+    context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
+        toastType: ToastType.Error);
   }
 
   onCompleted(Map<String, dynamic>? data) {

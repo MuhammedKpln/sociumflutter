@@ -400,10 +400,9 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
           // Send permission
           sendPermissionsAsked();
           context.router.pop();
-          scaffoldKey.currentState?.showSnackBar(SnackBar(
-              content: Text(askingForPermission
-                  ? 'İsteğiniz gönderildi!'
-                  : 'İstek kabul edildi, arama butonu aktif.')));
+          context.toast.showToast(askingForPermission
+              ? 'İsteğiniz gönderildi!'
+              : 'İstek kabul edildi, arama butonu aktif.');
         } else {
           // Give permission
         }

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/config.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/main.dart';
 import 'package:scflutter/state/auth.dart';
 
 import '../../components/RoundedButton.dart';
 import '../../components/Scaffold.dart';
+import '../../theme/toast.dart';
 
 class BirthdaySettingsPage extends ConsumerStatefulWidget {
   const BirthdaySettingsPage({Key? key}) : super(key: key);
@@ -23,8 +25,8 @@ class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage> {
 
   onError(OperationException? error) {
     print(error);
-    scaffoldKey.currentState?.showSnackBar(
-        const SnackBar(content: Text("Lütfen daha sonra tekrar deneyiniz.")));
+    context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
+        toastType: ToastType.Error);
   }
 
   onCompleted(Map<String, dynamic>? data) {

@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/theme/toast.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 import '../components/Scaffold.dart';
@@ -51,10 +53,9 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
   }
 
   onError(OperationException? error) {
-    print(error);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Lütfen e-posta adresinizi ve şifrenizi kontrol ediniz."),
-    ));
+    context.toast.showToast(
+        "Lütfen e-posta adresinizi ve şifrenizi kontrol ediniz.",
+        toastType: ToastType.Error);
   }
 
   @override

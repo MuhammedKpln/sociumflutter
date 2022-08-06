@@ -4,13 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
-import 'package:scflutter/main.dart';
 import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 import '../../components/Scaffold.dart';
+import '../../theme/toast.dart';
 
 class RegisterScreenStepFourPage extends ConsumerStatefulWidget {
   const RegisterScreenStepFourPage(
@@ -42,8 +43,8 @@ class RegisterScreenStepFourState
       });
 
       if (result.exception != null) {
-        scaffoldKey.currentState?.showSnackBar(const SnackBar(
-            content: Text("Lütfen daha sonra tekrar deneyiniz.")));
+        context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
+            toastType: ToastType.Error);
 
         // Timer(Duration(milliseconds: 500), () {
         //   AutoRouter.of(context).popUntilRoot();
@@ -86,8 +87,8 @@ class RegisterScreenStepFourState
   }
 
   onErrorLoginAttempt(OperationException? error) {
-    scaffoldKey.currentState?.showSnackBar(
-        const SnackBar(content: Text("Lütfen daha sonra tekrar deneyiniz.")));
+    context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
+        toastType: ToastType.Error);
   }
 
   @override
