@@ -220,7 +220,7 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
           GestureDetector(
             onTap: leaveQueue,
             child: Lottie.asset(
-              Animations.Search,
+              Animations.search.path,
               width: 100,
               height: 100,
             ),

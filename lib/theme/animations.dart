@@ -1,5 +1,8 @@
-class Animations {
-  Animations();
+enum Animations {
+  search("assets/animations/search.json"),
+  loading("assets/animations/loading.json"),
+  confetti("assets/animations/confetti.json");
 
-  static final Search = "assets/animations/search.json";
+  final String path;
+  const Animations(this.path);
 }

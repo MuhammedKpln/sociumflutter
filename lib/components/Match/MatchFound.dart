@@ -7,6 +7,7 @@ import 'package:scflutter/models/message.dart';
 import 'package:scflutter/models/user_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:scflutter/services/websocket.events.dart';
+import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 class MatchFound extends StatelessWidget {
@@ -43,7 +44,7 @@ class MatchFound extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black.withOpacity(0.7),
       body: Stack(alignment: Alignment.center, fit: StackFit.expand, children: [
-        Lottie.asset("assets/animations/confetti.json",
+        Lottie.asset(Animations.confetti.path,
             frameRate: FrameRate.max, height: 100),
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
