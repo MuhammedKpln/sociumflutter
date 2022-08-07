@@ -1,4 +1,4 @@
-package com.example.scflutter
+package com.socium
 
 import io.flutter.embedding.android.FlutterActivity
 
