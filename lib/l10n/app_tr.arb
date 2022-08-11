@@ -1,6 +1,15 @@
 {
-    "helloWorld": "Merhaba Dünya!",
-    "@helloWorld": {
-      "description": "The conventional newborn programmer greeting"
-    }
+  "onboardSliderFirst": "Ortak ilgi alanlarınıza göre çevrenizdeki yeni insanlarla tanışın",
+  "onboardSliderSecond": "Harika toplulukları keşfedin ve heyecan verici etkinliklere katılın",
+  "onboardSliderThird": "Arkadaşlarınızla iletişimde kalın",
+  "onboardStartBtnText": "Başlıyalım",
+  "onboardPrivacyPolicyText": "Devam ederek, Hizmet Şartlarımızı ve Gizlilik Politikamızı kabul etmiş olursunuz.",
+  "onboardLoginBtnText": "Giriş yap",
+  "onboardBottomSheetTitleText": "Giriş yap",
+  "onboardLoginWithGoogleBtnTxt": "Google ile giriş yap",
+  "onboardLoginWithAppleBtnTxt": "Apple ile giriş yap",
+  "onboardLoginWithEmailBtnTxt": "E-posta ile giriş yap",
+  "onboardRegisterWithGoogleBtnTxt": "Google ile kayıt ol",
+  "onboardRegisterWithAppleBtnTxt": "Apple ile kayıt ol",
+  "onboardRegisterWithEmailBtnTxt": "E-posta ile kayıt ol"
 }

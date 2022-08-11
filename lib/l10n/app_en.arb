@@ -1,6 +1,15 @@
 {
-    "helloWorld": "Hello World!",
-    "@helloWorld": {
-      "description": "The conventional newborn programmer greeting"
-    }
+  "onboardSliderFirst": "Meet new people around you based on your common interests",
+  "onboardSliderSecond": "Discover great communities and participate in exciting events",
+  "onboardSliderThird": "Stay in touch with your friends",
+  "onboardStartBtnText": "Let's get started",
+  "onboardPrivacyPolicyText": "By continuing, you agree to our Terms of Service and Privacy Policy.",
+  "onboardLoginBtnText": "Sign in",
+  "onboardBottomSheetTitleText": "Sign in",
+  "onboardLoginWithGoogleBtnTxt": "Sign in with Google",
+  "onboardLoginWithAppleBtnTxt": "Sign in with Apple",
+  "onboardLoginWithEmailBtnTxt": "Sign in with email",
+  "onboardRegisterWithGoogleBtnTxt": "Register with Google",
+  "onboardRegisterWithAppleBtnTxt": "Register with Apple",
+  "onboardRegisterWithEmailBtnTxt": "Register by email"
 }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
+import 'package:scflutter/extensions/i18n.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/storage/auth.storage.dart';
 import 'package:scflutter/theme/animation_durations.dart';
@@ -74,7 +75,8 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text("Giriş yap", style: Theme.of(context).textTheme.titleMedium),
+              Text(context.locale!.onboardBottomSheetTitleText,
+                  style: Theme.of(context).textTheme.titleMedium),
               RoundedButton(
                 onPressed: () => null,
                 icon: SvgPicture.asset(
@@ -86,8 +88,8 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                     backgroundColor:
                         MaterialStateProperty.all(const Color(0xffDB4437))),
                 child: Text(!registering
-                    ? "Google ile giriş yap"
-                    : "Google ile kayıt ol"),
+                    ? context.locale!.onboardLoginWithGoogleBtnTxt
+                    : context.locale!.onboardRegisterWithGoogleBtnTxt),
               ),
               RoundedButton(
                 onPressed: () => null,
@@ -96,8 +98,8 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                     foregroundColor: MaterialStateProperty.all(Colors.black),
                     backgroundColor: MaterialStateProperty.all(Colors.white)),
                 child: Text(!registering
-                    ? "Apple ile giriş yap"
-                    : "Apple ile kayıt ol"),
+                    ? context.locale!.onboardLoginWithAppleBtnTxt
+                    : context.locale!.onboardRegisterWithAppleBtnTxt),
               ),
               RoundedButton(
                 icon: const Icon(Icons.mail_outline),
@@ -107,8 +109,8 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black)),
                 child: Text(!registering
-                    ? "E-posta ile giriş yap"
-                    : "E-posta ile kayıt ol"),
+                    ? context.locale!.onboardLoginWithEmailBtnTxt
+                    : context.locale!.onboardRegisterWithEmailBtnTxt),
               )
             ],
           ),
@@ -154,7 +156,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                   width: double.infinity,
                   child: RoundedButton(
                       onPressed: onPressRegister,
-                      child: const Text("Başlıyalım")),
+                      child: Text(context.locale!.onboardStartBtnText)),
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -167,13 +169,13 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                           side: MaterialStateProperty.all(
                               const BorderSide(color: Colors.white))),
                       onPressed: onPressLogin,
-                      child: const Text("Giriş yap")),
+                      child: Text(context.locale!.onboardLoginBtnText)),
                 ),
               ],
             ),
-            const Text(
-              "Devam ederek, Hizmet Şartlarımızı ve Gizlilik Politikamızı kabul etmiş olursunuz.",
-              style: TextStyle(color: Colors.grey, fontSize: 13),
+            Text(
+              context.locale!.onboardPrivacyPolicyText,
+              style: const TextStyle(color: Colors.grey, fontSize: 13),
             )
           ],
         ));
@@ -183,19 +185,17 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
     return CarouselSlider.builder(
       itemBuilder: (context, int index, int pageViewIndex) {
         String image = "assets/meet.svg";
-        String description =
-            "Ortak ilgi alanlarınıza göre çevrenizdeki yeni insanlarla tanışın";
+        String description = context.locale!.onboardSliderFirst;
 
         switch (index) {
           case 1:
             image = "assets/explore.svg";
-            description =
-                "Harika toplulukları keşfedin ve heyecan verici etkinliklere katılın";
+            description = context.locale!.onboardSliderSecond;
             break;
 
           case 2:
             image = "assets/touch.svg";
-            description = "Arkadaşlarınızla iletişimde kalın";
+            description = context.locale!.onboardSliderThird;
         }
 
         return (Column(
