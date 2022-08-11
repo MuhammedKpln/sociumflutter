@@ -7,6 +7,7 @@ import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/Match/Communities.dart';
 import 'package:scflutter/components/Match/MatchFound.dart';
 import 'package:scflutter/components/Scaffold.dart';
+import 'package:scflutter/extensions/i18n.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/models/client_paired.dart';
 import 'package:scflutter/models/message.dart';
@@ -152,7 +153,7 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
         children: [
           Column(
             children: [
-              GradientText("Yeni insanlarla tanışın",
+              GradientText(context.locale!.helloWorld,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize:

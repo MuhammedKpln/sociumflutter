@@ -14,6 +14,7 @@ import 'package:scflutter/theme/theme.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
 import 'firebase_options.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthToken extends ContextEntry {
   final String token;
@@ -97,6 +98,7 @@ class SociumApplication extends ConsumerWidget {
     return MaterialApp.router(
       locale: const Locale('tr', 'TR'),
       localizationsDelegates: const [
+        ...AppLocalizations.localizationsDelegates,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
@@ -105,6 +107,7 @@ class SociumApplication extends ConsumerWidget {
       theme: SociumTheme(context),
       routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }
