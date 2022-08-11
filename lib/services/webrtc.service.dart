@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_webrtc/flutter_webrtc.dart' as wrc;
 
 final rtcConfig = {
@@ -8,9 +10,13 @@ final rtcConfig = {
 
 class PeerConnection {
   final wrc.RTCPeerConnection _peerConnection;
-  PeerConnection(this._peerConnection);
+  final StreamController<wrc.RTCPeerConnectionState> connectionState =
+      StreamController.broadcast();
+  PeerConnection(this._peerConnection) {
+    _onConnectionState();
+  }
 
-  get events => _peerConnection;
+  wrc.RTCPeerConnection get events => _peerConnection;
 
   Future<wrc.MediaStream> getUserMedia({bool turnVideoOn = false}) async {
     const videoCons = {"facingMode": "user"};
@@ -42,5 +48,11 @@ class PeerConnection {
 
   Future<void> setRemoteDescription(wrc.RTCSessionDescription answer) async {
     await _peerConnection.setRemoteDescription(answer);
+  }
+
+  _onConnectionState() {
+    _peerConnection.onConnectionState = (state) {
+      connectionState.add(state);
+    };
   }
 }

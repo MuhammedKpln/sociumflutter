@@ -17,6 +17,7 @@ import 'package:scflutter/main.dart';
 import 'package:scflutter/models/message.dart';
 import 'package:scflutter/models/socket/send_message_arguments.dart';
 import 'package:scflutter/models/user_model.dart';
+import 'package:scflutter/screens/Chat/CallConnectInformation.dart';
 import 'package:scflutter/services/webrtc.service.dart';
 import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/state/auth.dart';
@@ -58,6 +59,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   bool mediaPermissionsAlllowed = false;
   bool audio = false;
   bool video = false;
+  bool peerConnectionInitialized = false;
   double floatinActionButtonScale = 1;
 
   late PeerConnection peerConnection;
@@ -90,6 +92,10 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     chatCameraOpened = ValueNotifier(false);
     localStream = ValueNotifier(null);
     remoteStream = ValueNotifier(null);
+    final webRtcService = await createPeerConnection(rtcConfig);
+    peerConnection = PeerConnection(webRtcService);
+
+    setState(() => peerConnectionInitialized = true);
 
     chatMicMuted.addListener(() {
       // FIXME: does not work when camera is opened?
@@ -136,10 +142,11 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
 
         navigateToCallManager();
       }
-    });
 
-    final webRtcService = await createPeerConnection(rtcConfig);
-    peerConnection = PeerConnection(webRtcService);
+      if (context.router.isRouteActive(InCallManagerScreenRoute.name)) {
+        context.router.pop();
+      }
+    });
 
     widget.socketService.onAnswerMade((data) async {
       final answer =
@@ -166,14 +173,25 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       }
     });
 
-    peerConnection.events.onConnectionState = (state) {
-      if (state == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
-        connectedToCall.value = true;
+    peerConnection.connectionState.stream.listen((state) {
+      print(state);
+      switch (state) {
+        case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
+          connectedToCall.value = false;
+          break;
+        case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
+          connectedToCall.value = false;
+          break;
+        case RTCPeerConnectionState.RTCPeerConnectionStateConnecting:
+          connectedToCall.value = false;
+          break;
+        case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
+          connectedToCall.value = true;
+          break;
+        default:
+          connectedToCall.value = false;
       }
-      if (state == RTCPeerConnectionState.RTCPeerConnectionStateClosed) {
-        connectedToCall.value = false;
-      }
-    };
+    });
 
     peerConnection.events.onIceCandidate = (candidate) {
       widget.socketService.addIceCandidate(candidate, widget.userUUID!);
@@ -267,6 +285,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       chatMicMuted.dispose();
       chatCameraOpened.dispose();
       remoteStream.dispose();
+      peerConnection.connectionState.close();
       if (floatinActionButtonAnimatorTimer != null) {
         floatinActionButtonAnimatorTimer?.cancel();
       }
@@ -338,9 +357,6 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     if (widget.userUUID != null) {
       widget.socketService.callUser(offer, widget.userUUID!);
     }
-
-    scaffoldKey.currentState
-        ?.showSnackBar(const SnackBar(content: Text("Calling")));
   }
 
   void askForMediaPermissions() {
@@ -544,8 +560,20 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     );
   }
 
+  PreferredSizeWidget? renderAppBarBottom() {
+    if (peerConnectionInitialized) {
+      return PreferredSize(
+          preferredSize: const Size.fromHeight(80),
+          child: CallConnectInformation(
+            peerConnection: peerConnection,
+          ));
+    }
+    return null;
+  }
+
   AppBar renderAppBar() {
     return AppBar(
+      bottom: renderAppBarBottom(),
       centerTitle: true,
       title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Avatar(
