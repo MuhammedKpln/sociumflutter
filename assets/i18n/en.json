@@ -11,5 +11,17 @@
   "onboardLoginWithEmailBtnTxt": "Sign in with email",
   "onboardRegisterWithGoogleBtnTxt": "Register with Google",
   "onboardRegisterWithAppleBtnTxt": "Register with Apple",
-  "onboardRegisterWithEmailBtnTxt": "Register by email"
+  "onboardRegisterWithEmailBtnTxt": "Register by email",
+  "loginEmailTextFieldPlaceholder": "Email",
+  "loginPasswordTextFieldPlaceholder": "Password",
+  "registerWelcomeText": "Welcome to Socium! Let's get started",
+  "registerWelcomeTopicOne": "Choose your interests",
+  "registerContinueBtnTxt": "Continue",
+  "registerStepTwoTitle": "How would you like to be matched?",
+  "registerStepTwoFirstTopicTitle": "Chat",
+  "registerStepTwoFirstTopicDescription": "Match with people just to chat.",
+  "registerStepTwoSecondTopicTitle": "Voice chat",
+  "registerStepTwoSecondTopicDescription": "Pair to speak in real time via voice.",
+  "registerStepTwoPopularBadge": "Popular",
+  "wrongLoginDetails": "Please check your e-mail address and password."
 }

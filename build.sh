@@ -1,0 +1,1 @@
+flutter pub run easy_localization:generate -S assets/i18n/ -f json

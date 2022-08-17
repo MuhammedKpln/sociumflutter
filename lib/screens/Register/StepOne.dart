@@ -1,50 +1,50 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/utils/router.gr.dart';
-
 import '../../components/Scaffold.dart';
 
-class RegisterScreenStepOnePage extends ConsumerStatefulWidget {
+class RegisterScreenStepOnePage extends StatefulWidget {
   const RegisterScreenStepOnePage({Key? key}) : super(key: key);
 
   @override
   RegisterScreenStepOneState createState() => RegisterScreenStepOneState();
 }
 
-class RegisterScreenStepOneState
-    extends ConsumerState<RegisterScreenStepOnePage> {
-  final List<String> topics = [
-    'İlgi alanlarınızı seçin',
-  ];
-
-  renderTopics(context) {
-    return topics
-        .map((topic) => Padding(
-              padding: const EdgeInsets.all(10),
-              child: RichText(
-                text: TextSpan(children: [
-                  const WidgetSpan(
-                      child: Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: Icon(Icons.check_circle_outline_rounded, size: 20),
-                  )),
-                  TextSpan(
-                      text: topic,
-                      style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.titleLarge?.fontSize,
-                          fontWeight: FontWeight.w300)),
-                ]),
-              ),
-            ))
-        .toList();
-  }
-
+class RegisterScreenStepOneState extends State<RegisterScreenStepOnePage> {
   @override
   Widget build(BuildContext context) {
+    renderTopics() {
+      final List<String> topics = [
+        "registerWelcomeTopicOne".tr(),
+      ];
+
+      return topics
+          .map((topic) => Padding(
+                padding: const EdgeInsets.all(10),
+                child: RichText(
+                  text: TextSpan(children: [
+                    const WidgetSpan(
+                        child: Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: Icon(Icons.check_circle_outline_rounded, size: 20),
+                    )),
+                    TextSpan(
+                        text: topic,
+                        style: TextStyle(
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.fontSize,
+                            fontWeight: FontWeight.w300)),
+                  ]),
+                ),
+              ))
+          .toList();
+    }
+
     return AppScaffold(
       appBar: AppBar(),
       body: Container(
@@ -52,7 +52,7 @@ class RegisterScreenStepOneState
           child: Column(
             children: [
               GradientText(
-                "Socium'a hoşgeldiniz! Hadi başlıyalım",
+                "registerWelcomeText".tr(),
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: Theme.of(context).textTheme.headline5?.fontSize),
@@ -62,7 +62,7 @@ class RegisterScreenStepOneState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: renderTopics(context),
+                  children: renderTopics(),
                 ),
               ),
               const Spacer(),
@@ -70,7 +70,7 @@ class RegisterScreenStepOneState
                   width: double.infinity,
                   margin: const EdgeInsets.all(30),
                   child: RoundedButton(
-                      child: const Text("Devam et"),
+                      child: const Text("registerContinueBtnTxt").tr(),
                       onPressed: () => context.router
                           .navigate(const RegisterScreenStepTwoRoute())))
             ],

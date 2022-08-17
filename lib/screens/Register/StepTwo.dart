@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
@@ -21,14 +22,14 @@ class _RegisterScreenStepTwoState extends State<RegisterScreenStepTwoPage> {
     {
       "id": 0,
       "icon": Icons.message_outlined,
-      "title": "Sohbet",
-      "description": "İnsanlarla sadece sohbet yapmak için eşleşin."
+      "title": "registerStepTwoFirstTopicTitle".tr(),
+      "description": "registerStepTwoFirstTopicDescription".tr()
     },
     {
       "id": 1,
       "icon": Icons.mic_rounded,
-      "title": "Sesli sohbet",
-      "description": "Ses yoluyla gerçek zamanlı konuşmak için eşleşin."
+      "title": "registerStepTwoSecondTopicTitle".tr(),
+      "description": "registerStepTwoSecondTopicDescription".tr()
     },
   ];
 

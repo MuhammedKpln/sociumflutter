@@ -10,6 +10,7 @@ import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/theme/toast.dart';
 import 'package:scflutter/utils/router.gr.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../components/Scaffold.dart';
 
@@ -53,9 +54,8 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
   }
 
   onError(OperationException? error) {
-    context.toast.showToast(
-        "Lütfen e-posta adresinizi ve şifrenizi kontrol ediniz.",
-        toastType: ToastType.Error);
+    context.toast
+        .showToast("wrongLoginDetails".tr(), toastType: ToastType.Error);
   }
 
   @override
@@ -67,7 +67,7 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
           child: Column(
             children: [
               GradientText(
-                "Giriş yap",
+                "onboardBottomSheetTitleText".tr(),
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: Theme.of(context).textTheme.headline5?.fontSize),
@@ -83,7 +83,7 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
                       keyboardType: TextInputType.emailAddress,
                       controller: emailController,
                       decoration: InputDecoration(
-                        labelText: "E-posta",
+                        labelText: "loginEmailTextFieldPlaceholder".tr(),
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -105,7 +105,7 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
                         controller: passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
-                          labelText: "Şifre",
+                          labelText: "loginPasswordTextFieldPlaceholder".tr(),
                           floatingLabelBehavior: FloatingLabelBehavior.never,
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -142,7 +142,7 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
                     }
 
                     return RoundedButton(
-                      child: const Text("Giriş yap"),
+                      child: const Text("onboardLoginBtnText").tr(),
                       onPressed: () => runMutation(LoginArguments(
                               email: emailController.text,
                               password: passwordController.text)

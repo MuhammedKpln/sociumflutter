@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
-import 'package:scflutter/extensions/i18n.dart';
 import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/storage/auth.storage.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/router.gr.dart';
+import 'package:easy_localization/easy_localization.dart' as es;
 
 class OnboardScreenPage extends ConsumerStatefulWidget {
   const OnboardScreenPage({Key? key}) : super(key: key);
@@ -75,8 +75,9 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(context.locale!.onboardBottomSheetTitleText,
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text("onboardBottomSheetTitleText",
+                      style: Theme.of(context).textTheme.titleMedium)
+                  .tr(),
               RoundedButton(
                 onPressed: () => null,
                 icon: SvgPicture.asset(
@@ -88,8 +89,9 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                     backgroundColor:
                         MaterialStateProperty.all(const Color(0xffDB4437))),
                 child: Text(!registering
-                    ? context.locale!.onboardLoginWithGoogleBtnTxt
-                    : context.locale!.onboardRegisterWithGoogleBtnTxt),
+                        ? "onboardLoginWithGoogleBtnTxt"
+                        : "onboardRegisterWithGoogleBtnTxt")
+                    .tr(),
               ),
               RoundedButton(
                 onPressed: () => null,
@@ -98,8 +100,9 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                     foregroundColor: MaterialStateProperty.all(Colors.black),
                     backgroundColor: MaterialStateProperty.all(Colors.white)),
                 child: Text(!registering
-                    ? context.locale!.onboardLoginWithAppleBtnTxt
-                    : context.locale!.onboardRegisterWithAppleBtnTxt),
+                        ? "onboardLoginWithAppleBtnTxt"
+                        : "onboardRegisterWithAppleBtnTxt")
+                    .tr(),
               ),
               RoundedButton(
                 icon: const Icon(Icons.mail_outline),
@@ -109,8 +112,9 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black)),
                 child: Text(!registering
-                    ? context.locale!.onboardLoginWithEmailBtnTxt
-                    : context.locale!.onboardRegisterWithEmailBtnTxt),
+                        ? "onboardLoginWithEmailBtnTxt"
+                        : "onboardRegisterWithEmailBtnTxt")
+                    .tr(),
               )
             ],
           ),
@@ -156,7 +160,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                   width: double.infinity,
                   child: RoundedButton(
                       onPressed: onPressRegister,
-                      child: Text(context.locale!.onboardStartBtnText)),
+                      child: const Text("onboardStartBtnText").tr()),
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -169,14 +173,14 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                           side: MaterialStateProperty.all(
                               const BorderSide(color: Colors.white))),
                       onPressed: onPressLogin,
-                      child: Text(context.locale!.onboardLoginBtnText)),
+                      child: const Text("onboardLoginBtnText").tr()),
                 ),
               ],
             ),
-            Text(
-              context.locale!.onboardPrivacyPolicyText,
-              style: const TextStyle(color: Colors.grey, fontSize: 13),
-            )
+            const Text(
+              "onboardPrivacyPolicyText",
+              style: TextStyle(color: Colors.grey, fontSize: 13),
+            ).tr()
           ],
         ));
   }
@@ -185,17 +189,17 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
     return CarouselSlider.builder(
       itemBuilder: (context, int index, int pageViewIndex) {
         String image = "assets/meet.svg";
-        String description = context.locale!.onboardSliderFirst;
+        String description = "onboardSliderFirst".tr();
 
         switch (index) {
           case 1:
             image = "assets/explore.svg";
-            description = context.locale!.onboardSliderSecond;
+            description = "onboardSliderSecond".tr();
             break;
 
           case 2:
             image = "assets/touch.svg";
-            description = context.locale!.onboardSliderThird;
+            description = "onboardSliderThird".tr();
         }
 
         return (Column(

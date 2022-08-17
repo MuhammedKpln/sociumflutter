@@ -12,9 +12,10 @@ import 'package:scflutter/state/auth.dart';
 import 'package:scflutter/storage/auth.storage.dart';
 import 'package:scflutter/theme/theme.dart';
 import 'package:scflutter/utils/router.gr.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'firebase_options.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'generated/codegen_loader.g.dart';
 
 class AuthToken extends ContextEntry {
   final String token;
@@ -28,6 +29,7 @@ class AuthToken extends ContextEntry {
 final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await initHiveForFlutter();
 
   if (defaultTargetPlatform != TargetPlatform.macOS && !kDebugMode) {
@@ -86,8 +88,14 @@ Future<void> main() async {
     ),
   );
 
-  runApp(GraphQLProvider(
-      client: client, child: ProviderScope(child: SociumApplication())));
+  runApp(EasyLocalization(
+    path: "assets/i18n",
+    supportedLocales: const [Locale('en'), Locale('tr')],
+    assetLoader: const CodegenLoader(),
+    fallbackLocale: const Locale('en'),
+    child: GraphQLProvider(
+        client: client, child: ProviderScope(child: SociumApplication())),
+  ));
 }
 
 class SociumApplication extends ConsumerWidget {
@@ -96,18 +104,17 @@ class SociumApplication extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      locale: const Locale('tr', 'TR'),
-      localizationsDelegates: const [
-        ...AppLocalizations.localizationsDelegates,
+      localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        ...context.localizationDelegates,
       ],
       title: 'Flutter Demo',
       scaffoldMessengerKey: scaffoldKey,
       theme: SociumTheme(context),
       routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),
-      supportedLocales: AppLocalizations.supportedLocales,
+      supportedLocales: context.supportedLocales,
     );
   }
 }

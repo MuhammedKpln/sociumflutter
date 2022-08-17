@@ -11,5 +11,17 @@
   "onboardLoginWithEmailBtnTxt": "E-posta ile giriş yap",
   "onboardRegisterWithGoogleBtnTxt": "Google ile kayıt ol",
   "onboardRegisterWithAppleBtnTxt": "Apple ile kayıt ol",
-  "onboardRegisterWithEmailBtnTxt": "E-posta ile kayıt ol"
+  "onboardRegisterWithEmailBtnTxt": "E-posta ile kayıt ol",
+  "loginEmailTextFieldPlaceholder": "E-posta",
+  "loginPasswordTextFieldPlaceholder": "Şifre",
+  "registerWelcomeText": "Socium'a hoşgeldiniz! Hadi başlıyalım",
+  "registerWelcomeTopicOne": "İlgi alanlarınızı seçin",
+  "registerContinueBtnTxt": "Devam et",
+  "registerStepTwoTitle": "Nasıl eşleşmek istersiniz?",
+  "registerStepTwoFirstTopicTitle": "Sohbet",
+  "registerStepTwoFirstTopicDescription": "İnsanlarla sadece sohbet yapmak için eşleşin.",
+  "registerStepTwoSecondTopicTitle": "Sesli sohbet",
+  "registerStepTwoSecondTopicDescription": "Ses yoluyla gerçek zamanlı konuşmak için eşleşin.",
+  "registerStepTwoPopularBadge": "Popüler",
+  "wrongLoginDetails": "Lütfen e-posta adresinizi ve şifrenizi kontrol ediniz."
 }
