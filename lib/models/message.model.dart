@@ -8,12 +8,12 @@ part 'message.model.g.dart';
 @freezed
 class Message with _$Message {
   factory Message({
-    required String id,
+    required int id,
     required String text,
     required bool seen,
     required String user,
     required String receiver,
-    required String room,
+    required int room,
     required UserModel user_data,
     required UserModel receiver_data,
     required Room room_data,

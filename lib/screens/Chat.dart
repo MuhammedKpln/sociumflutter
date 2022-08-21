@@ -7,13 +7,12 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chatUi;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:nil/nil.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
-import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/main.dart';
 import 'package:scflutter/models/socket/send_message_arguments.dart';
+import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/CallConnectInformation.dart';
 import 'package:scflutter/services/webrtc.service.dart';
 import 'package:scflutter/services/websocket.events.dart';
@@ -60,6 +59,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   bool video = false;
   bool peerConnectionInitialized = false;
   double floatinActionButtonScale = 1;
+  final ChatRepository _chatRepository = ChatRepository();
 
   late PeerConnection peerConnection;
   late Timer? floatinActionButtonAnimatorTimer;
@@ -71,7 +71,20 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
 
     if (widget.comingFromMatchedPage) {
       initCallFeature();
+    } else {
+      fetchChatMessages();
     }
+  }
+
+  fetchChatMessages() async {
+    final remoteMessagesQuery =
+        await _chatRepository.fetchChatMessages(roomId: widget.room?.id ?? 0);
+
+    final parsedMessages = mergeChatFromQuery(remoteMessagesQuery);
+
+    setState(() {
+      messages.addAll(parsedMessages);
+    });
   }
 
   onPressHangup() async {
@@ -328,23 +341,20 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
         receiver: widget.connectedUser!));
   }
 
-  void mergeChatFromQuery(Map<String, dynamic> results) {
-    final data = FetchRoomMessage$Query.fromJson(results);
+  List<types.Message> mergeChatFromQuery(List<Message> results) {
     final List<types.Message> mappedData = [];
 
-    for (var message in data.messagesFromRoom) {
+    for (var message in results) {
       mappedData.add(types.TextMessage(
           id: message.id.toString(),
           author: types.User(
-              id: message.sender.id.toString(),
-              imageUrl: generateAvatarUrl(message.sender.avatar!),
-              firstName: message.sender.username),
-          text: message.message));
+              id: message.user.toString(),
+              imageUrl: generateAvatarUrl(message.user_data.avatar ?? ""),
+              firstName: message.user_data.username),
+          text: message.text));
     }
 
-    setState(() {
-      messages.addAll(mappedData);
-    });
+    return mappedData;
   }
 
   makeCall() async {
@@ -501,11 +511,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.comingFromMatchedPage) {
-      return renderChat();
-    }
-
-    return nil;
+    return renderChat();
     // FIXME:e
 
     // final variables = FetchRoomMessageArguments(
@@ -545,21 +551,25 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       appBar: renderAppBar(),
       floatingActionButton:
           connectedToCall.value ? renderFloatingButton() : null,
-      body: chatUi.Chat(
-        l10n: const chatUi.ChatL10nTr(),
-        showUserNames: true,
-        onSendPressed: onSendMessage,
-        theme: const chatUi.DarkChatTheme(
-            backgroundColor: ColorPalette.background,
-            primaryColor: ColorPalette.primary,
-            secondaryColor: ColorPalette.surface,
-            inputBackgroundColor: ColorPalette.surface),
-        user: types.User(
-            id: localUser?.id.toString() ?? "qwel",
-            firstName: widget.connectedUser?.username ?? ""),
-        messages: messages,
-        groupMessagesThreshold: 1,
-        emojiEnlargementBehavior: chatUi.EmojiEnlargementBehavior.multi,
+      body: StreamBuilder(
+        builder: (context, snapshot) {
+          return chatUi.Chat(
+            l10n: const chatUi.ChatL10nTr(),
+            showUserNames: true,
+            onSendPressed: onSendMessage,
+            theme: const chatUi.DarkChatTheme(
+                backgroundColor: ColorPalette.background,
+                primaryColor: ColorPalette.primary,
+                secondaryColor: ColorPalette.surface,
+                inputBackgroundColor: ColorPalette.surface),
+            user: types.User(
+                id: localUser?.id.toString() ?? "qwel",
+                firstName: widget.connectedUser?.username ?? ""),
+            messages: messages,
+            groupMessagesThreshold: 1,
+            emojiEnlargementBehavior: chatUi.EmojiEnlargementBehavior.multi,
+          );
+        },
       ),
     );
   }

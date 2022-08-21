@@ -1,4 +1,5 @@
 import 'package:scflutter/models/chat_rooms.dart';
+import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/utils/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -21,12 +22,32 @@ class ChatRepository with LoggerMixin {
         .or("user.eq.$id,receiver.eq.$id")
         .execute();
 
-    print(data.data);
-
     if (data.hasError) {
       logError(data.error);
     }
 
     return List<ChatRooms>.from(data.data.map((x) => ChatRooms.fromJson(x)));
+  }
+
+  Future<List<Message>> fetchChatMessages({required int roomId}) async {
+    const query = """*,
+                    user_data:user(*),
+                    receiver_data:receiver(*),
+                    room_data:room(*)
+                   """;
+
+    final request = await _query.select(query).eq("room", roomId).execute();
+
+    if (request.hasError) {
+      logError(request.error);
+    }
+
+    print(request.data);
+
+    return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
+  }
+
+  listenMessages(Function(SupabaseRealtimePayload payload) callback) {
+    return _supabaseClient.from("messages").stream(["id"]);
   }
 }
