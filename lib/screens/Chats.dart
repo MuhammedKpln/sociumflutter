@@ -12,6 +12,8 @@ import 'package:scflutter/utils/palette.dart';
 import '../components/Avatar.dart';
 import '../components/Loading.dart';
 import '../components/Scaffold.dart';
+import '../models/room.dart';
+import '../models/user.dart';
 import '../services/websocket.events.dart';
 import '../utils/router.gr.dart';
 
@@ -79,20 +81,23 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
             final message = messages[index];
 
             String username = "";
+            late UserModel user;
 
             if (message.user_data.id != localUser?.id) {
               username = message.user_data.username;
+              user = message.user_data;
             }
 
             if (message.receiver_data.id != localUser?.id) {
               username = message.receiver_data.username;
+              user = message.user_data;
             }
 
             return InkWell(
               onTap: () => context.router.navigate(ChatScreenRoute(
                   comingFromMatchedPage: false,
                   connectedUser: user,
-                  room: Room.fromJson(message.room.toJson()),
+                  room: Room.fromJson(message.room_data.toJson()),
                   socketService: socketService)),
               child: Column(
                 children: [

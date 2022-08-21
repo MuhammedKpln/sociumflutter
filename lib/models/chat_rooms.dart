@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:scflutter/models/room.dart';
 
 import 'package:scflutter/models/user.dart';
 
@@ -15,8 +16,9 @@ abstract class ChatRooms with _$ChatRooms {
     required String user,
     required String receiver,
     required int room,
-    required User receiver_data,
-    required User user_data,
+    required UserModel receiver_data,
+    required UserModel user_data,
+    required Room room_data,
   }) = _ChatRooms;
 
   factory ChatRooms.fromJson(Map<String, dynamic> json) =>

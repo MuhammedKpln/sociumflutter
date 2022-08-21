@@ -9,8 +9,8 @@ abstract class SendMessageArguments with _$SendMessageArguments {
   const factory SendMessageArguments({
     required String room,
     required String text,
-    required User user,
-    required User receiver,
+    required UserModel user,
+    required UserModel receiver,
     int? repliedToId,
   }) = _SendMessageArguments;
 

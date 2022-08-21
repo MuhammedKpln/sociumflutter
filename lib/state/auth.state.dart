@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
+import 'package:scflutter/repositories/auth.repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/user.dart';
 
@@ -12,7 +13,8 @@ abstract class AuthStateModel with _$AuthStateModel {
   const factory AuthStateModel(
       {String? accessToken,
       String? refreshToken,
-      User? user}) = _AuthStateModel;
+      User? rawUser,
+      UserModel? user}) = _AuthStateModel;
 
   factory AuthStateModel.fromJson(Map<String, dynamic> json) =>
       _$AuthStateModelFromJson(json);
@@ -27,10 +29,7 @@ class UserModelNotifier extends StateNotifier<AuthStateModel> {
   }
 
   clearUser() async {
-    await
-
-        /// A singleton that is used to access the Supabase client.
-        Supabase.instance.client.auth.signOut();
+    await AuthRepository().signOut();
     state = const AuthStateModel();
   }
 }

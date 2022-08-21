@@ -11,7 +11,8 @@ class ChatRepository with LoggerMixin {
   Future<List<ChatRooms>> fetchAllChatRooms({required String id}) async {
     const query = """*,
                     user_data:user(*),
-                    receiver_data:receiver(*)
+                    receiver_data:receiver(*),
+                    room_data:room(*)
                    """;
 
     var data = await _supabaseClient
@@ -19,6 +20,8 @@ class ChatRepository with LoggerMixin {
         .select(query)
         .or("user.eq.$id,receiver.eq.$id")
         .execute();
+
+    print(data.data);
 
     if (data.hasError) {
       logError(data.error);

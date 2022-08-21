@@ -14,7 +14,6 @@ import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/main.dart';
 import 'package:scflutter/models/socket/send_message_arguments.dart';
-import 'package:scflutter/models/user.dart';
 import 'package:scflutter/screens/Chat/CallConnectInformation.dart';
 import 'package:scflutter/services/webrtc.service.dart';
 import 'package:scflutter/services/websocket.events.dart';
@@ -26,6 +25,7 @@ import 'package:scflutter/utils/palette.dart';
 import '../components/Scaffold.dart';
 import '../models/message.model.dart';
 import '../models/room.dart';
+import '../models/user.dart';
 
 ValueNotifier<bool> chatMicMuted = ValueNotifier<bool>(false);
 ValueNotifier<bool> chatCameraOpened = ValueNotifier<bool>(false);
@@ -43,7 +43,7 @@ class ChatScreenPage extends ConsumerStatefulWidget {
       : super(key: key);
 
   bool comingFromMatchedPage = true;
-  User? connectedUser;
+  UserModel? connectedUser;
   Room? room;
   String? userUUID;
   SocketService socketService;
@@ -556,7 +556,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
             inputBackgroundColor: ColorPalette.surface),
         user: types.User(
             id: localUser?.id.toString() ?? "qwel",
-            firstName: widget.connectedUser?.userMetadata["username"] ?? ""),
+            firstName: widget.connectedUser?.username ?? ""),
         messages: messages,
         groupMessagesThreshold: 1,
         emojiEnlargementBehavior: chatUi.EmojiEnlargementBehavior.multi,
@@ -582,12 +582,12 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Avatar(
           avatarSize: AvatarSize.small,
-          username: widget.connectedUser?.userMetadata["username"]!,
+          username: widget.connectedUser!.username,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Text(
-            widget.connectedUser?.userMetadata["username"] ?? "",
+            widget.connectedUser?.username ?? "",
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),

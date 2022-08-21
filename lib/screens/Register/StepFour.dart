@@ -5,10 +5,10 @@ import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
+import 'package:scflutter/models/login_response.model.dart';
 import 'package:scflutter/repositories/auth.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/router.gr.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/Scaffold.dart';
 import '../../theme/toast.dart';
@@ -44,7 +44,6 @@ class RegisterScreenStepFourState
 
   register() async {
     if (_validateInput()) {
-      print(widget.username);
       final signUp = _authRepository
           .signUp(
               email: widget.email,
@@ -71,11 +70,13 @@ class RegisterScreenStepFourState
     return null;
   }
 
-  onSuccessfullLoginAttempt(GotrueSessionResponse user) {
+  onSuccessfullLoginAttempt(LoginResponse response) {
     final model = AuthStateModel(
-        accessToken: user.data?.accessToken,
-        refreshToken: user.data?.refreshToken,
-        user: user.user);
+        accessToken: response.accessToken,
+        rawUser: response.rawUser,
+        user: response.user,
+        refreshToken: response.refreshToken);
+
     ref.read(userProvider.notifier).setUser(model);
     context.router.replaceAll([const HomeScreenRoute()]);
   }

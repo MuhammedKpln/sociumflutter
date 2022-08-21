@@ -42,7 +42,7 @@ class _HomeScreenPageState extends ConsumerState<HomeScreenPage> {
   @override
   Widget build(BuildContext context) {
     final userNotifier = ref.watch(userProvider);
-    final username = userNotifier.user?.userMetadata["username"];
+    final username = userNotifier.user!.username;
 
     return Scaffold(
         body: AutoTabsScaffold(

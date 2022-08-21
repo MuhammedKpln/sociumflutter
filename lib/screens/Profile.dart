@@ -7,7 +7,7 @@ import 'package:scflutter/components/Loading.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
-import 'package:scflutter/models/user.dart' as UserModel;
+import 'package:scflutter/models/user.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,7 +26,7 @@ class ProfilePage extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfilePage> with LoadingMixin {
   final client = Supabase.instance.client;
-  late UserModel.User user;
+  late UserModel user;
 
   void onPressSettings() {
     context.router.navigate(const ProfileSettingsScreenRoute());
@@ -45,7 +45,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage> with LoadingMixin {
         .execute();
 
     if (!fetch.hasError) {
-      final parsedUser = UserModel.User.fromJson(fetch.data);
+      final parsedUser = UserModel.fromJson(fetch.data);
 
       setState(() {
         isLoading = false;

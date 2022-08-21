@@ -6,7 +6,7 @@ part 'room.g.dart';
 @freezed
 class Room with _$Room {
   factory Room({
-    required String id,
+    required int id,
     required String uuid,
     required String expireDate,
     required String created_at,

@@ -8,7 +8,7 @@ part 'client_paired.g.dart';
 abstract class ClientPaired with _$ClientPaired {
   const factory ClientPaired({
     required String room,
-    required User user,
+    required UserModel user,
     required String uuid,
   }) = _ClientPaired;
 

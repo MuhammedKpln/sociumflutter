@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
+import 'package:scflutter/models/user.dart';
+import 'package:scflutter/repositories/auth.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/router.gr.dart';
@@ -21,6 +23,7 @@ class OnboardScreenPage extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
   int carouselIndex = 0;
   SupabaseClient supabase = Supabase.instance.client;
+  final AuthRepository _authRepository = AuthRepository();
 
   @override
   void initState() {
@@ -34,18 +37,22 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
     super.dispose();
   }
 
-  _updateState() {
+  _updateState(UserModel user) {
     final model = AuthStateModel(
-      accessToken: supabase.auth.currentSession?.accessToken,
-      refreshToken: supabase.auth.currentSession?.refreshToken,
-      user: supabase.auth.currentUser,
-    );
+        accessToken: supabase.auth.currentSession?.accessToken,
+        refreshToken: supabase.auth.currentSession?.refreshToken,
+        rawUser: supabase.auth.currentUser,
+        user: user);
     ref.read(userProvider.notifier).setUser(model);
   }
 
-  _login() {
-    if (supabase.auth.currentUser != null) {
-      _updateState();
+  _login() async {
+    final currentUser = supabase.auth.currentUser;
+    if (currentUser != null) {
+      final user =
+          await _authRepository.getUserProfile(userUuid: currentUser.id);
+
+      _updateState(user);
       context.router.replace(const HomeScreenRoute());
     }
   }

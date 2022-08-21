@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
+import 'package:scflutter/repositories/auth.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scflutter/utils/router.gr.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show Supabase, GotrueError;
 
 import '../components/Scaffold.dart';
 
@@ -20,6 +22,7 @@ class LoginScreenPage extends ConsumerStatefulWidget {
 }
 
 class _LoginState extends ConsumerState<LoginScreenPage> {
+  final AuthRepository _authRepository = AuthRepository();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _client = Supabase.instance.client;
@@ -37,17 +40,15 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
   }
 
   login() async {
-    final signIn = await _client.auth
-        .signIn(email: emailController.text, password: passwordController.text);
-
-    if (signIn.error != null) {
-      onError(signIn.error);
-    }
+    final signIn = await _authRepository
+        .signIn(email: emailController.text, password: passwordController.text)
+        .catchError(onError);
 
     final userModel = AuthStateModel(
-        accessToken: signIn.data?.accessToken,
-        user: signIn.data?.user,
-        refreshToken: signIn.data?.refreshToken);
+        accessToken: signIn.accessToken,
+        rawUser: signIn.rawUser,
+        user: signIn.user,
+        refreshToken: signIn.refreshToken);
 
     ref.read(userProvider.notifier).setUser(userModel);
 
