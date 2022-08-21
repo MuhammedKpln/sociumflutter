@@ -1,21 +1,19 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/Match/Communities.dart';
-import 'package:scflutter/components/Match/MatchFound.dart';
 import 'package:scflutter/components/Scaffold.dart';
-import 'package:scflutter/extensions/toastExtension.dart';
-import 'package:scflutter/models/client_paired.dart';
-import 'package:scflutter/models/message.dart';
-import 'package:scflutter/services/websocket.events.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/theme/animations.dart';
-import 'package:scflutter/theme/toast.dart';
 import 'package:scflutter/utils/palette.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../state/auth.state.dart';
 
 class MatchScreenPage extends ConsumerStatefulWidget {
   const MatchScreenPage({Key? key}) : super(key: key);
@@ -25,43 +23,46 @@ class MatchScreenPage extends ConsumerStatefulWidget {
 }
 
 class _MatchScreenState extends ConsumerState<MatchScreenPage> {
-  final sc = SocketService();
+  final client = Supabase.instance.client;
   late OverlayEntry overlayEntry;
   bool searchingForOpponent = false;
   int tabIndex = 0;
 
   @override
   void initState() {
+    ChatRepository()
+        .fetchAllChatRooms(id: "736544f8-8d3c-4d9f-bfb6-1606e0e2c882");
+    // client.cha
     super.initState();
-    sc.onClientPaired((data) async {
-      ClientPaired formattedData = ClientPaired.fromJson(data);
+    // sc.onClientPaired((data) async {
+    //   ClientPaired formattedData = ClientPaired.fromJson(data);
 
-      await showDialog(
-          context: context,
-          barrierColor: const Color(0x00ffffff),
-          barrierDismissible: false,
-          builder: (context) => MatchFound(
-                room: Room(
-                    roomAdress: formattedData.room,
-                    id: 0,
-                    created_at: DateTime.now(),
-                    expireDate: DateTime.now(),
-                    updated_at: DateTime.now()),
-                userUUID: formattedData.uuid,
-                user: formattedData.user,
-                socketService: sc,
-              ));
-      setState(() {
-        searchingForOpponent = false;
-      });
-    });
+    //   await showDialog(
+    //       context: context,
+    //       barrierColor: const Color(0x00ffffff),
+    //       barrierDismissible: false,
+    //       builder: (context) => MatchFound(
+    //             room: Room(
+    //                 roomAdress: formattedData.room,
+    //                 id: 0,
+    //                 created_at: DateTime.now(),
+    //                 expireDate: DateTime.now(),
+    //                 updated_at: DateTime.now()),
+    //             userUUID: formattedData.uuid,
+    //             user: formattedData.user,
+    //             socketService: sc,
+    //           ));
+    //   setState(() {
+    //     searchingForOpponent = false;
+    //   });
+    // });
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    sc.socket.off(SocketListenerEvents.CLIENT_PAIRED.path);
+    // sc.socket.off(SocketListenerEvents.CLIENT_PAIRED.path);
   }
 
   void onCancel() {
@@ -69,19 +70,20 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   }
 
   void joinQueue() {
-    context.toast.showToast("Eşleşme sırasına katıldınız!",
-        toastType: ToastType.Success);
+    //TODO: IMPLEMENT SOCKET WITH SUPABASE
+    // context.toast
+    //     .showToast("matchScreenJoinedQueue".tr(), toastType: ToastType.Success);
 
-    final notifier = ref.read(userProvider);
-    sc.joinQueue(notifier.user!);
+    // final notifier = ref.read(userProvider);
+    // sc.joinQueue(notifier.user!);
 
-    setState(() {
-      searchingForOpponent = true;
-    });
+    // setState(() {
+    //   searchingForOpponent = true;
+    // });
   }
 
   void leaveQueue() {
-    sc.leaveQueue();
+    // sc.leaveQueue();
 
     setState(() {
       searchingForOpponent = false;
@@ -152,18 +154,18 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
         children: [
           Column(
             children: [
-              GradientText("",
+              GradientText("matchScreenTitle".tr(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize:
                           Theme.of(context).textTheme.titleLarge?.fontSize)),
               Text(
-                "Yeni insanlarla eşleşmek için, ara butonuna tıklayın!",
+                "matchScreenDescription",
                 style: Theme.of(context)
                     .textTheme
                     .labelLarge
                     ?.apply(color: Colors.grey.shade400),
-              ),
+              ).tr(),
             ],
           ),
           AnimatedCrossFade(

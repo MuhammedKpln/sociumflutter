@@ -1,10 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:date_format/date_format.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/models/profile_settings_page.model.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/router.gr.dart' as router;
 
 import '../../components/Scaffold.dart';
@@ -30,19 +29,18 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
       {
         "label": "Biyografi",
         "screen": const router.BioSettingsRoute(),
-        "value": user?.bio
+        "value": "#FIXME: SELAM"
       },
       {
         "label": "Doğum tarihi",
         "screen": const router.BirthdaySettingsRoute(),
-        "value": formatDate(
-            user?.birthday ?? DateTime.now(), [dd, ' ', MM, ' ', yyyy],
-            locale: const TurkishDateLocale())
+        "value": "#FIXME: SELAM"
       },
       {
         "label": "Gelen aramaları engelle",
         "screen": const router.BlockIncomingCallsScreenRoute(),
-        "value": user!.blockIncomingCalls! ? "Engelli" : "İzin verilmiş"
+        "value":
+            "#FIXME: SELAM" //user!.blockIncomingCalls! ? "Engelli" : "İzin verilmiş"
       },
     ];
 

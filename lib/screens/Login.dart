@@ -1,16 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
-import 'package:scflutter/graphql/graphql_api.graphql.dart';
-import 'package:scflutter/models/user_model.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/toast.dart';
-import 'package:scflutter/utils/router.gr.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:scflutter/utils/router.gr.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../components/Scaffold.dart';
 
@@ -24,38 +22,36 @@ class LoginScreenPage extends ConsumerStatefulWidget {
 class _LoginState extends ConsumerState<LoginScreenPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _client = Supabase.instance.client;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  onPressLogin(RunMutation runMutation, QueryResult<Object?>? result) {
-    runMutation({
-      "email": emailController.text,
-      "password": passwordController.text,
-    });
-  }
-
-  onCompleted(Map<String, dynamic>? result) async {
-    if (result != null) {
-      final data = Login$Mutation.fromJson(result);
-      final currentUser = User.fromJson(data.login.user.toJson());
-      final authState = ref.read(userProvider.notifier);
-      final model = AuthStateModel(
-          refreshToken: data.login.refreshToken,
-          accessToken: data.login.accessToken,
-          user: currentUser);
-
-      await authState.setUser(model);
-
-      AutoRouter.of(context).replaceAll([const HomeScreenRoute()]);
+  onError(GotrueError? error) {
+    if (error?.message == "Email not confirmed") {
+      context.toast
+          .showToast("Email not confirmed", toastType: ToastType.Error);
     }
-  }
 
-  onError(OperationException? error) {
     context.toast
         .showToast("wrongLoginDetails".tr(), toastType: ToastType.Error);
+
+    throw Exception(error);
+  }
+
+  login() async {
+    final signIn = await _client.auth
+        .signIn(email: emailController.text, password: passwordController.text);
+
+    if (signIn.error != null) {
+      onError(signIn.error);
+    }
+
+    final userModel = AuthStateModel(
+        accessToken: signIn.data?.accessToken,
+        user: signIn.data?.user,
+        refreshToken: signIn.data?.refreshToken);
+
+    ref.read(userProvider.notifier).setUser(userModel);
+
+    context.router.replaceAll([const HomeScreenRoute()]);
   }
 
   @override
@@ -124,31 +120,10 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
                 ),
               ),
               const Spacer(),
-              Mutation(
-                  options: MutationOptions(
-                      document: LoginMutation(
-                              variables: LoginArguments(
-                                  email: emailController.text,
-                                  password: passwordController.text))
-                          .document,
-                      onCompleted: (result) => onCompleted(result),
-                      onError: (err) => onError(err)),
-                  builder: (runMutation, result) {
-                    if (result!.isLoading) {
-                      return RoundedButton(
-                        child: const CircularProgressIndicator.adaptive(),
-                        onPressed: () => null,
-                      );
-                    }
-
-                    return RoundedButton(
-                      child: const Text("onboardLoginBtnText").tr(),
-                      onPressed: () => runMutation(LoginArguments(
-                              email: emailController.text,
-                              password: passwordController.text)
-                          .toJson()),
-                    );
-                  }),
+              RoundedButton(
+                onPressed: login,
+                child: const Text("onboardLoginBtnText").tr(),
+              )
             ],
           )),
     );

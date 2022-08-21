@@ -7,7 +7,7 @@ import 'package:scflutter/config.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/main.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/state/auth.state.dart';
 
 import '../../components/RoundedButton.dart';
 import '../../components/Scaffold.dart';
@@ -34,8 +34,9 @@ class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage> {
       final userNotifer = ref.read(userProvider.notifier);
       final parsedData = EditProfile$Mutation.fromJson(data);
 
-      userNotifer
-          .setBirthday(parsedData.editProfile.birthday ?? DateTime.now());
+//#FIXME: SELAM
+      // userNotifer
+      //     .setBirthday(parsedData.editProfile.birthday ?? DateTime.now());
 
       scaffoldKey.currentState
           ?.showSnackBar(const SnackBar(content: Text("Başarılı! ")));

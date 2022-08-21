@@ -23,5 +23,11 @@
   "registerStepTwoSecondTopicTitle": "Voice chat",
   "registerStepTwoSecondTopicDescription": "Pair to speak in real time via voice.",
   "registerStepTwoPopularBadge": "Popular",
-  "wrongLoginDetails": "Please check your e-mail address and password."
+  "wrongLoginDetails": "Please check your e-mail address and password.",
+  "matchScreenTitle": "Meet new people",
+  "matchScreenDescription": "Click the search button to match new people!",
+  "matchScreenJoinedQueue": "You have joined the match queue!",
+  "matchScreenMatchFoundTitle": "There is a new match!",
+  "matchScreenMatchFoundSendMessageBtnTxt": "Send message",
+  "matchScreenMatchFoundCloseBtnTxt": "Close"
 }

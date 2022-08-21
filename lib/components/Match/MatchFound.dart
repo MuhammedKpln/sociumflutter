@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:scflutter/components/Avatar.dart';
@@ -55,9 +56,9 @@ class MatchFound extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Text(
-                    'Yeni bir eşleşme var!',
+                    'matchScreenMatchFoundTitle',
                     style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  ).tr(),
                 ),
                 Avatar(
                   username: user.username!,
@@ -78,11 +79,12 @@ class MatchFound extends StatelessWidget {
                 RoundedButton(
                   onPressed: sendMessage,
                   icon: const Icon(EvaIcons.messageCircleOutline, size: 20),
-                  child: const Text("Mesaj gönder"),
+                  child:
+                      const Text("matchScreenMatchFoundSendMessageBtnTxt").tr(),
                 ),
                 TextButton(
                     onPressed: () => AutoRouter.of(context).pop(),
-                    child: const Text("Kapat"))
+                    child: const Text("matchScreenMatchFoundCloseBtnTxt").tr())
               ],
             )
           ],

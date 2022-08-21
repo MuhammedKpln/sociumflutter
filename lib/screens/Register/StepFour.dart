@@ -1,14 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
-import 'package:scflutter/models/user_model.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/repositories/auth.repository.dart';
+import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/router.gr.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/Scaffold.dart';
 import '../../theme/toast.dart';
@@ -27,29 +27,31 @@ class RegisterScreenStepFourPage extends ConsumerStatefulWidget {
 
 class RegisterScreenStepFourState
     extends ConsumerState<RegisterScreenStepFourPage> {
+  final AuthRepository _authRepository = AuthRepository();
   final passwordController = TextEditingController();
   final passwordConfirmationController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _confirmationFormKey = GlobalKey<FormState>();
 
-  onPressNext(runMutation, QueryResult result, BuildContext context) {
+  bool _validateInput() {
     if (_formKey.currentState!.validate() &&
         _confirmationFormKey.currentState!.validate()) {
-      runMutation({
-        'email': widget.email,
-        'username': widget.username,
-        'password': passwordController.text,
-        'passwordConfirmation': passwordConfirmationController.text
-      });
+      return true;
+    }
 
-      if (result.exception != null) {
-        context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
-            toastType: ToastType.Error);
+    return false;
+  }
 
-        // Timer(Duration(milliseconds: 500), () {
-        //   AutoRouter.of(context).popUntilRoot();
-        // });
-      }
+  register() async {
+    if (_validateInput()) {
+      print(widget.username);
+      final signUp = _authRepository
+          .signUp(
+              email: widget.email,
+              password: passwordController.text,
+              username: widget.username)
+          .then((value) => onSuccessfullLoginAttempt(value))
+          .catchError((err) => onErrorLoginAttempt(err));
     }
   }
 
@@ -69,24 +71,17 @@ class RegisterScreenStepFourState
     return null;
   }
 
-  onSuccessfullLoginAttempt(Map<String, dynamic>? data) {
-    if (data != null) {
-      final serializedData = Register$Mutation.fromJson(data);
-      final userModel = Login$Mutation$Login$User.fromJson(
-          serializedData.register.user.toJson());
-
-      final currentUser = User.fromJson(userModel.toJson());
-
-      ref.watch(userProvider.notifier).setUser(AuthStateModel(
-          refreshToken: serializedData.register.refreshToken,
-          user: currentUser,
-          accessToken: serializedData.register.accessToken));
-
-      context.router.replaceAll([const HomeScreenRoute()]);
-    }
+  onSuccessfullLoginAttempt(GotrueSessionResponse user) {
+    final model = AuthStateModel(
+        accessToken: user.data?.accessToken,
+        refreshToken: user.data?.refreshToken,
+        user: user.user);
+    ref.read(userProvider.notifier).setUser(model);
+    context.router.replaceAll([const HomeScreenRoute()]);
   }
 
-  onErrorLoginAttempt(OperationException? error) {
+  onErrorLoginAttempt(Exception error) {
+    print(error);
     context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
         toastType: ToastType.Error);
   }
@@ -165,28 +160,13 @@ class RegisterScreenStepFourState
                   ),
                 ),
               ),
-              Mutation(
-                  options: MutationOptions(
-                    document:
-                        RegisterMutation(variables: registerArguments).document,
-                    onCompleted: (data) => onSuccessfullLoginAttempt(data),
-                    onError: (error) => onErrorLoginAttempt(error),
-                  ),
-                  builder: (runMutation, result) {
-                    return Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.all(30),
-                        child: RoundedButton(
-                            icon: result!.isLoading
-                                ? const CircularProgressIndicator()
-                                : null,
-                            child: const Text("Kayıt ol"),
-                            onPressed: () {
-                              if (!result.isLoading) {
-                                onPressNext(runMutation, result, context);
-                              }
-                            }));
-                  }),
+              Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.all(30),
+                  child: RoundedButton(
+                      icon: null,
+                      onPressed: register,
+                      child: const Text("Kayıt ol")))
             ],
           )),
     );

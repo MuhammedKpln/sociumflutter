@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:scflutter/models/user_model.dart';
+import 'package:scflutter/models/user.dart';
 
 part 'client_paired.freezed.dart';
 part 'client_paired.g.dart';

@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
-import 'package:scflutter/state/auth.dart';
-import 'package:scflutter/storage/auth.storage.dart';
+import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/router.gr.dart';
 import 'package:easy_localization/easy_localization.dart' as es;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OnboardScreenPage extends ConsumerStatefulWidget {
   const OnboardScreenPage({Key? key}) : super(key: key);
@@ -20,6 +20,7 @@ class OnboardScreenPage extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
   int carouselIndex = 0;
+  SupabaseClient supabase = Supabase.instance.client;
 
   @override
   void initState() {
@@ -28,21 +29,24 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
     _login();
   }
 
-  Future<void> _login() async {
-    final accessToken = await getAccessToken();
-    final refreshToken = await getRefreshToken();
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
-    if (accessToken != null) {
-      final user = await getUser();
+  _updateState() {
+    final model = AuthStateModel(
+      accessToken: supabase.auth.currentSession?.accessToken,
+      refreshToken: supabase.auth.currentSession?.refreshToken,
+      user: supabase.auth.currentUser,
+    );
+    ref.read(userProvider.notifier).setUser(model);
+  }
 
-      if (user != null) {
-        final model = AuthStateModel(
-            accessToken: accessToken, refreshToken: refreshToken, user: user);
-        final authState = ref.read(userProvider.notifier);
-        await authState.setUser(model);
-
-        context.router.replace(const HomeScreenRoute());
-      }
+  _login() {
+    if (supabase.auth.currentUser != null) {
+      _updateState();
+      context.router.replace(const HomeScreenRoute());
     }
   }
 
@@ -115,7 +119,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                         ? "onboardLoginWithEmailBtnTxt"
                         : "onboardRegisterWithEmailBtnTxt")
                     .tr(),
-              )
+              ),
             ],
           ),
         ));

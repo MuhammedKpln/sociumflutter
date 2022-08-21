@@ -6,7 +6,7 @@ import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/main.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/toast.dart';
 
 import '../../components/Scaffold.dart';
@@ -25,9 +25,10 @@ class _BioSettingsPageState extends ConsumerState<BioSettingsPage> {
   void initState() {
     super.initState();
 
-    final userBio = ref.read(userProvider).user?.bio;
+//#FIXME: SELAM
+    // final userBio = ref.read(userProvider).user?.bio;
 
-    textController.text = userBio ?? "";
+    // textController.text = userBio ?? "";
   }
 
   @override
@@ -48,7 +49,9 @@ class _BioSettingsPageState extends ConsumerState<BioSettingsPage> {
       final userNotifer = ref.read(userProvider.notifier);
       final parsedData = EditProfile$Mutation.fromJson(data);
 
-      userNotifer.setBio(parsedData.editProfile.bio ?? "");
+      //#FIXME: SELAM
+
+      // userNotifer.setBio(parsedData.editProfile.bio ?? "");
 
       scaffoldKey.currentState
           ?.showSnackBar(const SnackBar(content: Text("Başarılı! ")));

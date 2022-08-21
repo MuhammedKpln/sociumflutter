@@ -7,26 +7,25 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chatUi;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:nil/nil.dart';
 import 'package:scflutter/components/Avatar.dart';
-import 'package:scflutter/components/Loading.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/main.dart';
-import 'package:scflutter/models/message.dart';
 import 'package:scflutter/models/socket/send_message_arguments.dart';
-import 'package:scflutter/models/user_model.dart';
+import 'package:scflutter/models/user.dart';
 import 'package:scflutter/screens/Chat/CallConnectInformation.dart';
 import 'package:scflutter/services/webrtc.service.dart';
 import 'package:scflutter/services/websocket.events.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/avatar.dart';
 import 'package:scflutter/utils/palette.dart';
-import 'package:scflutter/utils/router.gr.dart';
 
 import '../components/Scaffold.dart';
+import '../models/message.model.dart';
+import '../models/room.dart';
 
 ValueNotifier<bool> chatMicMuted = ValueNotifier<bool>(false);
 ValueNotifier<bool> chatCameraOpened = ValueNotifier<bool>(false);
@@ -82,9 +81,10 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   navigateToCallManager() {
-    context.router.navigate(InCallManagerScreenRoute(
-        username: widget.connectedUser?.username ?? "null",
-        onPressHangup: onPressHangup));
+    //FIXME: hopp
+    // context.router.navigate(InCallManagerScreenRoute(
+    //     username: widget.connectedUser?.username ?? "null",
+    //     onPressHangup: onPressHangup));
   }
 
   void initCallFeature() async {
@@ -143,9 +143,10 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
         navigateToCallManager();
       }
 
-      if (context.router.isRouteActive(InCallManagerScreenRoute.name)) {
-        context.router.pop();
-      }
+      //FIXME: hopp
+      // if (context.router.isRouteActive(InCallManagerScreenRoute.name)) {
+      //   context.router.pop();
+      // }
     });
 
     widget.socketService.onAnswerMade((data) async {
@@ -231,7 +232,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   void coreInit() {
-    widget.socketService.joinRoom(widget.room!.roomAdress);
+    widget.socketService.joinRoom(widget.room!.uuid);
 
     widget.socketService.onMessageReceived((response) {
       Message message = response.message;
@@ -241,10 +242,10 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
             types.TextMessage(
                 id: message.id.toString(),
                 author: types.User(
-                    id: message.senderId.toString(),
-                    imageUrl: generateAvatarUrl(message.sender.avatar!),
-                    firstName: message.sender.username),
-                text: message.message));
+                    id: message.user.toString(),
+                    imageUrl: generateAvatarUrl(message.user_data.avatar!),
+                    firstName: message.user_data.username),
+                text: message.text));
       });
     });
 
@@ -258,10 +259,11 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
         return;
       }
 
-      context.router.navigate(CallComingRoute(
-          username: widget.connectedUser!.username!,
-          onAcceptCall: () => answerCall(offer, data.uuid),
-          onRejectCall: () => context.router.pop()));
+      //FIXME: hopp
+      // context.router.navigate(CallComingRoute(
+      //     username: widget.connectedUser!.username!,
+      //     onAcceptCall: () => answerCall(offer, data.uuid),
+      //     onRejectCall: () => context.router.pop()));
     });
   }
 
@@ -312,8 +314,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   }
 
   Future<void> leaveRoom() async {
-    await Future.value(
-        widget.socketService.leaveRoom(widget.room?.roomAdress ?? ""));
+    await Future.value(widget.socketService.leaveRoom(widget.room?.uuid ?? ""));
   }
 
   void onSendMessage(types.PartialText text) {
@@ -321,8 +322,8 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     final localUser = provider.user;
 
     widget.socketService.sendMessage(SendMessageArguments(
-        room: widget.room!.roomAdress,
-        message: text.text,
+        room: widget.room!.uuid,
+        text: text.text,
         user: localUser!,
         receiver: widget.connectedUser!));
   }
@@ -504,22 +505,25 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       return renderChat();
     }
 
-    final variables = FetchRoomMessageArguments(
-        roomId: widget.room!.id, offset: 0, limit: 15);
+    return nil;
+    // FIXME:e
 
-    return Query(
-        options: QueryOptions(
-            onComplete: (data) => mergeChatFromQuery(data),
-            document: FetchRoomMessageQuery(variables: variables).document,
-            variables: variables.toJson()),
-        builder: (QueryResult result,
-            {VoidCallback? refetch, FetchMore? fetchMore}) {
-          if (result.isLoading) {
-            return const Loading();
-          }
+    // final variables = FetchRoomMessageArguments(
+    //     roomId: widget.room!.id, offset: 0, limit: 15);
 
-          return renderChat();
-        });
+    // return Query(
+    //     options: QueryOptions(
+    //         onComplete: (data) => mergeChatFromQuery(data),
+    //         document: FetchRoomMessageQuery(variables: variables).document,
+    //         variables: variables.toJson()),
+    //     builder: (QueryResult result,
+    //         {VoidCallback? refetch, FetchMore? fetchMore}) {
+    //       if (result.isLoading) {
+    //         return const Loading();
+    //       }
+
+    //       return renderChat();
+    //     });
   }
 
   Widget renderFloatingButton() {
@@ -552,7 +556,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
             inputBackgroundColor: ColorPalette.surface),
         user: types.User(
             id: localUser?.id.toString() ?? "qwel",
-            firstName: widget.connectedUser?.username ?? ""),
+            firstName: widget.connectedUser?.userMetadata["username"] ?? ""),
         messages: messages,
         groupMessagesThreshold: 1,
         emojiEnlargementBehavior: chatUi.EmojiEnlargementBehavior.multi,
@@ -578,12 +582,12 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Avatar(
           avatarSize: AvatarSize.small,
-          username: widget.connectedUser!.username!,
+          username: widget.connectedUser?.userMetadata["username"]!,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Text(
-            widget.connectedUser?.username ?? "",
+            widget.connectedUser?.userMetadata["username"] ?? "",
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),

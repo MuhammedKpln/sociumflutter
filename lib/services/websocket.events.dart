@@ -6,8 +6,8 @@ import 'package:scflutter/models/socket/answer_made_response.dart';
 import 'package:scflutter/models/socket/call_made_response.dart';
 import 'package:scflutter/models/socket/media_permissions_response.dart';
 import 'package:scflutter/models/socket/on_ice_candidate_response.dart';
-import 'package:scflutter/models/user_model.dart';
 import 'package:scflutter/services/websocket.service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/socket/message_received_response.dart';
 import '../models/socket/send_message_arguments.dart';

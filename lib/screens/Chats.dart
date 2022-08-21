@@ -2,18 +2,18 @@ import 'package:auto_route/auto_route.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:scflutter/components/Avatar.dart';
-import 'package:scflutter/components/Loading.dart';
-import 'package:scflutter/graphql/graphql_api.dart';
-import 'package:scflutter/models/message.dart';
-import 'package:scflutter/models/user_model.dart';
-import 'package:scflutter/services/websocket.events.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/mixins/Loading.mixin.dart';
+import 'package:scflutter/models/chat_rooms.dart';
+import 'package:scflutter/repositories/chat.repository.dart';
+import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/palette.dart';
-import 'package:scflutter/utils/router.gr.dart';
 
+import '../components/Avatar.dart';
+import '../components/Loading.dart';
 import '../components/Scaffold.dart';
+import '../services/websocket.events.dart';
+import '../utils/router.gr.dart';
 
 class ChatsScreenPage extends ConsumerStatefulWidget {
   const ChatsScreenPage({Key? key}) : super(key: key);
@@ -22,21 +22,36 @@ class ChatsScreenPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _ChatsScreenState();
 }
 
-class _ChatsScreenState extends ConsumerState<ChatsScreenPage> {
+class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
+    with LoadingMixin {
   final PageController pageController =
       PageController(initialPage: 0, keepPage: true);
+  final ChatRepository _chatRepository = ChatRepository();
   num? currentIndex = 0;
-
+  List<ChatRooms> messages = [];
   SocketService socketService = SocketService();
 
   @override
   void initState() {
     super.initState();
 
+    fetchChatRooms();
+
     pageController.addListener(() {
       setState(() {
         currentIndex = pageController.page?.round();
       });
+    });
+  }
+
+  fetchChatRooms() async {
+    final userId = ref.read(userProvider).user?.id ?? "";
+
+    final data = await _chatRepository.fetchAllChatRooms(id: userId);
+
+    setState(() {
+      messages = data;
+      isLoading = false;
     });
   }
 
@@ -47,109 +62,91 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage> {
   }
 
   Widget pageOne() {
-    return Query(
-        options: QueryOptions(
-          document: FetchMessagesQuery().document,
-        ),
-        builder: (QueryResult result,
-            {VoidCallback? refetch, FetchMore? fetchMore}) {
-          if (result.isLoading) {
-            return const Loading();
-          }
+    if (isLoading) {
+      return const Loading();
+    }
 
-          if (result.data == null) {
-            return noDataExists();
-          }
+    if (messages.isEmpty) {
+      return noDataExists();
+    }
 
-          final messages = result.data?["messages"] as List;
-          if (messages.isEmpty) {
-            return noDataExists();
-          }
+    final localUser = ref.read(userProvider).user;
 
-          final data = FetchMessages$Query.fromJson(result.data!);
-          final localUser = ref.read(userProvider).user;
+    return RefreshIndicator(
+      onRefresh: () async => await fetchChatRooms(),
+      child: ListView.separated(
+          itemBuilder: ((context, index) {
+            final message = messages[index];
 
-          return RefreshIndicator(
-            onRefresh: () async => refetch!(),
-            child: ListView.separated(
-                itemBuilder: ((context, index) {
-                  final FetchMessages$Query$Messages message =
-                      data.messages[index];
+            String username = "";
 
-                  String username = "";
-                  User user = User.fromJson(message.sender.toJson());
+            if (message.user_data.id != localUser?.id) {
+              username = message.user_data.username;
+            }
 
-                  if (message.sender.id != localUser?.id) {
-                    username = message.sender.username;
-                    user = User.fromJson(message.sender.toJson());
-                  }
+            if (message.receiver_data.id != localUser?.id) {
+              username = message.receiver_data.username;
+            }
 
-                  if (message.receiver.id != localUser?.id) {
-                    username = message.receiver.username;
-                    user = User.fromJson(message.receiver.toJson());
-                  }
-
-                  return InkWell(
-                    onTap: () => AutoRouter.of(context).navigate(
-                        ChatScreenRoute(
-                            comingFromMatchedPage: false,
-                            connectedUser: user,
-                            room: Room.fromJson(message.room.toJson()),
-                            socketService: socketService)),
-                    child: Column(
-                      children: [
-                        Row(
+            return InkWell(
+              onTap: () => context.router.navigate(ChatScreenRoute(
+                  comingFromMatchedPage: false,
+                  connectedUser: user,
+                  room: Room.fromJson(message.room.toJson()),
+                  socketService: socketService)),
+              child: Column(
+                children: [
+                  RoundedButton(
+                      child: const Text("sea"),
+                      onPressed: () => fetchChatRooms()),
+                  Row(
+                    children: [
+                      Avatar(
+                        avatarSize: AvatarSize.mediumish,
+                        username: username,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Avatar(
-                              avatarSize: AvatarSize.mediumish,
-                              username: user.username!,
+                            Text(
+                              username,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              padding: const EdgeInsets.only(top: 5),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    username,
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
+                                  Avatar(
+                                      username: username,
+                                      avatarSize: AvatarSize.extraSmall),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 5),
-                                    child: Row(
-                                      children: [
-                                        Avatar(
-                                            username: user.username!,
-                                            avatarSize: AvatarSize.extraSmall),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5),
-                                          child: Text(
-                                            message.message,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2
-                                                ?.copyWith(color: Colors.grey),
-                                          ),
-                                        )
-                                      ],
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Text(
+                                      message.text,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2
+                                          ?.copyWith(color: Colors.grey),
                                     ),
                                   )
                                 ],
                               ),
-                            ),
+                            )
                           ],
                         ),
-                      ],
-                    ),
-                  );
-                }),
-                separatorBuilder: (context, index) => const Divider(),
-                itemCount: data.messages.length),
-          );
-        });
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
+          separatorBuilder: (context, index) => const Divider(),
+          itemCount: messages.length),
+    );
   }
 
   Widget pageTwo() {

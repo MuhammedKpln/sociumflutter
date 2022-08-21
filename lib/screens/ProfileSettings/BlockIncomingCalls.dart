@@ -5,7 +5,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/main.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/state/auth.state.dart';
 
 import '../../components/RoundedButton.dart';
 import '../../components/Scaffold.dart';
@@ -26,11 +26,11 @@ class _BlockIncomingCallsScreenPageState
   @override
   void initState() {
     super.initState();
-
-    setState(() {
-      blockIncomingCalls =
-          ref.read(userProvider).user?.blockIncomingCalls ?? false;
-    });
+//#FIXME: SELAM
+    // setState(() {
+    //   blockIncomingCalls =
+    //       ref.read(userProvider).user?.blockIncomingCalls ?? false;
+    // });
   }
 
   onError(OperationException? error) {
@@ -44,8 +44,9 @@ class _BlockIncomingCallsScreenPageState
       final userNotifer = ref.read(userProvider.notifier);
       final parsedData = EditProfile$Mutation.fromJson(data);
 
-      userNotifer.setBlockIncomingCalls(
-          parsedData.editProfile.blockIncomingCalls ?? false);
+//#FIXME: SELAM
+      // userNotifer.setBlockIncomingCalls(
+      //     parsedData.editProfile.blockIncomingCalls ?? false);
 
       scaffoldKey.currentState
           ?.showSnackBar(const SnackBar(content: Text("Başarılı! ")));
