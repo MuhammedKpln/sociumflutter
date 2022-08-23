@@ -40,9 +40,8 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
   }
 
   login() async {
-    final signIn = await _authRepository
-        .signIn(email: emailController.text, password: passwordController.text)
-        .catchError(onError);
+    final signIn = await _authRepository.signIn(
+        email: emailController.text, password: passwordController.text);
 
     final userModel = AuthStateModel(
         accessToken: signIn.accessToken,

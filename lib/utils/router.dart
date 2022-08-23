@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:scflutter/screens/ChatNew.dart';
 import 'package:scflutter/screens/Home.dart';
 import 'package:scflutter/screens/Login.dart';
 import 'package:scflutter/screens/Match.dart';
@@ -8,7 +9,6 @@ import 'package:scflutter/screens/Register/StepOne.dart';
 import 'package:scflutter/screens/Register/StepThree.dart';
 import 'package:scflutter/screens/Register/StepTwo.dart';
 
-import '../screens/Chat.dart';
 import '../screens/Chats.dart';
 import '../screens/Profile.dart';
 import '../screens/ProfileSettings/BirthdaySettings.dart';
@@ -31,8 +31,11 @@ import '../screens/ProfileSettings/bio_settings.dart';
       AutoRoute(page: ProfilePage),
       AutoRoute(page: ChatsScreenPage),
     ]),
+    // AutoRoute(
+    //   page: ChatScreenPage,
+    // ),
     AutoRoute(
-      page: ChatScreenPage,
+      page: ChatNew,
     ),
     // AutoRoute(page: MatchFound, fullscreenDialog: true),
     AutoRoute(page: ProfileSettingsScreenPage),

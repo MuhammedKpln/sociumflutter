@@ -11,7 +11,6 @@ import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/main.dart';
-import 'package:scflutter/models/socket/send_message_arguments.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/CallConnectInformation.dart';
 import 'package:scflutter/services/webrtc.service.dart';
@@ -19,12 +18,13 @@ import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/avatar.dart';
-import 'package:scflutter/utils/palette.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../components/Scaffold.dart';
 import '../models/message.model.dart';
 import '../models/room.dart';
 import '../models/user.dart';
+import '../utils/palette.dart';
 
 ValueNotifier<bool> chatMicMuted = ValueNotifier<bool>(false);
 ValueNotifier<bool> chatCameraOpened = ValueNotifier<bool>(false);
@@ -60,6 +60,7 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   bool peerConnectionInitialized = false;
   double floatinActionButtonScale = 1;
   final ChatRepository _chatRepository = ChatRepository();
+  late RealtimeSubscription _stream;
 
   late PeerConnection peerConnection;
   late Timer? floatinActionButtonAnimatorTimer;
@@ -72,6 +73,46 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     if (widget.comingFromMatchedPage) {
       initCallFeature();
     } else {
+      _stream = _chatRepository.listenMessages((payload) {
+        final user = ref.read(userProvider).user;
+        final userId = user?.id;
+        if (payload.eventType == "INSERT") {
+          //fixme: use sockets broo
+          late Message message;
+          // if (userId == payload.newRecord!["user"]) {
+          message = Message.fromJson({
+            ...payload.newRecord!,
+            "user_data": user?.toJson(),
+            "receiver_data": widget.connectedUser?.toJson(),
+            "room_data": widget.room?.toJson()
+          });
+          // }
+
+          setState(() {
+            messages.insert(
+                0,
+                types.TextMessage(
+                    id: message.id.toString(),
+                    author: types.User(
+                        id: message.user.toString(),
+                        imageUrl:
+                            generateAvatarUrl(message.user_data.avatar ?? ""),
+                        firstName: message.user_data.username),
+                    text: message.text));
+          });
+        }
+
+        if (payload.eventType == "DELETE") {
+          print(payload.oldRecord!["id"]);
+          setState(() {
+            messages.removeWhere(
+                (element) => element.id == payload.oldRecord!["id"]);
+          });
+        }
+      });
+
+      _stream.subscribe();
+
       fetchChatMessages();
     }
   }
@@ -187,37 +228,37 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       }
     });
 
-    peerConnection.connectionState.stream.listen((state) {
-      print(state);
-      switch (state) {
-        case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
-          connectedToCall.value = false;
-          break;
-        case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
-          connectedToCall.value = false;
-          break;
-        case RTCPeerConnectionState.RTCPeerConnectionStateConnecting:
-          connectedToCall.value = false;
-          break;
-        case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
-          connectedToCall.value = true;
-          break;
-        default:
-          connectedToCall.value = false;
-      }
-    });
+    // peerConnection.connectionState.stream.listen((state) {
+    //   print(state);
+    //   switch (state) {
+    //     case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
+    //       connectedToCall.value = false;
+    //       break;
+    //     case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
+    //       connectedToCall.value = false;
+    //       break;
+    //     case RTCPeerConnectionState.RTCPeerConnectionStateConnecting:
+    //       connectedToCall.value = false;
+    //       break;
+    //     case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
+    //       connectedToCall.value = true;
+    //       break;
+    //     default:
+    //       connectedToCall.value = false;
+    //   }
+    // });
 
-    peerConnection.events.onIceCandidate = (candidate) {
-      widget.socketService.addIceCandidate(candidate, widget.userUUID!);
-    };
+    // peerConnection.events.onIceCandidate = (candidate) {
+    //   widget.socketService.addIceCandidate(candidate, widget.userUUID!);
+    // };
 
-    peerConnection.events.onAddStream = ((stream) {
-      final videoTracksLength = stream.getVideoTracks().length;
+    // peerConnection.events.onAddStream = ((stream) {
+    //   final videoTracksLength = stream.getVideoTracks().length;
 
-      if (videoTracksLength > 0) {
-        remoteStream.value = stream;
-      }
-    });
+    //   if (videoTracksLength > 0) {
+    //     remoteStream.value = stream;
+    //   }
+    // });
 
     widget.socketService.onIceCandidate((response) async {
       final candidate = RTCIceCandidate(response.candidate["candidate"],
@@ -293,6 +334,10 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     widget.socketService.makeAnswer(answer, widget.userUUID!);
   }
 
+  disposeSupabase() {
+    _stream.unsubscribe();
+  }
+
   disposeEvents() {
     try {
       localStream.dispose();
@@ -306,7 +351,6 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
       }
     } catch (err) {}
 
-    peerConnection.events.close();
     widget.socketService.socket.off(SocketListenerEvents.MESSAGE_RECEIVED.path);
     widget.socketService.socket.off(SocketListenerEvents.ANSWER_MADE.path);
     widget.socketService.socket.off(SocketListenerEvents.CALL_MADE.path);
@@ -323,22 +367,33 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
   @override
   void dispose() {
     super.dispose();
-    leaveRoom().then((value) => disposeEvents());
+    leaveRoom().then((value) {
+      disposeEvents();
+      disposeSupabase();
+    });
   }
 
   Future<void> leaveRoom() async {
     await Future.value(widget.socketService.leaveRoom(widget.room?.uuid ?? ""));
   }
 
-  void onSendMessage(types.PartialText text) {
+  void onSendMessage(types.PartialText text) async {
     final provider = ref.read(userProvider);
     final localUser = provider.user;
 
-    widget.socketService.sendMessage(SendMessageArguments(
-        room: widget.room!.uuid,
+    await _chatRepository.sendMessage(SendMessage(
         text: text.text,
-        user: localUser!,
-        receiver: widget.connectedUser!));
+        seen: false,
+        user: localUser!.id,
+        receiver: widget.connectedUser!.id,
+        room: widget.room!.id,
+        created_at: DateTime.now()));
+
+    // widget.socketService.sendMessage(SendMessageArguments(
+    //     room: widget.room!.uuid,
+    //     text: text.text,
+    //     user: localUser!,
+    //     receiver: widget.connectedUser!));
   }
 
   List<types.Message> mergeChatFromQuery(List<Message> results) {
@@ -548,30 +603,25 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
     final localUser = provider.user;
 
     return AppScaffold(
-      appBar: renderAppBar(),
-      floatingActionButton:
-          connectedToCall.value ? renderFloatingButton() : null,
-      body: StreamBuilder(
-        builder: (context, snapshot) {
-          return chatUi.Chat(
-            l10n: const chatUi.ChatL10nTr(),
-            showUserNames: true,
-            onSendPressed: onSendMessage,
-            theme: const chatUi.DarkChatTheme(
-                backgroundColor: ColorPalette.background,
-                primaryColor: ColorPalette.primary,
-                secondaryColor: ColorPalette.surface,
-                inputBackgroundColor: ColorPalette.surface),
-            user: types.User(
-                id: localUser?.id.toString() ?? "qwel",
-                firstName: widget.connectedUser?.username ?? ""),
-            messages: messages,
-            groupMessagesThreshold: 1,
-            emojiEnlargementBehavior: chatUi.EmojiEnlargementBehavior.multi,
-          );
-        },
-      ),
-    );
+        appBar: renderAppBar(),
+        floatingActionButton:
+            connectedToCall.value ? renderFloatingButton() : null,
+        body: chatUi.Chat(
+          l10n: const chatUi.ChatL10nTr(),
+          showUserNames: true,
+          onSendPressed: onSendMessage,
+          theme: const chatUi.DarkChatTheme(
+              backgroundColor: ColorPalette.background,
+              primaryColor: ColorPalette.primary,
+              secondaryColor: ColorPalette.surface,
+              inputBackgroundColor: ColorPalette.surface),
+          user: types.User(
+              id: localUser?.id ?? "qwel",
+              firstName: widget.connectedUser?.username ?? ""),
+          messages: messages,
+          groupMessagesThreshold: 1,
+          emojiEnlargementBehavior: chatUi.EmojiEnlargementBehavior.multi,
+        ));
   }
 
   PreferredSizeWidget? renderAppBarBottom() {
@@ -587,7 +637,6 @@ class _ChatState extends ConsumerState<ChatScreenPage> {
 
   AppBar renderAppBar() {
     return AppBar(
-      bottom: renderAppBarBottom(),
       centerTitle: true,
       title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Avatar(

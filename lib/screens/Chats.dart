@@ -94,7 +94,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
             }
 
             return InkWell(
-              onTap: () => context.router.navigate(ChatScreenRoute(
+              onTap: () => context.router.navigate(ChatNew(
                   comingFromMatchedPage: false,
                   connectedUser: user,
                   room: Room.fromJson(message.room_data.toJson()),

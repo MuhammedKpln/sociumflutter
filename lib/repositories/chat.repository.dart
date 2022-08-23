@@ -36,7 +36,11 @@ class ChatRepository with LoggerMixin {
                     room_data:room(*)
                    """;
 
-    final request = await _query.select(query).eq("room", roomId).execute();
+    final request = await _query
+        .select(query)
+        .eq("room", roomId)
+        .order("created_at", ascending: false)
+        .execute();
 
     if (request.hasError) {
       logError(request.error);
@@ -47,7 +51,19 @@ class ChatRepository with LoggerMixin {
     return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
   }
 
-  listenMessages(Function(SupabaseRealtimePayload payload) callback) {
-    return _supabaseClient.from("messages").stream(["id"]);
+  Future<void> sendMessage(SendMessage message) async {
+    final request = await _query.insert(message.toJson()).execute();
+
+    if (request.hasError) {
+      logError(request.error);
+    }
+  }
+
+  RealtimeSubscription listenMessages(
+      int roomId, Function(SupabaseRealtimePayload payload) callback) {
+    return Supabase.instance.client
+        .from("messages:room=eq.$roomId")
+        .on(SupabaseEventTypes.all, callback)
+        .subscription;
   }
 }

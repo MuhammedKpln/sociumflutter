@@ -17,9 +17,24 @@ class Message with _$Message {
     required UserModel user_data,
     required UserModel receiver_data,
     required Room room_data,
-    required String created_at,
+    required DateTime created_at,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);
+}
+
+@freezed
+class SendMessage with _$SendMessage {
+  factory SendMessage({
+    required String text,
+    required bool seen,
+    required String user,
+    required String receiver,
+    required int room,
+    required DateTime created_at,
+  }) = _SendMessage;
+
+  factory SendMessage.fromJson(Map<String, dynamic> json) =>
+      _$SendMessageFromJson(json);
 }
