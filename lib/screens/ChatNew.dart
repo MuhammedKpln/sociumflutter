@@ -5,9 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/models/message.model.dart';
+import 'package:scflutter/models/socket/media_permissions_response.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/PeerConnection.mixin.dart';
 import 'package:scflutter/screens/Chat/PermissionModal.dart';
+import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/theme/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../components/Avatar.dart';
@@ -42,23 +44,31 @@ class ChatNew extends ConsumerStatefulWidget {
   _ChatNewState createState() => _ChatNewState();
 }
 
-class _ChatNewState extends ConsumerState<ChatNew> with PeerConnectionMixin {
+class _ChatNewState extends ConsumerState<ChatNew>
+    with PeerConnectionMixin, TickerProviderStateMixin {
   final ChatRepository _chatRepository = ChatRepository();
   List<types.Message> messages = [];
   late RealtimeSubscription _stream;
 
-  // late final AnimationController _controller = AnimationController(
-  //   duration: const Duration(seconds: 2),
-  //   vsync: this,
-  // )..repeat(reverse: true);
-  // late final Animation<double> _animation = CurvedAnimation(
-  //   parent: _controller,
-  //   curve: Curves.fastOutSlowIn,
-  // );
+  late final AnimationController _controller = AnimationController(
+    duration: Duration(milliseconds: AnimationDurations.veryHigh.duration),
+    vsync: this,
+  )..repeat(reverse: true);
+  late final Animation<double> _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.fastOutSlowIn,
+  );
 
   @override
   void initState() {
     super.initState();
+
+    peerConnectionEnsureInitialized(
+        socketService: widget.socketService,
+        userUUID: widget.connectedUser!.id,
+        onClientDisconnected: _handleOnClientDisconnected,
+        mediaPermissionsAnswered: _handleMediaPermissionsAllowedEvent,
+        permissionsAskedCallback: _handlePermissionAskedEvent);
 
     fetchChatMessages().then((_) {
       listenMessages();
@@ -67,9 +77,32 @@ class _ChatNewState extends ConsumerState<ChatNew> with PeerConnectionMixin {
 
   @override
   void dispose() {
-    super.dispose();
-
+    _controller.dispose();
     _stream.unsubscribe();
+    disposeEvents(widget.socketService);
+    super.dispose();
+  }
+
+  _handlePermissionAskedEvent() async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return renderPermissionModal(askingForPermission: false);
+        });
+  }
+
+  _handleMediaPermissionsAllowedEvent(MediaPermission payload) {
+    print("selam");
+    setState(() {
+      audio = payload.audio!;
+      video = payload.video!;
+      mediaPermissionsAlllowed = true;
+    });
+  }
+
+  _handleOnClientDisconnected() async {
+    context.toast.showToast("Kullanıcı çıkış yaptı");
+    await context.router.pop();
   }
 
   listenMessages() async {
@@ -142,15 +175,15 @@ class _ChatNewState extends ConsumerState<ChatNew> with PeerConnectionMixin {
     //     onPressHangup: onPressHangup));
   }
 
-  // Widget renderFloatingButton() {
-  //   return ScaleTransition(
-  //     scale: _animation,
-  //     child: FloatingActionButton(
-  //         enableFeedback: true,
-  //         onPressed: navigateToCallManager,
-  //         child: const Icon(FeatherIcons.phoneOutgoing)),
-  //   );
-  // }
+  Widget renderFloatingButton() {
+    return ScaleTransition(
+      scale: _animation,
+      child: FloatingActionButton(
+          enableFeedback: true,
+          onPressed: navigateToCallManager,
+          child: const Icon(FeatherIcons.phoneOutgoing)),
+    );
+  }
 
   PreferredSizeWidget? renderAppBarBottom() {
     if (peerConnectionInitialized) {
@@ -172,12 +205,18 @@ class _ChatNewState extends ConsumerState<ChatNew> with PeerConnectionMixin {
     return PermissionModal(
       askingForPermission: askingForPermission,
       user: widget.connectedUser!,
-      sendPermissionsAskedCallback: () {
-        // sending permissions
+      sendPermissionsAskedCallback: ({audio = false, video = false}) {
+        print(
+          "Selam",
+        );
+        widget.socketService.askForMediaPermissions(widget.userUUID!,
+            audio: audio, video: video);
       },
-      acceptPermissionsAskedCallback: (mediaPermissionsAllowedPayload) {
+      acceptPermissionsAskedCallback: ({mediaPermissionsAllowed = false}) {
+        print("Selam");
+
         setState(() {
-          mediaPermissionsAlllowed = mediaPermissionsAllowedPayload;
+          mediaPermissionsAlllowed = mediaPermissionsAllowed;
         });
 
         acceptPermissionsAsked(audio: audio, video: video);
@@ -190,7 +229,6 @@ class _ChatNewState extends ConsumerState<ChatNew> with PeerConnectionMixin {
   }
 
   void askForMediaPermissions() {
-    print("selam");
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -253,6 +291,20 @@ class _ChatNewState extends ConsumerState<ChatNew> with PeerConnectionMixin {
     );
   }
 
+  void onSendMessage(types.PartialText text) async {
+    final provider = ref.read(userProvider);
+    final localUser = provider.user;
+
+    final model = SendMessage(
+        text: text.text,
+        seen: false,
+        user: localUser!.id,
+        receiver: widget.connectedUser!.id,
+        room: widget.room!.id);
+
+    await _chatRepository.sendMessage(model);
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(userProvider);
@@ -260,10 +312,12 @@ class _ChatNewState extends ConsumerState<ChatNew> with PeerConnectionMixin {
 
     return AppScaffold(
         appBar: renderAppBar(),
+        floatingActionButton:
+            connectedToCall.value ? renderFloatingButton() : null,
         body: chatUi.Chat(
           l10n: const chatUi.ChatL10nTr(),
           showUserNames: true,
-          onSendPressed: (t) => null,
+          onSendPressed: onSendMessage,
           theme: SociumChatTheme,
           user: types.User(
               id: localUser?.id ?? "qwel",

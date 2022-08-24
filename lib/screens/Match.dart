@@ -7,12 +7,17 @@ import 'package:lottie/lottie.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/Match/Communities.dart';
 import 'package:scflutter/components/Scaffold.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
+import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../components/Match/MatchFound.dart';
+import '../models/client_paired.dart';
 import '../state/auth.state.dart';
+import '../theme/toast.dart';
 
 class MatchScreenPage extends ConsumerStatefulWidget {
   const MatchScreenPage({Key? key}) : super(key: key);
@@ -26,40 +31,36 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   late OverlayEntry overlayEntry;
   bool searchingForOpponent = false;
   int tabIndex = 0;
+  SocketService socketService = SocketService();
 
   @override
   void initState() {
     // client.cha
     super.initState();
-    // sc.onClientPaired((data) async {
-    //   ClientPaired formattedData = ClientPaired.fromJson(data);
+    socketService.onClientPaired((data) async {
+      ClientPaired formattedData = ClientPaired.fromJson(data);
 
-    //   await showDialog(
-    //       context: context,
-    //       barrierColor: const Color(0x00ffffff),
-    //       barrierDismissible: false,
-    //       builder: (context) => MatchFound(
-    //             room: Room(
-    //                 roomAdress: formattedData.room,
-    //                 id: 0,
-    //                 created_at: DateTime.now(),
-    //                 expireDate: DateTime.now(),
-    //                 updated_at: DateTime.now()),
-    //             userUUID: formattedData.uuid,
-    //             user: formattedData.user,
-    //             socketService: sc,
-    //           ));
-    //   setState(() {
-    //     searchingForOpponent = false;
-    //   });
-    // });
+      await showDialog(
+          context: context,
+          barrierColor: const Color(0x00ffffff),
+          barrierDismissible: false,
+          builder: (context) => MatchFound(
+                room: formattedData.room,
+                userUUID: formattedData.uuid,
+                user: formattedData.user,
+                socketService: socketService,
+              ));
+      setState(() {
+        searchingForOpponent = false;
+      });
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    // sc.socket.off(SocketListenerEvents.CLIENT_PAIRED.path);
+    socketService.socket.off(SocketListenerEvents.CLIENT_PAIRED.path);
   }
 
   void onCancel() {
@@ -68,19 +69,19 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
 
   void joinQueue() {
     //TODO: IMPLEMENT SOCKET WITH SUPABASE
-    // context.toast
-    //     .showToast("matchScreenJoinedQueue".tr(), toastType: ToastType.Success);
+    context.toast
+        .showToast("matchScreenJoinedQueue".tr(), toastType: ToastType.Success);
 
-    // final notifier = ref.read(userProvider);
-    // sc.joinQueue(notifier.user!);
+    final notifier = ref.read(userProvider);
+    socketService.joinQueue(notifier.user!);
 
-    // setState(() {
-    //   searchingForOpponent = true;
-    // });
+    setState(() {
+      searchingForOpponent = true;
+    });
   }
 
   void leaveQueue() {
-    // sc.leaveQueue();
+    socketService.leaveQueue();
 
     setState(() {
       searchingForOpponent = false;

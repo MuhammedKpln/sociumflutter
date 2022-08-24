@@ -21,8 +21,10 @@ class PermissionModal extends StatefulWidget {
   UserModel user;
   bool audio;
   bool video;
-  Function sendPermissionsAskedCallback;
-  Function(bool mediaPermissionsAllowed) acceptPermissionsAskedCallback;
+  Function({required bool audio, required bool video})
+      sendPermissionsAskedCallback;
+  Function({required bool mediaPermissionsAllowed})
+      acceptPermissionsAskedCallback;
 
   @override
   State<PermissionModal> createState() => _PermissionModalState();
@@ -62,21 +64,19 @@ class _PermissionModalState extends State<PermissionModal> {
 
   handleActionButton() {
     if (widget.askingForPermission) {
-      if (!widget.audio && !widget.video) {
+      if (!audio && !video) {
         // If no permissions given, close the modal
         context.router.pop();
       }
 
-      if (widget.audio || widget.video) {
+      if (audio || video) {
         // Give/send permission to the user
         // Send permission
-        widget.sendPermissionsAskedCallback.call();
+        widget.sendPermissionsAskedCallback.call(audio: true, video: true);
         context.router.pop();
         context.toast.showToast(widget.askingForPermission
             ? 'İsteğiniz gönderildi!'
             : 'İstek kabul edildi, arama butonu aktif.');
-      } else {
-        // Give permission
       }
     } else {
       if (!widget.audio && widget.video) {
@@ -85,7 +85,7 @@ class _PermissionModalState extends State<PermissionModal> {
         handleAudioOnpress(audioParameter: true);
       }
 
-      widget.acceptPermissionsAskedCallback.call(true);
+      widget.acceptPermissionsAskedCallback.call(mediaPermissionsAllowed: true);
 
       // setState(() {
       //   mediaPermissionsAlllowed = true;

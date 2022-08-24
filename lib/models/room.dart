@@ -8,8 +8,8 @@ class Room with _$Room {
   factory Room({
     required int id,
     required String uuid,
-    required String expireDate,
-    required String created_at,
+    required DateTime expireDate,
+    required DateTime created_at,
   }) = _Room;
 
   factory Room.fromJson(Map<String, dynamic> json) => _$RoomFromJson(json);

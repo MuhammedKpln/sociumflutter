@@ -32,7 +32,6 @@ class SendMessage with _$SendMessage {
     required String user,
     required String receiver,
     required int room,
-    required DateTime created_at,
   }) = _SendMessage;
 
   factory SendMessage.fromJson(Map<String, dynamic> json) =>

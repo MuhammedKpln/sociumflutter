@@ -11,7 +11,7 @@ class SocketCore {
     socket = IO.io(uri, options);
 
     socket.onConnect((data) {
-      print(data);
+      print("CONNECTED");
     });
   }
 

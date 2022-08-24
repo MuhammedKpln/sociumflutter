@@ -9,6 +9,7 @@ import 'package:scflutter/screens/Register/StepOne.dart';
 import 'package:scflutter/screens/Register/StepThree.dart';
 import 'package:scflutter/screens/Register/StepTwo.dart';
 
+import '../screens/Chat/InCallManager.dart';
 import '../screens/Chats.dart';
 import '../screens/Profile.dart';
 import '../screens/ProfileSettings/BirthdaySettings.dart';
@@ -42,7 +43,7 @@ import '../screens/ProfileSettings/bio_settings.dart';
     AutoRoute(page: BioSettingsPage),
     AutoRoute(page: BirthdaySettingsPage),
     AutoRoute(page: BlockIncomingCallsScreenPage),
-    // AutoRoute(page: InCallManagerScreenPage, fullscreenDialog: true),
+    AutoRoute(page: InCallManagerScreenPage, fullscreenDialog: true),
     // AutoRoute(page: TestScreen),
   ],
 )

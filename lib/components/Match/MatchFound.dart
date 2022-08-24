@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
-import 'package:scflutter/models/message.dart';
-import 'package:scflutter/models/user_model.dart';
+import 'package:scflutter/models/user.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/utils/router.gr.dart';
+
+import '../../models/room.dart';
 
 class MatchFound extends StatelessWidget {
   MatchFound(
@@ -20,7 +21,7 @@ class MatchFound extends StatelessWidget {
       required this.socketService})
       : super(key: key);
 
-  User user;
+  UserModel user;
   Room room;
   String userUUID;
   SocketService socketService;
@@ -34,7 +35,7 @@ class MatchFound extends StatelessWidget {
     void sendMessage() {
       closeDialog();
 
-      context.router.navigate(ChatScreenRoute(
+      context.router.navigate(ChatNew(
           comingFromMatchedPage: true,
           connectedUser: user,
           room: room,
@@ -61,13 +62,13 @@ class MatchFound extends StatelessWidget {
                   ).tr(),
                 ),
                 Avatar(
-                  username: user.username!,
+                  username: user.username,
                   avatarSize: AvatarSize.large,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Text(
-                    user.username ?? "No username",
+                    user.username,
                     style: const TextStyle(
                         color: Colors.white, decoration: TextDecoration.none),
                   ),

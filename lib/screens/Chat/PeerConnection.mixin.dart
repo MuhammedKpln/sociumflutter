@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:scflutter/models/socket/media_permissions_response.dart';
 import 'package:scflutter/services/websocket.events.dart';
 
 import '../../services/webrtc.service.dart';
@@ -16,12 +17,15 @@ mixin PeerConnectionMixin {
   ValueNotifier<MediaStream?> remoteStream = ValueNotifier(null);
   ValueNotifier<MediaStream?> localStream = ValueNotifier(null);
 
-  ensureInitialized(
+  peerConnectionEnsureInitialized(
       {required SocketService socketService,
       required String userUUID,
       Function? permissionsAskedCallback,
-      Function? mediaPermissionsAnswered,
-      Function? onClientDisconnected}) {
+      Function(MediaPermission payload)? mediaPermissionsAnswered,
+      Function? onClientDisconnected}) async {
+    final webRtcService = await createPeerConnection(rtcConfig);
+    peerConnection = PeerConnection(webRtcService);
+
     peerConnection.connectionState.stream.listen((state) {
       switch (state) {
         case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
@@ -116,6 +120,7 @@ mixin PeerConnectionMixin {
       audio = response.audio != null ? response.audio! : audio;
       video = response.video != null ? response.video! : video;
 
+      print("seqeqweq");
       permissionsAskedCallback?.call();
 
       // showModalBottomSheet(
@@ -125,12 +130,10 @@ mixin PeerConnectionMixin {
     });
 
     socketService.onMediaPermissionAnswered((response) {
-      if (audio || video) {
-        mediaPermissionsAnswered?.call();
-        // setState(() {
-        //   mediaPermissionsAlllowed = true;
-        // });
-      }
+      mediaPermissionsAnswered?.call(response);
+      // setState(() {
+      //   mediaPermissionsAlllowed = true;
+      // });
     });
 
     socketService.onClientDisconnected(() async {
@@ -139,5 +142,25 @@ mixin PeerConnectionMixin {
       // context.toast.showToast("Kullanıcı çıkış yaptı");
       // await context.router.pop();
     });
+  }
+
+  disposeEvents(SocketService socketService) {
+    try {
+      localStream.dispose();
+      connectedToCall.dispose();
+      chatMicMuted.dispose();
+      chatCameraOpened.dispose();
+      remoteStream.dispose();
+      peerConnection.connectionState.close();
+    } catch (err) {}
+
+    socketService.socket.off(SocketListenerEvents.MESSAGE_RECEIVED.path);
+    socketService.socket.off(SocketListenerEvents.ANSWER_MADE.path);
+    socketService.socket.off(SocketListenerEvents.CALL_MADE.path);
+    socketService.socket.off(SocketListenerEvents.RECEIVED_ICE_CANDIDATE.path);
+    socketService.socket
+        .off(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path);
+    socketService.socket.off(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path);
+    socketService.socket.off(SocketListenerEvents.CLIENT_DISCONNECTED.path);
   }
 }
