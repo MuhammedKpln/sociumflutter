@@ -18,7 +18,6 @@ import 'generated/codegen_loader.g.dart';
 final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await EasyLocalization.ensureInitialized();
   await initHiveForFlutter();
   await Supabase.initialize(
@@ -30,8 +29,8 @@ Future<void> main() async {
   if (defaultTargetPlatform != TargetPlatform.macOS && !kDebugMode) {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
+    FlutterError.onError = Logger().logError;
   }
-  FlutterError.onError = Logger().logError;
 
   runApp(EasyLocalization(
     path: "assets/i18n",
