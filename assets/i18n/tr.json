@@ -34,5 +34,6 @@
   "fail": "Lütfen daha sonra tekrar deneyiniz!",
   "save": "Kaydet",
   "bioSettingsTitle": "Biyografi",
-  "birthdaySettingsTitle": "Doğum tarihi"
+  "birthdaySettingsTitle": "Doğum tarihi",
+  "blockIncomingCallsSettingsTitle": "Gelen aramaları engelle"
 }

@@ -40,6 +40,13 @@ class UserModelNotifier extends StateNotifier<AuthStateModel> {
     state = state.copyWith(user: modifiedUser);
   }
 
+  setBlockIncomingCalls(bool blockIncomingCalls) {
+    final modifiedUser =
+        state.user?.copyWith(blockIncomingCalls: blockIncomingCalls);
+
+    state = state.copyWith(user: modifiedUser);
+  }
+
   clearUser() async {
     await AuthRepository().signOut();
     state = const AuthStateModel();

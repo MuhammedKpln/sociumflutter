@@ -34,5 +34,6 @@
   "fail": "Failed!",
   "save": "Save",
   "bioSettingsTitle": "Biopgraphy",
-  "birthdaySettingsTitle": "Birthday"
+  "birthdaySettingsTitle": "Birthday",
+  "blockIncomingCallsSettingsTitle": "Block incoming calls"
 }
