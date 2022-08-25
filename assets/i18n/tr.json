@@ -29,5 +29,9 @@
   "matchScreenJoinedQueue": "Eşleşme sırasına katıldınız!",
   "matchScreenMatchFoundTitle": "Yeni bir eşleşme var!",
   "matchScreenMatchFoundSendMessageBtnTxt": "Mesaj gönder",
-  "matchScreenMatchFoundCloseBtnTxt": "Kapat"
+  "matchScreenMatchFoundCloseBtnTxt": "Kapat",
+  "success": "Basarili!",
+  "fail": "Lütfen daha sonra tekrar deneyiniz!",
+  "save": "Kaydet",
+  "bioSettingsTitle": "Biyografi"
 }

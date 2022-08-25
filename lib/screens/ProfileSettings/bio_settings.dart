@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -6,8 +7,10 @@ import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/graphql/graphql_api.graphql.dart';
 import 'package:scflutter/main.dart';
+import 'package:scflutter/repositories/user.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/toast.dart';
+import 'package:scflutter/utils/logger.dart';
 
 import '../../components/Scaffold.dart';
 
@@ -18,77 +21,50 @@ class BioSettingsPage extends ConsumerStatefulWidget {
   _BioSettingsPageState createState() => _BioSettingsPageState();
 }
 
-class _BioSettingsPageState extends ConsumerState<BioSettingsPage> {
+class _BioSettingsPageState extends ConsumerState<BioSettingsPage>
+    with LoggerMixin {
   final textController = TextEditingController();
+  UserRepository _userRepository = UserRepository();
 
   @override
   void initState() {
     super.initState();
 
-//#FIXME: SELAM
-    // final userBio = ref.read(userProvider).user?.bio;
+    final userBio = ref.read(userProvider).user?.biography;
 
-    // textController.text = userBio ?? "";
+    textController.text = userBio ?? "";
   }
 
   @override
   void dispose() {
-    super.dispose();
     textController.dispose();
+    super.dispose();
   }
 
-  onError(OperationException? error) {
-    print(error);
-    context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
-        toastType: ToastType.Error);
+  void navigateBack() {
+    context.router.navigateBack();
   }
 
-  onCompleted(Map<String, dynamic>? data) {
-    if (data != null) {
-      final user = ref.read(userProvider);
-      final userNotifer = ref.read(userProvider.notifier);
-      final parsedData = EditProfile$Mutation.fromJson(data);
+  void updateProfile() async {
+    final user = ref.read(userProvider);
+    final userId = user.user!.id;
+    final userNotifer = ref.read(userProvider.notifier);
 
-      //#FIXME: SELAM
+    _userRepository.editBio(textController.text, userId).then((value) {
+      userNotifer.setBiography(value);
 
-      // userNotifer.setBio(parsedData.editProfile.bio ?? "");
+      context.toast.showToast("success".tr(), toastType: ToastType.Success);
 
-      scaffoldKey.currentState
-          ?.showSnackBar(const SnackBar(content: Text("Başarılı! ")));
-      context.router.pop();
-    }
-  }
-
-  updateCache(
-      GraphQLDataProxy cache, QueryResult<EditProfile$Mutation>? result) {
-    if (result?.data != null) {
-      final parseResult = EditProfile$Mutation.fromJson(result!.data!);
-
-      final variables =
-          GetUserProfileArguments(username: parseResult.editProfile.username);
-      final request = MutationOptions(
-              document: GetUserProfileQuery(variables: variables).document,
-              variables: variables.toJson())
-          .asRequest;
-      final query = cache.readQuery(request);
-      if (query != null) {
-        final parseQuery = GetUserProfile$Query.fromJson(query);
-
-        parseQuery.getUser.bio = parseResult.editProfile.bio;
-
-        cache.writeQuery(request, data: parseQuery.toJson());
-      }
-    }
+      navigateBack();
+    }).catchError((error) {
+      context.toast.showToast("fail".tr(), toastType: ToastType.Error);
+      print(error);
+      logError(error);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final mutationVariables =
-        EditProfileArguments(biography: textController.value.text);
-    final mutationVariablesParsed = mutationVariables.toJson();
-    final mutationDocument =
-        EditProfileMutation(variables: mutationVariables).document;
-
     return AppScaffold(
       appBar: AppBar(
         title: const Text('Biyografini düzenle'),
@@ -107,7 +83,7 @@ class _BioSettingsPageState extends ConsumerState<BioSettingsPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Biyografi"),
+                  const Text("bioSettingsTitle").tr(),
                   TextFormField(
                     controller: textController,
                     onChanged: (value) {
@@ -117,18 +93,10 @@ class _BioSettingsPageState extends ConsumerState<BioSettingsPage> {
                 ],
               ),
             ),
-            Mutation(
-                options: MutationOptions<EditProfile$Mutation>(
-                    document: mutationDocument,
-                    variables: mutationVariablesParsed,
-                    onError: onError,
-                    update: updateCache,
-                    onCompleted: onCompleted),
-                builder: (runMutation, result) {
-                  return RoundedButton(
-                      child: const Text("Kaydet"),
-                      onPressed: () => runMutation(mutationVariablesParsed));
-                }),
+            RoundedButton(
+              onPressed: updateProfile,
+              child: const Text("save").tr(),
+            )
           ],
         ),
       ),

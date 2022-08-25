@@ -45,11 +45,11 @@ class _CallComingState extends State<CallComingPage> {
 
   @override
   void dispose() {
-    super.dispose();
-
     FlutterRingtonePlayer.stop();
     ringtoneTimer.cancel();
     hapticTimer.cancel();
+
+    super.dispose();
   }
 
   @override

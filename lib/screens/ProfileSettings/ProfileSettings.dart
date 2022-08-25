@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/models/profile_settings_page.model.dart';
 import 'package:scflutter/state/auth.state.dart';
+import 'package:scflutter/utils/date.dart';
 import 'package:scflutter/utils/router.gr.dart' as router;
 
 import '../../components/Scaffold.dart';
@@ -22,25 +24,23 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(AutoRouter.of(context).routeData.route.path);
     final user = ref.watch(userProvider).user;
 
     final List<Map<String, dynamic>> pages = [
       {
         "label": "Biyografi",
         "screen": const router.BioSettingsRoute(),
-        "value": "#FIXME: SELAM"
+        "value": user?.biography ?? "Bilgi bulunmamakta."
       },
       {
         "label": "Doğum tarihi",
         "screen": const router.BirthdaySettingsRoute(),
-        "value": "#FIXME: SELAM"
+        "value": formatDate(user?.birthday ?? DateTime.now())
       },
       {
         "label": "Gelen aramaları engelle",
         "screen": const router.BlockIncomingCallsScreenRoute(),
-        "value":
-            "#FIXME: SELAM" //user!.blockIncomingCalls! ? "Engelli" : "İzin verilmiş"
+        "value": user!.blockIncomingCalls! ? "Engelli" : "İzin verilmiş"
       },
     ];
 

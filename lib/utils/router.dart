@@ -9,6 +9,7 @@ import 'package:scflutter/screens/Register/StepOne.dart';
 import 'package:scflutter/screens/Register/StepThree.dart';
 import 'package:scflutter/screens/Register/StepTwo.dart';
 
+import '../screens/Chat/CallComing.dart';
 import '../screens/Chat/InCallManager.dart';
 import '../screens/Chats.dart';
 import '../screens/Profile.dart';
@@ -26,7 +27,7 @@ import '../screens/ProfileSettings/bio_settings.dart';
     AutoRoute(page: RegisterScreenStepTwoPage),
     AutoRoute(page: RegisterStepThreeScreenPage),
     AutoRoute(page: RegisterScreenStepFourPage),
-    // AutoRoute(page: CallComingPage, fullscreenDialog: true),
+    AutoRoute(page: CallComingPage, fullscreenDialog: true),
     AutoRoute(page: HomeScreenPage, children: [
       AutoRoute(page: MatchScreenPage),
       AutoRoute(page: ProfilePage),

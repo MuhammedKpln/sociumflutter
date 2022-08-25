@@ -11,7 +11,7 @@ class UserModel with _$UserModel {
     String? avatar,
     bool? blockIncomingCalls,
     String? biography,
-    String? birthday,
+    DateTime? birthday,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

@@ -20,8 +20,6 @@ class Logger {
     }
 
     _logger.shout(error);
-
-    throw Exception(error);
   }
 }
 

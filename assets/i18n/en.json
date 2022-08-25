@@ -29,5 +29,9 @@
   "matchScreenJoinedQueue": "You have joined the match queue!",
   "matchScreenMatchFoundTitle": "There is a new match!",
   "matchScreenMatchFoundSendMessageBtnTxt": "Send message",
-  "matchScreenMatchFoundCloseBtnTxt": "Close"
+  "matchScreenMatchFoundCloseBtnTxt": "Close",
+  "success": "Sucessfull!",
+  "fail": "Failed!",
+  "save": "Save",
+  "bioSettingsTitle": "Biopgraphy"
 }
