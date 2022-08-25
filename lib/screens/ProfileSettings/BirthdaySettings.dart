@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/config.dart';
+import 'package:scflutter/extensions/logger.extension.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
-import 'package:scflutter/mixins/Core.mixin.dart';
 import 'package:scflutter/repositories/user.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/date.dart';
@@ -20,8 +20,7 @@ class BirthdaySettingsPage extends ConsumerStatefulWidget {
   _BirthdaySettingsPageState createState() => _BirthdaySettingsPageState();
 }
 
-class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage>
-    with SociumCore {
+class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage> {
   DateTime selectedDate = DateTime.now();
   final TextEditingController _controller = TextEditingController();
   final UserRepository _userRepository = UserRepository();
@@ -76,7 +75,7 @@ class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage>
 
   void onError(error) {
     context.toast.showToast("fail".tr(), toastType: ToastType.Error);
-    logError(error);
+    context.logger.logError(error);
   }
 
   void updateBirthday() async {

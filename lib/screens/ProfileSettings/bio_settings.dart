@@ -2,15 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/RoundedButton.dart';
+import 'package:scflutter/extensions/logger.extension.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
-import 'package:scflutter/graphql/graphql_api.graphql.dart';
-import 'package:scflutter/main.dart';
+import 'package:scflutter/models/user.dart';
 import 'package:scflutter/repositories/user.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/toast.dart';
-import 'package:scflutter/utils/logger.dart';
 
 import '../../components/Scaffold.dart';
 
@@ -21,8 +19,7 @@ class BioSettingsPage extends ConsumerStatefulWidget {
   _BioSettingsPageState createState() => _BioSettingsPageState();
 }
 
-class _BioSettingsPageState extends ConsumerState<BioSettingsPage>
-    with LoggerMixin {
+class _BioSettingsPageState extends ConsumerState<BioSettingsPage> {
   final textController = TextEditingController();
   final UserRepository _userRepository = UserRepository();
 
@@ -45,24 +42,25 @@ class _BioSettingsPageState extends ConsumerState<BioSettingsPage>
     context.router.navigateBack();
   }
 
+  onSuccess(UserModel value) {
+    final userNotifer = ref.read(userProvider.notifier);
+
+    userNotifer.setBiography(value.biography!);
+
+    context.toast.showToast("success".tr(), toastType: ToastType.Success);
+
+    navigateBack();
+  }
+
+  onError(error) {
+    context.toast.showToast("fail".tr(), toastType: ToastType.Error);
+    context.logger.logError(error);
+  }
+
   void updateProfile() async {
     final user = ref.read(userProvider);
     final userId = user.user!.id;
-    final userNotifer = ref.read(userProvider.notifier);
     final data = {"biography": textController.text};
-
-    onSuccess(value) {
-      userNotifer.setBiography(value.biography!);
-
-      context.toast.showToast("success".tr(), toastType: ToastType.Success);
-
-      navigateBack();
-    }
-
-    onError(error) {
-      context.toast.showToast("fail".tr(), toastType: ToastType.Error);
-      logError(error);
-    }
 
     _userRepository
         .updateProfile(data, userId)
