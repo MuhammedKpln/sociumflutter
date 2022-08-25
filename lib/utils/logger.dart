@@ -15,11 +15,12 @@ class Logger {
   }
 
   logError(error) {
-    if (defaultTargetPlatform != TargetPlatform.macOS) {
+    try {
       FirebaseCrashlytics.instance.recordFlutterFatalError(error);
+      _logger.shout(error);
+    } catch (err) {
+      _logger.shout(error);
     }
-
-    _logger.shout(error);
   }
 }
 
