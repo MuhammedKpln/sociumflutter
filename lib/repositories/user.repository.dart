@@ -11,7 +11,7 @@ class UserRepository extends BaseRepositoryClass {
           .eq("id", userId)
           .execute();
 
-      return Future.value(request.data["biography"]);
+      return Future.value(request.data[0]["biography"]);
     } catch (err) {
       logError(err);
       throw Exception(err);
