@@ -33,5 +33,6 @@
   "success": "Sucessfull!",
   "fail": "Failed!",
   "save": "Save",
-  "bioSettingsTitle": "Biopgraphy"
+  "bioSettingsTitle": "Biopgraphy",
+  "birthdaySettingsTitle": "Birthday"
 }

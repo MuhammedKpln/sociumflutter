@@ -34,6 +34,12 @@ class UserModelNotifier extends StateNotifier<AuthStateModel> {
     state = state.copyWith(user: modifiedUser);
   }
 
+  setBirthday(DateTime birthday) {
+    final modifiedUser = state.user?.copyWith(birthday: birthday);
+
+    state = state.copyWith(user: modifiedUser);
+  }
+
   clearUser() async {
     await AuthRepository().signOut();
     state = const AuthStateModel();

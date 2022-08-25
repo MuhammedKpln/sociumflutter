@@ -33,5 +33,6 @@
   "success": "Basarili!",
   "fail": "Lütfen daha sonra tekrar deneyiniz!",
   "save": "Kaydet",
-  "bioSettingsTitle": "Biyografi"
+  "bioSettingsTitle": "Biyografi",
+  "birthdaySettingsTitle": "Doğum tarihi"
 }

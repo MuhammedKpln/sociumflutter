@@ -1,13 +1,13 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:date_format/date_format.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/config.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
-import 'package:scflutter/graphql/graphql_api.graphql.dart';
-import 'package:scflutter/main.dart';
+import 'package:scflutter/mixins/Core.mixin.dart';
+import 'package:scflutter/repositories/user.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
+import 'package:scflutter/utils/date.dart';
 
 import '../../components/RoundedButton.dart';
 import '../../components/Scaffold.dart';
@@ -20,82 +20,81 @@ class BirthdaySettingsPage extends ConsumerStatefulWidget {
   _BirthdaySettingsPageState createState() => _BirthdaySettingsPageState();
 }
 
-class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage> {
+class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage>
+    with SociumCore {
   DateTime selectedDate = DateTime.now();
+  final TextEditingController _controller = TextEditingController();
+  final UserRepository _userRepository = UserRepository();
 
-  onError(OperationException? error) {
-    print(error);
-    context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
-        toastType: ToastType.Error);
+  @override
+  void initState() {
+    super.initState();
+
+    _controller.text = formatDate(selectedDate);
   }
 
-  onCompleted(Map<String, dynamic>? data) {
-    if (data != null) {
-      final userNotifer = ref.read(userProvider.notifier);
-      final parsedData = EditProfile$Mutation.fromJson(data);
-
-//#FIXME: SELAM
-      // userNotifer
-      //     .setBirthday(parsedData.editProfile.birthday ?? DateTime.now());
-
-      scaffoldKey.currentState
-          ?.showSnackBar(const SnackBar(content: Text("Başarılı! ")));
-      context.router.pop();
-    }
-  }
-
-  updateCache(
-      GraphQLDataProxy cache, QueryResult<EditProfile$Mutation>? result) {
-    if (result?.data != null) {
-      final parseResult = EditProfile$Mutation.fromJson(result!.data!);
-
-      final variables =
-          GetUserProfileArguments(username: parseResult.editProfile.username);
-      final request = MutationOptions(
-              document: GetUserProfileQuery(variables: variables).document,
-              variables: variables.toJson())
-          .asRequest;
-      final query = cache.readQuery(request);
-      if (query != null) {
-        final parseQuery = GetUserProfile$Query.fromJson(query);
-
-        parseQuery.getUser.birthday = parseResult.editProfile.birthday;
-
-        cache.writeQuery(request, data: parseQuery.toJson());
-      }
-    }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   selectDate() async {
-    final todaysDate = DateTime.now();
+    final currentDate = DateTime.now();
     final maximumDate = Config.maximumDateForRegistration;
-    final minimumDate = Config.minimumDateForRegistration;
 
     final date = await showDatePicker(
-        locale: const Locale('tr'),
+        locale: EasyLocalization.of(context)?.currentLocale,
         context: context,
-        initialDate: maximumDate,
-        firstDate: DateTime(1980),
-        lastDate: maximumDate);
+        initialDate: currentDate,
+        firstDate: maximumDate,
+        lastDate: currentDate);
 
     if (date != null) {
+      final formattedDate = formatDate(date);
+      _controller.text = formattedDate;
+
       setState(() {
         selectedDate = date;
       });
     }
   }
 
+  void navigateBack() {
+    context.router.navigateBack();
+  }
+
+  void onSuccess(DateTime birthday) {
+    final userNotifier = ref.read(userProvider.notifier);
+
+    userNotifier.setBirthday(birthday);
+
+    context.toast.showToast("success".tr(), toastType: ToastType.Success);
+
+    navigateBack();
+  }
+
+  void onError(error) {
+    context.toast.showToast("fail".tr(), toastType: ToastType.Error);
+    logError(error);
+  }
+
+  void updateBirthday() async {
+    final user = ref.read(userProvider);
+    final userId = user.user!.id;
+    final updateData = {"birthday": selectedDate.toIso8601String()};
+
+    _userRepository
+        .updateProfile(updateData, userId)
+        .then((value) => onSuccess(value.birthday!))
+        .catchError(onError);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final user = ref.read(userProvider).user;
-    final mutationVariables = EditProfileArguments(birthday: selectedDate);
-    final mutationVariablesParsed = mutationVariables.toJson();
-    final mutationDocument =
-        EditProfileMutation(variables: mutationVariables).document;
-
     return AppScaffold(
       appBar: AppBar(
-        title: const Text("Doğum günü"),
+        title: const Text("birthdaySettingsTitle").tr(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -112,27 +111,20 @@ class _BirthdaySettingsPageState extends ConsumerState<BirthdaySettingsPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Doğum tarihi"),
-                  RoundedButton(
-                      onPressed: selectDate,
-                      child: Text(formatDate(
-                          selectedDate, [dd, ' ', MM, ' ', yyyy],
-                          locale: const TurkishDateLocale())))
+                  TextField(
+                    controller: _controller,
+                    onTap: selectDate,
+                    decoration: const InputDecoration(
+                        icon: Icon(Icons.calendar_today), //icon of text field
+                        labelText: "Enter Date" //label text of field
+                        ),
+                    readOnly: true,
+                  )
                 ],
               ),
             ),
-            Mutation(
-                options: MutationOptions<EditProfile$Mutation>(
-                    document: mutationDocument,
-                    variables: mutationVariablesParsed,
-                    onError: onError,
-                    update: updateCache,
-                    onCompleted: onCompleted),
-                builder: (runMutation, result) {
-                  return RoundedButton(
-                      child: const Text("Kaydet"),
-                      onPressed: () => runMutation(mutationVariablesParsed));
-                }),
+            RoundedButton(
+                onPressed: updateBirthday, child: const Text("save").tr())
           ],
         ),
       ),
