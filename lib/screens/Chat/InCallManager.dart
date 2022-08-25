@@ -7,8 +7,9 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/main.dart';
-import 'package:scflutter/screens/Chat/PeerConnection.mixin.dart';
 import 'package:scflutter/utils/palette.dart';
+
+import '../../state/chat.state.dart';
 
 class InCallManagerScreenPage extends StatefulWidget {
   InCallManagerScreenPage(
@@ -23,8 +24,7 @@ class InCallManagerScreenPage extends StatefulWidget {
       _InCallManagerScreenPageState();
 }
 
-class _InCallManagerScreenPageState extends State<InCallManagerScreenPage>
-    with PeerConnectionMixin {
+class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
   DateTime date = DateTime(DateTime.now().year, 0, 0, 0, 0, 0, 0, 0);
   late Timer timer;
   RTCVideoRenderer remoteRenderer = RTCVideoRenderer();

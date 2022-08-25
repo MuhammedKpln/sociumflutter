@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,6 @@ import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/models/socket/media_permissions_response.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
-import 'package:scflutter/screens/Chat/PeerConnection.mixin.dart';
 import 'package:scflutter/screens/Chat/PermissionModal.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/theme/theme.dart';
@@ -16,13 +17,17 @@ import '../components/Avatar.dart';
 import '../components/Scaffold.dart';
 import '../models/room.dart';
 import '../models/user.dart';
+import '../services/webrtc.service.dart';
 import '../services/websocket.events.dart';
 import '../state/auth.state.dart';
+import '../state/chat.state.dart';
 import '../utils/avatar.dart';
 import 'Chat/CallConnectInformation.dart';
 
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chatUi;
+
+part 'Chat/Chat.part.dart';
 
 class ChatNew extends ConsumerStatefulWidget {
   ChatNew(
@@ -45,7 +50,7 @@ class ChatNew extends ConsumerStatefulWidget {
 }
 
 class _ChatNewState extends ConsumerState<ChatNew>
-    with PeerConnectionMixin, TickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final ChatRepository _chatRepository = ChatRepository();
   List<types.Message> messages = [];
   late RealtimeSubscription _stream;
