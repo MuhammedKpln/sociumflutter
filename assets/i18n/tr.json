@@ -35,5 +35,9 @@
   "save": "Kaydet",
   "bioSettingsTitle": "Biyografi",
   "birthdaySettingsTitle": "Doğum tarihi",
-  "blockIncomingCallsSettingsTitle": "Gelen aramaları engelle"
+  "blockIncomingCallsSettingsTitle": "Gelen aramaları engelle",
+  "noInformationFound": "Herhangi bir bilgi bulunmamakta.",
+  "blocked": "Engelli",
+  "unblocked": "İzin verilmiş",
+  "profileSettingsTitle": "Profilini düzenle"
 }

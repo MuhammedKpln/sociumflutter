@@ -28,25 +28,25 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
 
     final List<Map<String, dynamic>> pages = [
       {
-        "label": "Biyografi",
+        "label": "bioSettingsTitle".tr(),
         "screen": const router.BioSettingsRoute(),
-        "value": user?.biography ?? "Bilgi bulunmamakta."
+        "value": user?.biography ?? "noInformationFound".tr()
       },
       {
-        "label": "Doğum tarihi",
+        "label": "birthdaySettingsTitle".tr(),
         "screen": const router.BirthdaySettingsRoute(),
         "value": formatDate(user?.birthday ?? DateTime.now())
       },
       {
-        "label": "Gelen aramaları engelle",
+        "label": "blockIncomingCallsSettingsTitle".tr(),
         "screen": const router.BlockIncomingCallsScreenRoute(),
-        "value": user!.blockIncomingCalls! ? "Engelli" : "İzin verilmiş"
+        "value": user!.blockIncomingCalls! ? "blocked".tr() : "unblocked".tr()
       },
     ];
 
     return AppScaffold(
       appBar: AppBar(
-        title: const Text("Profilini düzenle"),
+        title: const Text("profileSettingsTitle").tr(),
       ),
       body: Column(children: [
         Expanded(
@@ -55,8 +55,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
                 itemBuilder: ((context, index) {
                   final page = ProfileSettingsPageModal(
                       label: pages[index]["label"]!,
-                      value: pages[index]["value"] ??
-                          "Herhangi bir bilgi bulunmamakta.",
+                      value: pages[index]["value"] ?? "noInformationFound".tr(),
                       screen: pages[index]["screen"]);
 
                   return ListTile(

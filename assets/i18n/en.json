@@ -35,5 +35,9 @@
   "save": "Save",
   "bioSettingsTitle": "Biopgraphy",
   "birthdaySettingsTitle": "Birthday",
-  "blockIncomingCallsSettingsTitle": "Block incoming calls"
+  "blockIncomingCallsSettingsTitle": "Block incoming calls",
+  "noInformationFound": "No information found",
+  "blocked": "Blocked",
+  "unblocked": "Not blocked",
+  "profileSettingsTitle": "Edit your profile"
 }
