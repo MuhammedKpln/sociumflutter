@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/mixins/Loading.mixin.dart';
 import 'package:scflutter/models/chat_rooms.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
@@ -101,9 +100,6 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
                   socketService: socketService)),
               child: Column(
                 children: [
-                  RoundedButton(
-                      child: const Text("sea"),
-                      onPressed: () => fetchChatRooms()),
                   Row(
                     children: [
                       Avatar(
