@@ -24,7 +24,7 @@ class BioSettingsPage extends ConsumerStatefulWidget {
 class _BioSettingsPageState extends ConsumerState<BioSettingsPage>
     with LoggerMixin {
   final textController = TextEditingController();
-  UserRepository _userRepository = UserRepository();
+  final UserRepository _userRepository = UserRepository();
 
   @override
   void initState() {
@@ -49,18 +49,25 @@ class _BioSettingsPageState extends ConsumerState<BioSettingsPage>
     final user = ref.read(userProvider);
     final userId = user.user!.id;
     final userNotifer = ref.read(userProvider.notifier);
+    final data = {"biography": textController.text};
 
-    _userRepository.editBio(textController.text, userId).then((value) {
-      userNotifer.setBiography(value);
+    onSuccess(value) {
+      userNotifer.setBiography(value.biography!);
 
       context.toast.showToast("success".tr(), toastType: ToastType.Success);
 
       navigateBack();
-    }).catchError((error) {
+    }
+
+    onError(error) {
       context.toast.showToast("fail".tr(), toastType: ToastType.Error);
-      print(error);
       logError(error);
-    });
+    }
+
+    _userRepository
+        .updateProfile(data, userId)
+        .then(onSuccess)
+        .catchError(onError);
   }
 
   @override
