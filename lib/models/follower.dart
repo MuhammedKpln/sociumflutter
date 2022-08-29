@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:scflutter/models/user.dart';
 
 part 'follower.freezed.dart';
 part 'follower.g.dart';
@@ -17,8 +17,8 @@ class Follower with _$Follower {
       {required int id,
       required String user,
       required String actor,
-      User? user_data,
-      User? actor_data,
+      UserModel? user_data,
+      UserModel? actor_data,
       required DateTime created_at}) = _Follower;
 
   factory Follower.fromJson(Map<String, dynamic> json) =>

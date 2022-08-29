@@ -4,6 +4,7 @@ import 'package:scflutter/screens/Home.dart';
 import 'package:scflutter/screens/Login.dart';
 import 'package:scflutter/screens/Match.dart';
 import 'package:scflutter/screens/Onboard.dart';
+import 'package:scflutter/screens/Profile/Followers.dart';
 import 'package:scflutter/screens/Register/StepFour.dart';
 import 'package:scflutter/screens/Register/StepOne.dart';
 import 'package:scflutter/screens/Register/StepThree.dart';
@@ -45,6 +46,7 @@ import '../screens/ProfileSettings/bio_settings.dart';
     AutoRoute(page: BirthdaySettingsPage),
     AutoRoute(page: BlockIncomingCallsScreenPage),
     AutoRoute(page: InCallManagerScreenPage, fullscreenDialog: true),
+    AutoRoute(page: FollowersPage, fullscreenDialog: true),
     // AutoRoute(page: TestScreen),
   ],
 )

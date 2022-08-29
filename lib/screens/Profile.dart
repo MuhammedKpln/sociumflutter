@@ -6,7 +6,6 @@ import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/Loading.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
-import 'package:scflutter/extensions/logger.extension.dart';
 import 'package:scflutter/models/follower.dart';
 import 'package:scflutter/models/user.dart';
 import 'package:scflutter/repositories/follower.repository.dart';
@@ -35,10 +34,6 @@ class _ProfileScreenState extends ConsumerState<ProfilePage> with LoadingMixin {
 
   void onPressSettings() {
     context.router.navigate(const ProfileSettingsScreenRoute());
-  }
-
-  onError(error) {
-    context.logger.logError(error);
   }
 
   fetchUserProfile() async {
@@ -191,40 +186,51 @@ class _ProfileScreenState extends ConsumerState<ProfilePage> with LoadingMixin {
   }
 
   Row userFollowerInformation(FollowerRepositoryOutput data) {
+    void navigateToFollowersPage({required bool fetchingFollowers}) {
+      context.router
+          .navigate(FollowersRoute(fetchingFollowers: fetchingFollowers));
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Column(
-          children: [
-            Text(
-              "TAKİP",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: Theme.of(context).textTheme.titleSmall?.fontSize),
-            ),
-            Text(
-              data.followings.round().toString(),
-              style: TextStyle(
-                  color: const Color(0xff8A84E2),
-                  fontSize: Theme.of(context).textTheme.titleLarge?.fontSize),
-            )
-          ],
+        InkWell(
+          onTap: () => navigateToFollowersPage(fetchingFollowers: false),
+          child: Column(
+            children: [
+              Text(
+                "TAKİP",
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: Theme.of(context).textTheme.titleSmall?.fontSize),
+              ),
+              Text(
+                data.followings.round().toString(),
+                style: TextStyle(
+                    color: const Color(0xff8A84E2),
+                    fontSize: Theme.of(context).textTheme.titleLarge?.fontSize),
+              )
+            ],
+          ),
         ),
-        Column(
-          children: [
-            Text(
-              "TAKİPÇİ",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: Theme.of(context).textTheme.titleSmall?.fontSize),
-            ),
-            Text(
-              data.followers.round().toString(),
-              style: TextStyle(
-                  color: const Color(0xffF9A620),
-                  fontSize: Theme.of(context).textTheme.titleLarge?.fontSize),
-            )
-          ],
+        InkWell(
+          onTap: () => navigateToFollowersPage(fetchingFollowers: true),
+          child: Column(
+            children: [
+              Text(
+                "TAKİPÇİ",
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: Theme.of(context).textTheme.titleSmall?.fontSize),
+              ),
+              Text(
+                data.followers.round().toString(),
+                style: TextStyle(
+                    color: const Color(0xffF9A620),
+                    fontSize: Theme.of(context).textTheme.titleLarge?.fontSize),
+              )
+            ],
+          ),
         ),
         Column(
           children: [
