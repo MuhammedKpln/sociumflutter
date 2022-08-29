@@ -19,4 +19,16 @@ class UserRepository extends BaseRepositoryClass {
     logError(request.error);
     throw Exception(request.error);
   }
+
+  Future<UserModel> fetchUser(String username) async {
+    final request =
+        await _builder.select().eq("username", username).single().execute();
+
+    if (request.hasError) {
+      logError(request.error);
+      throw Exception(request.error);
+    }
+
+    return UserModel.fromJson(request.data);
+  }
 }

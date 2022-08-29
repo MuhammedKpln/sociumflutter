@@ -21,8 +21,6 @@ class _HomeScreenPageState extends ConsumerState<HomeScreenPage> {
 
   @override
   void initState() {
-    print("selqm");
-    // TODO: implement initState
     super.initState();
 
     stateChangeEvent = _client.auth.onAuthStateChange((event, session) {
@@ -34,9 +32,8 @@ class _HomeScreenPageState extends ConsumerState<HomeScreenPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     stateChangeEvent.data?.unsubscribe();
+    super.dispose();
   }
 
   @override

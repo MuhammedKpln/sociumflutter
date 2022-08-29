@@ -6,8 +6,11 @@ import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/Loading.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
-import 'package:scflutter/graphql/graphql_api.dart';
+import 'package:scflutter/extensions/logger.extension.dart';
+import 'package:scflutter/models/follower.dart';
 import 'package:scflutter/models/user.dart';
+import 'package:scflutter/repositories/follower.repository.dart';
+import 'package:scflutter/repositories/user.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -25,33 +28,35 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfilePage> with LoadingMixin {
-  final client = Supabase.instance.client;
+  final UserRepository _userRepository = UserRepository();
+  final FollowerRepository _followerRepository = FollowerRepository();
   late UserModel user;
+  late FollowerRepositoryOutput followers;
 
   void onPressSettings() {
     context.router.navigate(const ProfileSettingsScreenRoute());
   }
 
   onError(error) {
-    //TODO: implelemtn
+    context.logger.logError(error);
   }
 
   fetchUserProfile() async {
-    final fetch = await client
-        .from("users")
-        .select()
-        .eq("username", widget.username)
-        .single()
-        .execute();
-
-    if (!fetch.hasError) {
-      final parsedUser = UserModel.fromJson(fetch.data);
+    _userRepository.fetchUser(widget.username).then((value) async {
+      final followersOutput = await fetchUserFollowers();
 
       setState(() {
         isLoading = false;
-        user = parsedUser;
+        followers = followersOutput;
+        user = value;
       });
-    }
+    }).catchError(onError);
+  }
+
+  Future<FollowerRepositoryOutput> fetchUserFollowers() async {
+    final userId = Supabase.instance.client.auth.user()!.id;
+
+    return await _followerRepository.fetchFollowingsCount(userId);
   }
 
   @override
@@ -124,7 +129,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage> with LoadingMixin {
                                 style: const TextStyle(color: Colors.grey),
                               ),
                               //FIXME: implement
-                              // userFollowerInformation();
+                              userFollowerInformation(followers),
                               upgradeButton()
                             ]),
                       ),
@@ -185,7 +190,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage> with LoadingMixin {
     );
   }
 
-  Row userFollowerInformation(GetUserProfile$Query$GetUser$$count data) {
+  Row userFollowerInformation(FollowerRepositoryOutput data) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
