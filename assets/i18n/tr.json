@@ -23,5 +23,21 @@
   "registerStepTwoSecondTopicTitle": "Sesli sohbet",
   "registerStepTwoSecondTopicDescription": "Ses yoluyla gerçek zamanlı konuşmak için eşleşin.",
   "registerStepTwoPopularBadge": "Popüler",
-  "wrongLoginDetails": "Lütfen e-posta adresinizi ve şifrenizi kontrol ediniz."
+  "wrongLoginDetails": "Lütfen e-posta adresinizi ve şifrenizi kontrol ediniz.",
+  "matchScreenTitle": "Yeni insanlarla tanışın",
+  "matchScreenDescription": "Yeni insanlarla eşleşmek için, ara butonuna tıklayın!",
+  "matchScreenJoinedQueue": "Eşleşme sırasına katıldınız!",
+  "matchScreenMatchFoundTitle": "Yeni bir eşleşme var!",
+  "matchScreenMatchFoundSendMessageBtnTxt": "Mesaj gönder",
+  "matchScreenMatchFoundCloseBtnTxt": "Kapat",
+  "success": "Basarili!",
+  "fail": "Lütfen daha sonra tekrar deneyiniz!",
+  "save": "Kaydet",
+  "bioSettingsTitle": "Biyografi",
+  "birthdaySettingsTitle": "Doğum tarihi",
+  "blockIncomingCallsSettingsTitle": "Gelen aramaları engelle",
+  "noInformationFound": "Herhangi bir bilgi bulunmamakta.",
+  "blocked": "Engelli",
+  "unblocked": "İzin verilmiş",
+  "profileSettingsTitle": "Profilini düzenle"
 }

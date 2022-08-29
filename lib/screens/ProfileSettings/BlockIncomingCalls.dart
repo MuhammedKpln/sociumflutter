@@ -1,14 +1,15 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:scflutter/extensions/logger.extension.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
-import 'package:scflutter/graphql/graphql_api.graphql.dart';
-import 'package:scflutter/main.dart';
-import 'package:scflutter/state/auth.dart';
+import 'package:scflutter/repositories/user.repository.dart';
+import 'package:scflutter/state/auth.state.dart';
 
 import '../../components/RoundedButton.dart';
 import '../../components/Scaffold.dart';
+import '../../models/user.dart';
 import '../../theme/toast.dart';
 
 class BlockIncomingCallsScreenPage extends ConsumerStatefulWidget {
@@ -22,35 +23,15 @@ class BlockIncomingCallsScreenPage extends ConsumerStatefulWidget {
 class _BlockIncomingCallsScreenPageState
     extends ConsumerState<BlockIncomingCallsScreenPage> {
   bool blockIncomingCalls = false;
+  final UserRepository _userRepository = UserRepository();
 
   @override
   void initState() {
     super.initState();
-
     setState(() {
       blockIncomingCalls =
           ref.read(userProvider).user?.blockIncomingCalls ?? false;
     });
-  }
-
-  onError(OperationException? error) {
-    print(error);
-    context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
-        toastType: ToastType.Error);
-  }
-
-  onCompleted(Map<String, dynamic>? data) {
-    if (data != null) {
-      final userNotifer = ref.read(userProvider.notifier);
-      final parsedData = EditProfile$Mutation.fromJson(data);
-
-      userNotifer.setBlockIncomingCalls(
-          parsedData.editProfile.blockIncomingCalls ?? false);
-
-      scaffoldKey.currentState
-          ?.showSnackBar(const SnackBar(content: Text("Başarılı! ")));
-      context.router.pop();
-    }
   }
 
   onChangeSwitch(bool value) {
@@ -59,17 +40,41 @@ class _BlockIncomingCallsScreenPageState
     });
   }
 
+  void navigateBack() {
+    context.router.navigateBack();
+  }
+
+  onSuccess(UserModel value) {
+    final userNotifer = ref.read(userProvider.notifier);
+
+    userNotifer.setBlockIncomingCalls(value.blockIncomingCalls!);
+
+    context.toast.showToast("success".tr(), toastType: ToastType.Success);
+
+    navigateBack();
+  }
+
+  onError(error) {
+    context.toast.showToast("fail".tr(), toastType: ToastType.Error);
+    context.logger.logError(error);
+  }
+
+  void updateProfile() async {
+    final user = ref.read(userProvider);
+    final userId = user.user!.id;
+    final data = {"blockIncomingCalls": blockIncomingCalls};
+
+    _userRepository
+        .updateProfile(data, userId)
+        .then((value) => onSuccess(value))
+        .catchError(onError);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final mutationVariables =
-        EditProfileArguments(blockIncomingCalls: blockIncomingCalls);
-    final mutationVariablesParsed = mutationVariables.toJson();
-    final mutationDocument =
-        EditProfileMutation(variables: mutationVariables).document;
-
     return AppScaffold(
       appBar: AppBar(
-        title: const Text('Biyografini düzenle'),
+        title: const Text('blockIncomingCallsSettingsTitle').tr(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -83,22 +88,13 @@ class _BlockIncomingCallsScreenPageState
                   borderRadius: BorderRadius.circular(10)),
               child: Row(
                 children: [
-                  const Text("Gelen aramaları engelle"),
+                  const Text("blockIncomingCallsSettingsTitle").tr(),
                   Switch(value: blockIncomingCalls, onChanged: onChangeSwitch),
                 ],
               ),
             ),
-            Mutation(
-                options: MutationOptions<EditProfile$Mutation>(
-                    document: mutationDocument,
-                    variables: mutationVariablesParsed,
-                    onError: onError,
-                    onCompleted: onCompleted),
-                builder: (runMutation, result) {
-                  return RoundedButton(
-                      child: const Text("Kaydet"),
-                      onPressed: () => runMutation(mutationVariablesParsed));
-                }),
+            RoundedButton(
+                onPressed: updateProfile, child: const Text("save").tr()),
           ],
         ),
       ),

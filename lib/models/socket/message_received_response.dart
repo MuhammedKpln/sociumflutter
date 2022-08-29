@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:scflutter/models/message.dart';
+
+import '../message.model.dart';
 
 part 'message_received_response.freezed.dart';
 part 'message_received_response.g.dart';

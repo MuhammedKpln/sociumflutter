@@ -1,13 +1,10 @@
-// ignore_for_file: constant_identifier_names
-
 import 'package:flutter/foundation.dart';
 
 enum ApiService {
-  GraphQLAPI(kDebugMode
-      ? "http://localhost:3000/graphql"
-      : 'https://derdevam.com/graphql'),
-  WebsocketAPI(
-      kDebugMode ? "http://localhost:3001" : 'https://cio.derdevam.com');
+  SupabaseUrl("https://yjifhdpnxmwbuaoxumbk.supabase.co"),
+  WebsocketAPI(kDebugMode
+      ? "https://dad4-78-82-129-164.eu.ngrok.io"
+      : 'https://socium.fly.dev');
 
   final String path;
   const ApiService(this.path);

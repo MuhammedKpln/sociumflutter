@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import 'package:scflutter/models/user_model.dart';
+import 'package:scflutter/models/user.dart';
 
 part 'send_message_arguments.freezed.dart';
 part 'send_message_arguments.g.dart';
@@ -9,9 +8,9 @@ part 'send_message_arguments.g.dart';
 abstract class SendMessageArguments with _$SendMessageArguments {
   const factory SendMessageArguments({
     required String room,
-    required String message,
-    required User user,
-    required User receiver,
+    required String text,
+    required UserModel user,
+    required UserModel receiver,
     int? repliedToId,
   }) = _SendMessageArguments;
 

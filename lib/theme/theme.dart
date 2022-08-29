@@ -1,7 +1,14 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:scflutter/utils/palette.dart';
+
+const SociumChatTheme = DarkChatTheme(
+    backgroundColor: ColorPalette.background,
+    primaryColor: ColorPalette.primary,
+    secondaryColor: ColorPalette.surface,
+    inputBackgroundColor: ColorPalette.surface);
 
 SociumTheme(BuildContext context) {
   return ThemeData(

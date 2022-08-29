@@ -7,8 +7,9 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/main.dart';
-import 'package:scflutter/screens/Chat.dart';
 import 'package:scflutter/utils/palette.dart';
+
+import '../../state/chat.state.dart';
 
 class InCallManagerScreenPage extends StatefulWidget {
   InCallManagerScreenPage(

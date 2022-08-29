@@ -1,14 +1,16 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
-import 'package:scflutter/models/message.dart';
-import 'package:scflutter/models/user_model.dart';
+import 'package:scflutter/models/user.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/utils/router.gr.dart';
+
+import '../../models/room.dart';
 
 class MatchFound extends StatelessWidget {
   MatchFound(
@@ -19,7 +21,7 @@ class MatchFound extends StatelessWidget {
       required this.socketService})
       : super(key: key);
 
-  User user;
+  UserModel user;
   Room room;
   String userUUID;
   SocketService socketService;
@@ -33,7 +35,7 @@ class MatchFound extends StatelessWidget {
     void sendMessage() {
       closeDialog();
 
-      context.router.navigate(ChatScreenRoute(
+      context.router.navigate(ChatNew(
           comingFromMatchedPage: true,
           connectedUser: user,
           room: room,
@@ -55,18 +57,18 @@ class MatchFound extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Text(
-                    'Yeni bir eşleşme var!',
+                    'matchScreenMatchFoundTitle',
                     style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  ).tr(),
                 ),
                 Avatar(
-                  username: user.username!,
+                  username: user.username,
                   avatarSize: AvatarSize.large,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Text(
-                    user.username ?? "No username",
+                    user.username,
                     style: const TextStyle(
                         color: Colors.white, decoration: TextDecoration.none),
                   ),
@@ -78,11 +80,12 @@ class MatchFound extends StatelessWidget {
                 RoundedButton(
                   onPressed: sendMessage,
                   icon: const Icon(EvaIcons.messageCircleOutline, size: 20),
-                  child: const Text("Mesaj gönder"),
+                  child:
+                      const Text("matchScreenMatchFoundSendMessageBtnTxt").tr(),
                 ),
                 TextButton(
                     onPressed: () => AutoRouter.of(context).pop(),
-                    child: const Text("Kapat"))
+                    child: const Text("matchScreenMatchFoundCloseBtnTxt").tr())
               ],
             )
           ],
