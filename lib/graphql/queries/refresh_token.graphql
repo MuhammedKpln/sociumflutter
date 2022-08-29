@@ -1,7 +1,0 @@
-mutation REFRESH_TOKEN($refreshToken: String!, $userId: Float!) {
-  refreshToken(refreshToken: $refreshToken, userId: $userId) {
-    access_token
-    refresh_token
-    expire_date
-  }
-}

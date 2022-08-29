@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/config.dart';
 import 'package:scflutter/serivces.dart';
 import 'package:scflutter/theme/theme.dart';
@@ -19,7 +18,6 @@ final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  await initHiveForFlutter();
   await Supabase.initialize(
       url: ApiService.SupabaseUrl.path,
       anonKey: Config.SupabaseAnonKey,

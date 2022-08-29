@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/GradientText.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
-import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/models/login_response.model.dart';
 import 'package:scflutter/repositories/auth.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
@@ -89,12 +88,6 @@ class RegisterScreenStepFourState
 
   @override
   Widget build(BuildContext context) {
-    final registerArguments = RegisterArguments(
-        email: widget.email,
-        username: widget.username,
-        password: passwordController.text,
-        passwordConfirmation: passwordConfirmationController.text);
-
     return AppScaffold(
       appBar: AppBar(),
       body: Container(

@@ -1,9 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:scflutter/components/GradientText.dart';
-import 'package:scflutter/graphql/graphql_api.dart';
 import 'package:scflutter/utils/avatar.dart';
 import 'package:scflutter/utils/palette.dart';
 
@@ -115,33 +112,33 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
                   ?.apply(color: Colors.grey.shade400),
             ),
           ),
-          Expanded(
-            child: Query(
-                options: QueryOptions(
-                    document: FetchPostsQuery(
-                            variables:
-                                FetchPostsArguments(limit: 15, offset: 0))
-                        .document),
-                builder: (QueryResult result,
-                    {VoidCallback? refetch, FetchMore? fetchMore}) {
-                  if (result.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+          // Expanded(
+          //   child: Query(
+          //       options: QueryOptions(
+          //           document: FetchPostsQuery(
+          //                   variables:
+          //                       FetchPostsArguments(limit: 15, offset: 0))
+          //               .document),
+          //       builder: (QueryResult result,
+          //           {VoidCallback? refetch, FetchMore? fetchMore}) {
+          //         if (result.isLoading) {
+          //           return const Center(child: CircularProgressIndicator());
+          //         }
 
-                  final data = FetchPosts$Query.fromJson(result.data!);
+          //         final data = FetchPosts$Query.fromJson(result.data!);
 
-                  return ListView.builder(
-                    itemBuilder: ((context, index) {
-                      final item = data.posts[index];
+          //         return ListView.builder(
+          //           itemBuilder: ((context, index) {
+          //             final item = data.posts[index];
 
-                      return Post(
-                          title: item.content,
-                          categoryName: item.category.name);
-                    }),
-                    itemCount: result.data?.length,
-                  );
-                }),
-          )
+          //             return Post(
+          //                 title: item.content,
+          //                 categoryName: item.category.name);
+          //           }),
+          //           itemCount: result.data?.length,
+          //         );
+          //       }),
+          // )
         ],
       ),
     );
