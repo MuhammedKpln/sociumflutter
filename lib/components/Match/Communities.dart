@@ -1,7 +1,12 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/GradientText.dart';
-import 'package:scflutter/utils/avatar.dart';
+import 'package:scflutter/components/Match/JoinedCommunities.dart';
+import 'package:scflutter/mixins/Loading.mixin.dart';
+import 'package:scflutter/models/room.dart';
+import 'package:scflutter/repositories/room.repository.dart';
+import 'package:scflutter/theme/icon.dart';
 import 'package:scflutter/utils/palette.dart';
 
 class CommunitiesTab extends StatefulWidget {
@@ -11,135 +16,160 @@ class CommunitiesTab extends StatefulWidget {
   State<CommunitiesTab> createState() => _CommunitiesTabState();
 }
 
-Widget Post({required String title, required String categoryName, image}) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 5),
-    padding: const EdgeInsets.all(10),
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [Colors.grey.shade900, Colors.black26],
-        )),
-    child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: image != null
-                ? Image.network(generateAvatarUrl(image),
-                    width: 70, height: 70, fit: BoxFit.fill)
-                : Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [
-                      ColorPalette.primary,
-                      ColorPalette.primary.withOpacity(0.7)
-                    ])),
-                    child: Center(
-                        child: Text(
-                      title.characters.first,
-                      style: const TextStyle(color: Colors.white),
-                    )),
-                  ),
-          ),
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(title),
-                      const Icon(
-                        EvaIcons.globe,
-                        size: 17,
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: ColorPalette.surface,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Text(categoryName),
-                      ),
-                      Row(
-                        children: const [
-                          Text("3232"),
-                          Icon(
-                            EvaIcons.people,
-                            size: 17,
-                          )
-                        ],
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          )
-        ]),
-  );
-}
+class _CommunitiesTabState extends State<CommunitiesTab> with LoadingMixin {
+  final RoomRepository _roomRepository = RoomRepository();
+  int count = 0;
+  List<RoomWithPartipicationsData>? data;
+  List<RoomPartipicationWithRoomData> joinedRooms = [];
 
-class _CommunitiesTabState extends State<CommunitiesTab> {
+  renderBottomSheet() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(),
+        context: context,
+        builder: ((context) {
+          return DraggableScrollableSheet(
+              expand: false,
+              builder: ((context, scrollController) {
+                return SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    children: const [
+                      Text(
+                        "selam",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                );
+              }));
+        }));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _roomRepository.fetchPublishedRooms().then((value) {
+      final mapped = List<RoomWithPartipicationsData>.from(
+          value.data.map((_) => RoomWithPartipicationsData.fromJson(_)));
+
+      setState(() {
+        count = value.count!;
+        data = mapped;
+      });
+    });
+  }
+
+  Widget Post({
+    required String title,
+    required int userCount,
+  }) {
+    return Stack(alignment: Alignment.centerLeft, children: [
+      InkWell(
+        onTap: renderBottomSheet,
+        child: Container(
+            margin: const EdgeInsets.only(left: 40),
+            padding:
+                const EdgeInsets.only(left: 20, top: 5, bottom: 5, right: 10),
+            decoration: BoxDecoration(
+                gradient: ColorPalette.surfaceLinearGradient,
+                borderRadius: BorderRadius.circular(10)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                    Icon(
+                      FeatherIcons.globe,
+                      size: IconSizes.medium.size,
+                      color: Colors.grey,
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: Text(
+                            userCount.toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(color: Colors.grey),
+                          ),
+                        ),
+                        Icon(
+                          FeatherIcons.users,
+                          size: IconSizes.medium.size,
+                          color: Colors.grey,
+                        )
+                      ],
+                    )
+                  ],
+                )
+              ],
+            )),
+      ),
+      Avatar(
+        username: title,
+        avatarSize: AvatarSize.medium,
+      ),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GradientText("Topluluklar",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: Theme.of(context).textTheme.titleLarge?.fontSize)),
-          Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 20),
-            child: Text(
-              "Yeni topluluklar keşfedin",
-              style: Theme.of(context)
-                  .textTheme
-                  .labelLarge
-                  ?.apply(color: Colors.grey.shade400),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GradientText("Topluluklar",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize:
+                        Theme.of(context).textTheme.titleLarge?.fontSize)),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 20),
+              child: Text(
+                "Yeni topluluklar keşfedin",
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge
+                    ?.copyWith(color: Colors.grey.shade400),
+              ),
             ),
-          ),
-          // Expanded(
-          //   child: Query(
-          //       options: QueryOptions(
-          //           document: FetchPostsQuery(
-          //                   variables:
-          //                       FetchPostsArguments(limit: 15, offset: 0))
-          //               .document),
-          //       builder: (QueryResult result,
-          //           {VoidCallback? refetch, FetchMore? fetchMore}) {
-          //         if (result.isLoading) {
-          //           return const Center(child: CircularProgressIndicator());
-          //         }
+            const JoinedCommunities(),
+            ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: ((context, index) {
+                  final post = data![index];
 
-          //         final data = FetchPosts$Query.fromJson(result.data!);
-
-          //         return ListView.builder(
-          //           itemBuilder: ((context, index) {
-          //             final item = data.posts[index];
-
-          //             return Post(
-          //                 title: item.content,
-          //                 categoryName: item.category.name);
-          //           }),
-          //           itemCount: result.data?.length,
-          //         );
-          //       }),
-          // )
-        ],
+                  return Post(
+                      title: post.name!,
+                      userCount: post.room_partipications_data.length);
+                }),
+                separatorBuilder: ((context, index) {
+                  return const Divider();
+                }),
+                itemCount: count),
+          ],
+        ),
       ),
     );
   }

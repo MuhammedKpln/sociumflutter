@@ -11,4 +11,6 @@ abstract class ColorPalette {
     ColorPalette.primary,
     Colors.orange.shade300,
   ]);
+  static LinearGradient surfaceLinearGradient =
+      const LinearGradient(colors: [ColorPalette.surface, Colors.black]);
 }
