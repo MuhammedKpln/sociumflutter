@@ -40,5 +40,11 @@
   "blocked": "Blocked",
   "unblocked": "Not blocked",
   "profileSettingsTitle": "Edit your profile",
-  "myCommunities": "My Communities"
+  "myCommunities": "My Communities",
+  "aboutCommunity": "About Community",
+  "communityMembers": "Users ({memberCount})",
+  "viewAllMembersBtnTxt": "View all members",
+  "communities": "Communities",
+  "joinCommunityBtnText": "Join",
+  "leaveCommunityBtnText": "Leave Community"
 }

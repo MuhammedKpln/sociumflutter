@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nil/nil.dart';
 import 'package:scflutter/mixins/Loading.mixin.dart';
 import 'package:scflutter/models/room.dart';
 import 'package:scflutter/repositories/room.repository.dart';
@@ -8,17 +10,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../utils/palette.dart';
 import '../Avatar.dart';
 
-class JoinedCommunities extends StatefulWidget {
+class JoinedCommunities extends ConsumerStatefulWidget {
   const JoinedCommunities({Key? key}) : super(key: key);
 
   @override
-  State<JoinedCommunities> createState() => _JoinedCommunitiesState();
+  JoinedCommunitiesState createState() => JoinedCommunitiesState();
 }
 
-class _JoinedCommunitiesState extends State<JoinedCommunities>
+class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
     with LoadingMixin {
   final RoomRepository _roomRepository = RoomRepository();
   late List<RoomPartipicationWithRoomData> rooms;
+  //TODO: remove count, use .length instead
   int count = 0;
 
   @override
@@ -35,7 +38,6 @@ class _JoinedCommunitiesState extends State<JoinedCommunities>
 
     final mappedData = List<RoomPartipicationWithRoomData>.from(
         request.data.map((_) => RoomPartipicationWithRoomData.fromJson(_)));
-
     setState(() {
       rooms = mappedData;
       count = request.count ?? 0;
@@ -68,16 +70,19 @@ class _JoinedCommunitiesState extends State<JoinedCommunities>
 
   @override
   Widget build(BuildContext context) {
-    return renderLoading(
-        child: Column(
+    if (count < 1) {
+      return nil;
+    }
+
+    return Column(
       children: [
         Text(
-          "myCommunities".toUpperCase(),
+          "myCommunities".tr().toUpperCase(),
           style: Theme.of(context)
               .textTheme
               .labelLarge
               ?.copyWith(color: Colors.grey.shade400),
-        ).tr(),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: SizedBox(
@@ -95,6 +100,6 @@ class _JoinedCommunitiesState extends State<JoinedCommunities>
           ),
         )
       ],
-    ));
+    );
   }
 }

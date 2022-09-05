@@ -1,11 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:scflutter/components/GradientText.dart';
-import 'package:scflutter/components/Match/Communities.dart';
 import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/services/websocket.events.dart';
@@ -28,6 +26,7 @@ class MatchScreenPage extends ConsumerStatefulWidget {
 
 class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   final client = Supabase.instance.client;
+  final PageController _pageController = PageController();
   late OverlayEntry overlayEntry;
   bool searchingForOpponent = false;
   int tabIndex = 0;
@@ -37,6 +36,12 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
   void initState() {
     // client.cha
     super.initState();
+
+    _pageController.addListener(() {
+      setState(() {
+        tabIndex = _pageController.page!.round();
+      });
+    });
     socketService.onClientPaired((data) async {
       ClientPaired formattedData = ClientPaired.fromJson(data);
 
@@ -58,6 +63,7 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
 
   @override
   void dispose() {
+    _pageController.dispose();
     super.dispose();
 
     socketService.socket.off(SocketListenerEvents.CLIENT_PAIRED.path);
@@ -88,63 +94,19 @@ class _MatchScreenState extends ConsumerState<MatchScreenPage> {
     });
   }
 
-  void changeTab(int index) {
-    setState(() {
-      tabIndex = index;
-    });
+  void changeTab(int index) async {
+    await _pageController.animateToPage(index,
+        duration: const Duration(milliseconds: 200), curve: Curves.ease);
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider.notifier);
 
-    return AppScaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(EvaIcons.moreHorizontal),
-            onPressed: () => user.clearUser(),
-          ),
-          title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(20)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () => changeTab(0),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      width: 100,
-                      decoration: BoxDecoration(
-                          color: tabIndex == 0 ? ColorPalette.primary : null,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: const Icon(EvaIcons.globe,
-                          color: ColorPalette.grey, size: 15),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () => changeTab(1),
-                    child: Container(
-                      width: 100,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: tabIndex == 1 ? ColorPalette.primary : null,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: const Icon(EvaIcons.people,
-                          size: 15, color: ColorPalette.grey),
-                    ),
-                  )
-                ],
-              ),
-            )
-          ]),
-        ),
-        body: tabIndex == 0 ? _Main(context) : const CommunitiesTab());
+    return AppScaffold(body: _Main());
   }
 
-  Widget _Main(BuildContext context) {
+  Widget _Main() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

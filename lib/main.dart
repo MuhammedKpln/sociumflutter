@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,8 @@ class SociumApplication extends ConsumerWidget {
       title: 'Flutter Demo',
       scaffoldMessengerKey: scaffoldKey,
       theme: SociumTheme(context),
-      routerDelegate: _appRouter.delegate(),
+      routerDelegate: AutoRouterDelegate(_appRouter,
+          navigatorObservers: () => [AutoRouteObserver()]),
       routeInformationParser: _appRouter.defaultRouteParser(),
       supportedLocales: context.supportedLocales,
     );

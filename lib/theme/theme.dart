@@ -25,6 +25,13 @@ SociumTheme(BuildContext context) {
           textTheme: ButtonTextTheme.normal,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(Colors.white),
+              side: MaterialStateProperty.all(
+                  const BorderSide(color: ColorPalette.primary)),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20))))),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(ColorPalette.primary),

@@ -40,5 +40,11 @@
   "blocked": "Engelli",
   "unblocked": "İzin verilmiş",
   "profileSettingsTitle": "Profilini düzenle",
-  "myCommunities": "Katıldığım odalar"
+  "myCommunities": "Katıldığım odalar",
+  "aboutCommunity": "Oda hakkında",
+  "communityMembers": "Kullanıcılar ({memberCount})",
+  "viewAllMembersBtnTxt": "Tüm kullanıcıları göster",
+  "communities": "Odalar",
+  "joinCommunityBtnText": "Katıl",
+  "leaveCommunityBtnText": "Cik"
 }
