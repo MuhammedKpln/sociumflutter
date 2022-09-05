@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:scflutter/components/Match/Communities.dart';
+import 'package:scflutter/screens/Match/Communities.dart';
 import 'package:scflutter/screens/ChatNew.dart';
 import 'package:scflutter/screens/Home.dart';
 import 'package:scflutter/screens/Login.dart';
@@ -35,7 +35,7 @@ import '../screens/ProfileSettings/bio_settings.dart';
     AutoRoute(page: HomeScreenPage, children: [
       AutoRoute(page: MatchScreenOnboardPage, children: [
         AutoRoute(page: MatchScreenPage, initial: true),
-        AutoRoute(page: CommunitiesTab),
+        AutoRoute(page: CommunitiesTabPage),
       ]),
       AutoRoute(page: ProfilePage),
       AutoRoute(page: ChatsScreenPage),
