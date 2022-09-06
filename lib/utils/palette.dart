@@ -11,6 +11,11 @@ abstract class ColorPalette {
     ColorPalette.primary,
     Colors.orange.shade300,
   ]);
-  static LinearGradient surfaceLinearGradient =
-      const LinearGradient(colors: [Color(0xFF33383F), Color(0xFF131416)]);
+  static LinearGradient surfaceLinearGradient = const LinearGradient(
+      colors: [Color(0xFF33383F), Color(0xFF131416)],
+      begin: Alignment.centerLeft,
+      tileMode: TileMode.decal,
+      end: Alignment.centerRight);
+  static LinearGradient shimmerGradient =
+      LinearGradient(colors: [Colors.white.withOpacity(0.5), Colors.white]);
 }

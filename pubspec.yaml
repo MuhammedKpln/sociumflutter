@@ -58,6 +58,7 @@ dependencies:
   easy_localization: ^3.0.1
   supabase_flutter: ^0.3.3
   intl: ^0.17.0
+  shimmer: ^2.0.0
 
 
 
