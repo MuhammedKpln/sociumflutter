@@ -8,7 +8,7 @@ class RoomRepository extends BaseRepositoryClass {
   RoomRepository()
       : super(BaseRepositoryArguments(userData: true, roomData: true));
 
-  Future<PostgrestResponse> fetchPublishedRooms() async {
+  Future<List<Room>> fetchPublishedRooms() async {
     String select = """*,
       room_partipications_data:room_partipications(*,user_data:users(*))
 """;
@@ -17,17 +17,18 @@ class RoomRepository extends BaseRepositoryClass {
         .from("rooms")
         .select(select)
         .eq("published", true)
-        .execute(count: CountOption.estimated);
+        .execute();
 
     if (request.hasError) {
       logError(request.error);
       throw Exception(request.error);
     }
 
-    return request;
+    return List.from(request.data.map((data) => Room.fromJson(data)));
   }
 
-  Future<PostgrestResponse> fetchJoinedRooms({required String userId}) async {
+  Future<List<RoomPartipication>> fetchJoinedRooms(
+      {required String userId}) async {
     String select = """*,
       room_data:room(*)
 """;
@@ -43,7 +44,8 @@ class RoomRepository extends BaseRepositoryClass {
       throw Exception(request.error);
     }
 
-    return request;
+    return List.from(
+        request.data.map((data) => RoomPartipication.fromJson(data)));
   }
 
   Future<Room> fetchRoomDetails({required int roomId}) async {

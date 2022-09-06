@@ -21,7 +21,7 @@ class JoinedCommunities extends ConsumerStatefulWidget {
 class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
     with NewLoadingMixin<JoinedCommunities>, TickerProviderStateMixin {
   final RoomRepository _roomRepository = RoomRepository();
-  late List<RoomPartipicationWithRoomData> rooms;
+  late List<RoomPartipication> rooms;
   //TODO: remove count, use .length instead
   int count = 0;
 
@@ -37,13 +37,10 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
 
     final request = await _roomRepository.fetchJoinedRooms(userId: userId);
 
-    final mappedData = List<RoomPartipicationWithRoomData>.from(
-        request.data.map((_) => RoomPartipicationWithRoomData.fromJson(_)));
-
     setLoading(false);
     setState(() {
-      rooms = mappedData;
-      count = request.count ?? 0;
+      rooms = request;
+      count = request.length;
     });
   }
 
@@ -104,7 +101,7 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
               itemBuilder: ((context, index) {
                 final community = rooms[index];
 
-                return Community(title: community.room_data.name!);
+                return Community(title: community.room_data?.name ?? "No name");
               }),
               scrollDirection: Axis.horizontal,
               itemCount: count,

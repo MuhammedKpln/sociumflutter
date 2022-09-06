@@ -25,7 +25,7 @@ class _CommunitiesTabState extends ConsumerState<CommunitiesTabPage>
     with NewLoadingMixin<CommunitiesTabPage>, TickerProviderStateMixin {
   final RoomRepository _roomRepository = RoomRepository();
   int count = 0;
-  List<RoomWithPartipicationsData>? data;
+  List<Room>? data;
   GlobalKey<JoinedCommunitiesState> testkey = GlobalKey();
 
   navigateToRoomDetails({required int roomId}) async {
@@ -46,13 +46,10 @@ class _CommunitiesTabState extends ConsumerState<CommunitiesTabPage>
 
   fetchPublishedRooms() async {
     _roomRepository.fetchPublishedRooms().then((value) {
-      final mapped = List<RoomWithPartipicationsData>.from(
-          value.data.map((_) => RoomWithPartipicationsData.fromJson(_)));
-
       setLoading(false);
       setState(() {
-        count = value.count!;
-        data = mapped;
+        count = value.length;
+        data = value;
       });
     });
   }
@@ -167,7 +164,7 @@ class _CommunitiesTabState extends ConsumerState<CommunitiesTabPage>
                     return Post(
                         roomId: post.id,
                         title: post.name!,
-                        userCount: post.room_partipications_data.length);
+                        userCount: post.room_partipications_data?.length ?? 0);
                   }),
                   separatorBuilder: ((context, index) {
                     return const SizedBox(
