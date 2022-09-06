@@ -20,7 +20,7 @@ class MatchScreenOnboardPage extends ConsumerWidget {
     final user = ref.watch(userProvider.notifier);
 
     return AutoTabsRouter(
-      routes: const [MatchScreenRoute(), CommunitiesTab()],
+      routes: const [MatchScreenRoute(), CommunitiesTabRoute()],
       builder: (context, child, animation) {
         final tabsRouter = AutoTabsRouter.of(context);
 

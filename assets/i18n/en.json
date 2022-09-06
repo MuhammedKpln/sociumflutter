@@ -46,5 +46,6 @@
   "viewAllMembersBtnTxt": "View all members",
   "communities": "Communities",
   "joinCommunityBtnText": "Join",
-  "leaveCommunityBtnText": "Leave Community"
+  "leaveCommunityBtnText": "Leave Community",
+  "exploreCommunities": "Explore Communities"
 }

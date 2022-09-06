@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/GradientText.dart';
+import 'package:scflutter/components/LoadingNew.dart';
 import 'package:scflutter/components/Match/JoinedCommunities.dart';
-import 'package:scflutter/mixins/Loading.mixin.dart';
+import 'package:scflutter/mixins/NewLoading.mixin.dart';
 import 'package:scflutter/models/room.dart';
 import 'package:scflutter/repositories/room.repository.dart';
 import 'package:scflutter/theme/icon.dart';
@@ -21,7 +22,7 @@ class CommunitiesTabPage extends ConsumerStatefulWidget {
 }
 
 class _CommunitiesTabState extends ConsumerState<CommunitiesTabPage>
-    with LoadingMixin {
+    with NewLoadingMixin<CommunitiesTabPage>, TickerProviderStateMixin {
   final RoomRepository _roomRepository = RoomRepository();
   int count = 0;
   List<RoomWithPartipicationsData>? data;
@@ -48,6 +49,7 @@ class _CommunitiesTabState extends ConsumerState<CommunitiesTabPage>
       final mapped = List<RoomWithPartipicationsData>.from(
           value.data.map((_) => RoomWithPartipicationsData.fromJson(_)));
 
+      setLoading(false);
       setState(() {
         count = value.count!;
         data = mapped;
@@ -138,26 +140,41 @@ class _CommunitiesTabState extends ConsumerState<CommunitiesTabPage>
                     fontSize:
                         Theme.of(context).textTheme.titleLarge?.fontSize)),
           ),
-          JoinedCommunities(
-            key: testkey,
+          Loading(
+            type: LoadingType.list,
+            child: JoinedCommunities(
+              key: testkey,
+            ),
           ),
-          ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: ((context, index) {
-                final post = data![index];
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Text(
+              "exploreCommunities".tr().toUpperCase(),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge
+                  ?.copyWith(color: Colors.grey.shade400),
+            ),
+          ),
+          Loading(
+              type: LoadingType.list,
+              child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: ((context, index) {
+                    final post = data![index];
 
-                return Post(
-                    roomId: post.id,
-                    title: post.name!,
-                    userCount: post.room_partipications_data.length);
-              }),
-              separatorBuilder: ((context, index) {
-                return const SizedBox(
-                  height: 20,
-                );
-              }),
-              itemCount: count),
+                    return Post(
+                        roomId: post.id,
+                        title: post.name!,
+                        userCount: post.room_partipications_data.length);
+                  }),
+                  separatorBuilder: ((context, index) {
+                    return const SizedBox(
+                      height: 20,
+                    );
+                  }),
+                  itemCount: count))
         ],
       ),
     );
