@@ -2,7 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nil/nil.dart';
-import 'package:scflutter/mixins/Loading.mixin.dart';
+import 'package:scflutter/components/LoadingNew.dart';
+import 'package:scflutter/mixins/NewLoading.mixin.dart';
 import 'package:scflutter/models/room.dart';
 import 'package:scflutter/repositories/room.repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -18,7 +19,7 @@ class JoinedCommunities extends ConsumerStatefulWidget {
 }
 
 class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
-    with LoadingMixin {
+    with NewLoadingMixin<JoinedCommunities>, TickerProviderStateMixin {
   final RoomRepository _roomRepository = RoomRepository();
   late List<RoomPartipicationWithRoomData> rooms;
   //TODO: remove count, use .length instead
@@ -38,10 +39,11 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
 
     final mappedData = List<RoomPartipicationWithRoomData>.from(
         request.data.map((_) => RoomPartipicationWithRoomData.fromJson(_)));
+
+    setLoading(false);
     setState(() {
       rooms = mappedData;
       count = request.count ?? 0;
-      isLoading = false;
     });
   }
 
@@ -49,18 +51,28 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
     return Container(
       decoration: BoxDecoration(
           gradient: ColorPalette.surfaceLinearGradient,
-          borderRadius: BorderRadius.circular(20)),
+          borderRadius: BorderRadius.circular(15)),
       child: Padding(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(5),
         child: Column(
           children: [
-            Avatar(
-              username: title,
-              avatarSize: AvatarSize.large,
+            Loading(
+              size: AvatarSize.large,
+              type: LoadingType.avatar,
+              child: Avatar(
+                username: title,
+                avatarSize: AvatarSize.large,
+              ),
             ),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall,
+            Loading(
+              type: LoadingType.singleLine,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
             ),
           ],
         ),
