@@ -9,7 +9,7 @@ mixin NewLoadingMixin<T extends StatefulWidget> on State<T>
     implements TickerProviderStateMixin<T> {
   ValueNotifier<bool> isLoading = ValueNotifier(true);
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 2),
+    duration: const Duration(milliseconds: 300),
     value: 0,
     vsync: this,
   );
