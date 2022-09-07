@@ -50,7 +50,8 @@ class RoomRepository extends BaseRepositoryClass {
 
   Future<Room> fetchRoomDetails({required int roomId}) async {
     String select = """*,
-      room_partipications_data:room_partipications(*,user_data:users(*))
+      room_partipications_data:room_partipications(*,user_data:users(*)),
+      category_data:categories(*)
 """;
 
     final request = await supabase
@@ -60,6 +61,8 @@ class RoomRepository extends BaseRepositoryClass {
         .limit(1)
         .single()
         .execute();
+
+    print(request.data);
 
     if (request.hasError) {
       logError(request.error);

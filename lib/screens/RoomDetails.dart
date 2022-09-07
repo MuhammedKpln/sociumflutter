@@ -282,17 +282,17 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
   }
 
   Widget renderCategories() {
+    if (roomDetails.category_data == null) {
+      return SizedBox();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: SizedBox(
         width: 200,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: const [
-            Badge(child: Text("Social")),
-            Badge(child: Text("Social"))
-          ],
-        ),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          Badge(child: Text(roomDetails.category_data?.name ?? ""))
+        ]),
       ),
     );
   }
