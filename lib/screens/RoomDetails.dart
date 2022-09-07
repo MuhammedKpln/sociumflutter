@@ -18,11 +18,11 @@ import '../components/Avatar.dart';
 import '../utils/palette.dart';
 
 class RoomDetailsPage extends ConsumerStatefulWidget {
-  RoomDetailsPage({Key? key, required this.roomId, required this.onPop})
+  RoomDetailsPage({Key? key, required this.roomId, this.onPop})
       : super(key: key);
 
   int roomId;
-  VoidCallback onPop;
+  VoidCallback? onPop;
 
   @override
   _RoomDetailsPageState createState() => _RoomDetailsPageState();
@@ -42,7 +42,7 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
 
   @override
   void dispose() {
-    widget.onPop();
+    widget.onPop?.call();
     super.dispose();
   }
 
