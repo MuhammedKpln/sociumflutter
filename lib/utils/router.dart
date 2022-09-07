@@ -4,7 +4,6 @@ import 'package:scflutter/screens/ChatNew.dart';
 import 'package:scflutter/screens/Home.dart';
 import 'package:scflutter/screens/Login.dart';
 import 'package:scflutter/screens/Match.dart';
-import 'package:scflutter/screens/MatchScreenOnboard.dart';
 import 'package:scflutter/screens/Onboard.dart';
 import 'package:scflutter/screens/Profile/Followers.dart';
 import 'package:scflutter/screens/Register/StepFour.dart';
@@ -12,7 +11,8 @@ import 'package:scflutter/screens/Register/StepOne.dart';
 import 'package:scflutter/screens/Register/StepThree.dart';
 import 'package:scflutter/screens/Register/StepTwo.dart';
 import 'package:scflutter/screens/RoomDetails.dart';
-
+import 'package:scflutter/screens/Router/ChatsRouter.dart';
+import 'package:scflutter/screens/Router/MatchRouter.dart';
 import '../screens/Chat/CallComing.dart';
 import '../screens/Chat/InCallManager.dart';
 import '../screens/Chats.dart';
@@ -33,12 +33,15 @@ import '../screens/ProfileSettings/bio_settings.dart';
     AutoRoute(page: RegisterScreenStepFourPage),
     AutoRoute(page: CallComingPage, fullscreenDialog: true),
     AutoRoute(page: HomeScreenPage, children: [
-      AutoRoute(page: MatchScreenOnboardPage, children: [
+      AutoRoute(page: MatchRouter, children: [
         AutoRoute(page: MatchScreenPage, initial: true),
         AutoRoute(page: CommunitiesTabPage),
       ]),
       AutoRoute(page: ProfilePage),
-      AutoRoute(page: ChatsScreenPage),
+      AutoRoute(
+          page: ChatsRouter,
+          children: [AutoRoute(page: ChatsScreenPage, initial: true)],
+          name: "ChatsRouter"),
     ]),
     // AutoRoute(
     //   page: ChatScreenPage,

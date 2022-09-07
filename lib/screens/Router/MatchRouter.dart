@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/state/auth.state.dart';
+import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
-import '../utils/palette.dart';
-
-class MatchScreenOnboardPage extends ConsumerWidget {
-  const MatchScreenOnboardPage({Key? key}) : super(key: key);
+class MatchRouter extends ConsumerWidget {
+  const MatchRouter({Key? key}) : super(key: key);
 
   void changeTab(int index, TabsRouter context) {
     context.setActiveIndex(index);

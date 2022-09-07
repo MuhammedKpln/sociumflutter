@@ -44,8 +44,8 @@ class _HomeScreenPageState extends ConsumerState<HomeScreenPage> {
     return Scaffold(
         body: AutoTabsScaffold(
       routes: [
-        const MatchScreenOnboardRoute(),
-        const ChatsScreenRoute(),
+        const MatchRouter(),
+        const ChatsRouter(),
         ProfileRoute(username: username),
       ],
       bottomNavigationBuilder: (_, tabsRouter) {

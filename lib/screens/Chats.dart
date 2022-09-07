@@ -62,7 +62,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
     );
   }
 
-  Widget pageOne() {
+  Widget main() {
     if (isLoading) {
       return const Loading();
     }
@@ -157,11 +157,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      appBar: renderAppBar(),
-      body: PageView(
-          controller: pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [pageOne(), pageTwo()]),
+      body: main(),
     );
   }
 
