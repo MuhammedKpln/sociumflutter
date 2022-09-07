@@ -34,6 +34,10 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
   FollowerRepositoryOutput? followers;
 
   void onPressSettings() {
+    context.router.navigate(const SettingsRoute());
+  }
+
+  void onPressProfileSettings() {
     context.router.navigate(const ProfileSettingsScreenRoute());
   }
 
@@ -66,7 +70,8 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
     return AppScaffold(
         appBar: AppBar(
           leading: IconButton(
-              onPressed: onPressSettings, icon: const Icon(FeatherIcons.edit)),
+              onPressed: onPressProfileSettings,
+              icon: const Icon(FeatherIcons.edit)),
           actions: [
             IconButton(
                 onPressed: onPressSettings,

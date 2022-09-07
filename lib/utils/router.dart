@@ -13,6 +13,7 @@ import 'package:scflutter/screens/Register/StepTwo.dart';
 import 'package:scflutter/screens/RoomDetails.dart';
 import 'package:scflutter/screens/Router/ChatsRouter.dart';
 import 'package:scflutter/screens/Router/MatchRouter.dart';
+import 'package:scflutter/screens/Settings.dart';
 import '../screens/Chat/CallComing.dart';
 import '../screens/Chat/InCallManager.dart';
 import '../screens/Chats.dart';
@@ -63,6 +64,10 @@ import '../screens/ProfileSettings/bio_settings.dart';
         page: ProfilePage,
         fullscreenDialog: true,
         name: "ProfilePageAsDialogRoute"),
+    AutoRoute(
+      page: SettingsPage,
+      fullscreenDialog: true,
+    ),
     // AutoRoute(page: TestScreen),
   ],
 )

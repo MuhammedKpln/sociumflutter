@@ -51,6 +51,7 @@ class SociumApplication extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         ...context.localizationDelegates,
       ],
+      locale: context.locale,
       title: 'Flutter Demo',
       scaffoldMessengerKey: scaffoldKey,
       theme: SociumTheme(context),

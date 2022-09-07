@@ -47,5 +47,6 @@
   "communities": "Communities",
   "joinCommunityBtnText": "Join",
   "leaveCommunityBtnText": "Leave Community",
-  "exploreCommunities": "Explore Communities"
+  "exploreCommunities": "Explore Communities",
+  "settingsChangeLang": "Change language"
 }
