@@ -23,7 +23,7 @@ class JoinedCommunities extends ConsumerStatefulWidget {
 class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
     with NewLoadingMixin<JoinedCommunities>, TickerProviderStateMixin {
   final RoomRepository _roomRepository = RoomRepository();
-  late List<RoomPartipication> rooms;
+  List<RoomPartipication> rooms = [];
 
   @override
   void initState() {
