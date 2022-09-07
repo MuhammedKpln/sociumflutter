@@ -37,7 +37,9 @@ import '../screens/ProfileSettings/bio_settings.dart';
         AutoRoute(page: MatchScreenPage, initial: true),
         AutoRoute(page: CommunitiesTabPage),
       ]),
-      AutoRoute(page: ProfilePage),
+      AutoRoute(
+        page: ProfilePage,
+      ),
       AutoRoute(
           page: ChatsRouter,
           children: [AutoRoute(page: ChatsScreenPage, initial: true)],
@@ -57,6 +59,10 @@ import '../screens/ProfileSettings/bio_settings.dart';
     AutoRoute(page: InCallManagerScreenPage, fullscreenDialog: true),
     AutoRoute(page: FollowersPage, fullscreenDialog: true),
     AutoRoute(page: RoomDetailsPage, fullscreenDialog: false),
+    AutoRoute(
+        page: ProfilePage,
+        fullscreenDialog: true,
+        name: "ProfilePageAsDialogRoute"),
     // AutoRoute(page: TestScreen),
   ],
 )

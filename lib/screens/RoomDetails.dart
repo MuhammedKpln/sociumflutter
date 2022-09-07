@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:scflutter/models/user.dart';
 import 'package:scflutter/repositories/room.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/toast.dart';
+import 'package:scflutter/utils/router.gr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../components/Avatar.dart';
@@ -126,6 +128,10 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
             )));
   }
 
+  void onTapUser(String username) {
+    context.router.navigate(ProfilePageAsDialogRoute(username: username));
+  }
+
   Widget renderUsersSection() {
     if (roomDetails.room_partipications_data!.isEmpty) {
       return const SizedBox();
@@ -160,6 +166,7 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
                   roomDetails.room_partipications_data?[index].user_data;
 
               return ListTile(
+                onTap: () => onTapUser(user?.username ?? "admin"),
                 title: Text(user?.username ?? "??"),
                 leading: Avatar(username: user?.username ?? "??"),
               );
