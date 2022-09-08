@@ -12,6 +12,7 @@ import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/PermissionModal.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/theme/theme.dart';
+import 'package:scflutter/utils/router.gr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../components/Avatar.dart';
 import '../components/Scaffold.dart';
@@ -273,23 +274,31 @@ class _ChatNewState extends ConsumerState<ChatNew>
             : FeatherIcons.phoneCall));
   }
 
+  Future<void> navigateToUserProfile() async {
+    await context.router.navigate(ProfilePageAsDialogRoute(
+        username: widget.connectedUser?.username ?? "admin"));
+  }
+
   AppBar renderAppBar() {
     return AppBar(
       bottom: renderAppBarBottom(),
       centerTitle: true,
-      title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Avatar(
-          avatarSize: AvatarSize.small,
-          username: widget.connectedUser!.username,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: Text(
-            widget.connectedUser?.username ?? "",
-            style: Theme.of(context).textTheme.bodySmall,
+      title: InkWell(
+        onTap: navigateToUserProfile,
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Avatar(
+            avatarSize: AvatarSize.small,
+            username: widget.connectedUser!.username,
           ),
-        ),
-      ]),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              widget.connectedUser?.username ?? "",
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        ]),
+      ),
       actions: [
         askForPermissionsButton(),
       ],
