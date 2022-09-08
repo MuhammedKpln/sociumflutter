@@ -1,10 +1,12 @@
 import 'package:scflutter/models/chat_rooms.dart';
 import 'package:scflutter/models/message.model.dart';
+import 'package:scflutter/repositories/room.repository.dart';
 import 'package:scflutter/utils/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatRepository with LoggerMixin {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
+  final RoomRepository _roomRepository = RoomRepository();
   final String _table = "messages";
 
   SupabaseQueryBuilder get _query => _supabaseClient.from(_table);
@@ -66,4 +68,7 @@ class ChatRepository with LoggerMixin {
         .on(SupabaseEventTypes.all, callback)
         .subscription;
   }
+
+  Future<bool> Function({required int roomId}) get deleteRoom =>
+      _roomRepository.deleteRoom;
 }

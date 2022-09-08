@@ -102,4 +102,15 @@ class RoomRepository extends BaseRepositoryClass {
 
     return RoomPartipication.fromJson(request.data.first);
   }
+
+  Future<bool> deleteRoom({required int roomId}) async {
+    final request = await _builder.delete().eq("id", roomId).execute();
+
+    if (request.hasError) {
+      logError(request.error);
+      throw Exception(request.error);
+    }
+
+    return true;
+  }
 }

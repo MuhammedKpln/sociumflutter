@@ -12,6 +12,7 @@ const SociumChatTheme = DarkChatTheme(
 
 SociumTheme(BuildContext context) {
   return ThemeData(
+      dialogBackgroundColor: ColorPalette.background,
       iconTheme: const IconThemeData(color: Colors.white),
       appBarTheme: const AppBarTheme(
           backgroundColor: ColorPalette.background,

@@ -48,5 +48,8 @@
   "joinCommunityBtnText": "Join",
   "leaveCommunityBtnText": "Leave Community",
   "exploreCommunities": "Explore Communities",
-  "settingsChangeLang": "Change language"
+  "settingsChangeLang": "Change language",
+  "sureToDelete": "Are you sure you want to delete {name}?",
+  "cancelBtnTxt": "Cancel",
+  "deleteBtnTxt": "Delete"
 }

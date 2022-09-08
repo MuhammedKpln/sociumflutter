@@ -48,5 +48,8 @@
   "joinCommunityBtnText": "Katıl",
   "leaveCommunityBtnText": "Cik",
   "exploreCommunities": "Oda kesfet",
-  "settingsChangeLang": "Dil degistir"
+  "settingsChangeLang": "Dil degistir",
+  "sureToDelete": "{name} silmek istediginize eminmisiniz?",
+  "deleteBtnText": "Sil",
+  "cancelBtnText": "Iptal et"
 }
