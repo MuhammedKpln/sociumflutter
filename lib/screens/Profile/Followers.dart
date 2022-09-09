@@ -25,7 +25,6 @@ class _FollowersPageState extends ConsumerState<FollowersPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     if (widget.fetchingFollowers) {

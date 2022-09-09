@@ -126,13 +126,11 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
                               Loading(
                                 type: LoadingType.singleLine,
                                 child: Text(
-                                  //FIXME: implement
                                   user?.biography ??
                                       "Herhangi bir bilgi bulunmamakta.",
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                               ),
-                              //FIXME: implement
                               userFollowerInformation(userMeta),
                               upgradeButton()
                             ]),
@@ -140,9 +138,8 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
                       Center(
                         child: Container(
                             transform: Matrix4.translationValues(0.0, -50, 0.0),
-                            child: const Avatar(
-                                //FIXME: implement
-                                username: "q",
+                            child: Avatar(
+                                username: user?.username ?? "s",
                                 avatarSize: AvatarSize.large)),
                       ),
                     ],

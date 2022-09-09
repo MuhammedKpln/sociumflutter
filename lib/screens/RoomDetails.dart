@@ -218,9 +218,8 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
               Container(
                   alignment: Alignment.center,
                   transform: Matrix4.translationValues(0.0, -50, 0.0),
-                  child: const Avatar(
-                      //FIXME: implement
-                      username: "q",
+                  child: Avatar(
+                      username: roomDetails.name ?? "s",
                       avatarSize: AvatarSize.large)),
             ],
           ),
