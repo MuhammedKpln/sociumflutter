@@ -7,6 +7,7 @@ import 'package:scflutter/mixins/Loading.mixin.dart';
 import 'package:scflutter/models/follower.dart';
 import 'package:scflutter/repositories/follower.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
+import 'package:scflutter/utils/router.gr.dart';
 
 class FollowersPage extends ConsumerStatefulWidget {
   FollowersPage({Key? key, required this.fetchingFollowers}) : super(key: key);
@@ -54,9 +55,8 @@ class _FollowersPageState extends ConsumerState<FollowersPage>
     }).catchError(onError);
   }
 
-  void navigateToUserProfile() async {
-    //TODO: implement
-    context.router.navigateBack();
+  void navigateToUserProfile(String username) async {
+    await context.router.navigate(ProfilePageAsDialogRoute(username: username));
   }
 
   @override
@@ -78,7 +78,7 @@ class _FollowersPageState extends ConsumerState<FollowersPage>
                   }
 
                   return ListTile(
-                    onTap: navigateToUserProfile,
+                    onTap: () => navigateToUserProfile(username),
                     title: Text(username),
                     leading: Avatar(username: username),
                   );
