@@ -39,14 +39,14 @@ class _HomeScreenPageState extends ConsumerState<HomeScreenPage> {
   @override
   Widget build(BuildContext context) {
     final userNotifier = ref.watch(userProvider);
-    final username = userNotifier.user!.username;
+    final username = userNotifier.user?.username;
 
     return Scaffold(
         body: AutoTabsScaffold(
       routes: [
         const MatchRouter(),
         const ChatsRouter(),
-        ProfileRoute(username: username),
+        ProfileRoute(username: username ?? ""),
       ],
       bottomNavigationBuilder: (_, tabsRouter) {
         return BottomNavigationBar(
