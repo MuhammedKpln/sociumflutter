@@ -5,13 +5,6 @@ part 'follower.freezed.dart';
 part 'follower.g.dart';
 
 @freezed
-class FollowerRepositoryOutput with _$FollowerRepositoryOutput {
-  factory FollowerRepositoryOutput(
-      {required int followers,
-      required int followings}) = _FollowerRepositoryOutput;
-}
-
-@freezed
 class Follower with _$Follower {
   factory Follower(
       {required int id,

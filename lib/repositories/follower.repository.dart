@@ -8,20 +8,6 @@ class FollowerRepository extends BaseRepositoryClass {
   FollowerRepository()
       : super(BaseRepositoryArguments(userData: true, actorData: true));
 
-  Future<FollowerRepositoryOutput> fetchFollowingsCount(String userId) async {
-    final fetchFollowings =
-        await supabase.rpc('user_followers_count').execute();
-
-    if (!fetchFollowings.hasError) {
-      return FollowerRepositoryOutput(
-          followers: fetchFollowings.data[0],
-          followings: fetchFollowings.data[1]);
-    }
-
-    logError(fetchFollowings.error);
-    throw Exception(fetchFollowings.error);
-  }
-
   Future<List<Follower>> fetchUserFollowers(String userId) async {
     String select = userMeta.join(",");
     final request = await _builder.select(select).eq('actor', userId).execute();

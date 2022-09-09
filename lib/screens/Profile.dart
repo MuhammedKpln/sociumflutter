@@ -7,9 +7,7 @@ import 'package:scflutter/components/LoadingNew.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
 import 'package:scflutter/mixins/NewLoading.mixin.dart';
-import 'package:scflutter/models/follower.dart';
 import 'package:scflutter/models/user.dart';
-import 'package:scflutter/repositories/follower.repository.dart';
 import 'package:scflutter/repositories/user.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/palette.dart';
@@ -29,9 +27,8 @@ class ProfilePage extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfilePage>
     with NewLoadingMixin<ProfilePage>, TickerProviderStateMixin {
   final UserRepository _userRepository = UserRepository();
-  final FollowerRepository _followerRepository = FollowerRepository();
   UserModel? user;
-  FollowerRepositoryOutput? followers;
+  UserMetaData? userMeta;
 
   bool get isFullScreen =>
       context.router.current.name == ProfilePageAsDialogRoute.name;
@@ -46,20 +43,29 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
 
   fetchUserProfile() async {
     _userRepository.fetchUser(widget.username).then((value) async {
-      final followersOutput = await fetchUserFollowers();
+      final metaOutput = await fetchUserMeta();
 
       setLoading(false);
       setState(() {
-        followers = followersOutput;
+        userMeta = metaOutput;
         user = value;
       });
     }).catchError(onError);
   }
 
-  Future<FollowerRepositoryOutput> fetchUserFollowers() async {
+  Future<UserMetaData> fetchUserMeta() async {
     final userId = Supabase.instance.client.auth.user()!.id;
 
-    return await _followerRepository.fetchFollowingsCount(userId);
+    return await _userRepository.fetchUserMeta(userId);
+  }
+
+  void navigateToFollowersPage({required bool fetchingFollowers}) {
+    context.router
+        .navigate(FollowersRoute(fetchingFollowers: fetchingFollowers));
+  }
+
+  void navigateToRoomsPage() {
+    context.router.navigate(RoomsRoute());
   }
 
   @override
@@ -127,7 +133,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
                                 ),
                               ),
                               //FIXME: implement
-                              userFollowerInformation(followers),
+                              userFollowerInformation(userMeta),
                               upgradeButton()
                             ]),
                       ),
@@ -202,12 +208,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
     );
   }
 
-  Row userFollowerInformation(FollowerRepositoryOutput? data) {
-    void navigateToFollowersPage({required bool fetchingFollowers}) {
-      context.router
-          .navigate(FollowersRoute(fetchingFollowers: fetchingFollowers));
-    }
-
+  Row userFollowerInformation(UserMetaData? data) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -257,24 +258,28 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
             ],
           ),
         ),
-        Column(
-          children: [
-            Text(
-              "ODALAR",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: Theme.of(context).textTheme.titleSmall?.fontSize),
-            ),
-            Loading(
-              type: LoadingType.singleLine,
-              child: Text(
-                "32",
+        InkWell(
+          onTap: navigateToRoomsPage,
+          child: Column(
+            children: [
+              Text(
+                "ODALAR",
                 style: TextStyle(
-                    color: const Color(0xffD4AFCD),
-                    fontSize: Theme.of(context).textTheme.titleLarge?.fontSize),
+                    color: Colors.grey,
+                    fontSize: Theme.of(context).textTheme.titleSmall?.fontSize),
               ),
-            )
-          ],
+              Loading(
+                type: LoadingType.singleLine,
+                child: Text(
+                  data?.rooms.round().toString() ?? "0",
+                  style: TextStyle(
+                      color: const Color(0xffD4AFCD),
+                      fontSize:
+                          Theme.of(context).textTheme.titleLarge?.fontSize),
+                ),
+              )
+            ],
+          ),
         ),
       ],
     );

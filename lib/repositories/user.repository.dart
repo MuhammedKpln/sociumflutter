@@ -31,4 +31,18 @@ class UserRepository extends BaseRepositoryClass {
 
     return UserModel.fromJson(request.data);
   }
+
+  Future<UserMetaData> fetchUserMeta(String userId) async {
+    final fetchMetaData = await supabase.rpc('user_followers_count').execute();
+
+    if (!fetchMetaData.hasError) {
+      return UserMetaData(
+          followers: fetchMetaData.data[0],
+          followings: fetchMetaData.data[1],
+          rooms: fetchMetaData.data[2]);
+    }
+
+    logError(fetchMetaData.error);
+    throw Exception(fetchMetaData.error);
+  }
 }

@@ -37,7 +37,7 @@ class RoomRepository extends BaseRepositoryClass {
         .from("room_partipications")
         .select(select)
         .eq("user", userId)
-        .execute(count: CountOption.estimated);
+        .execute();
 
     if (request.hasError) {
       logError(request.error);

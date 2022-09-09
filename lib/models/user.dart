@@ -17,3 +17,14 @@ class UserModel with _$UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 }
+
+@freezed
+class UserMetaData with _$UserMetaData {
+  factory UserMetaData(
+      {required int followers,
+      required int followings,
+      required int rooms}) = _UserMetaData;
+
+  factory UserMetaData.fromJson(Map<String, dynamic> json) =>
+      _$UserMetaDataFromJson(json);
+}
