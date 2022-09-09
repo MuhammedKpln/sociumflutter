@@ -33,6 +33,9 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
   UserModel? user;
   FollowerRepositoryOutput? followers;
 
+  bool get isFullScreen =>
+      context.router.current.name == ProfilePageAsDialogRoute.name;
+
   void onPressSettings() {
     context.router.navigate(const SettingsRoute());
   }
@@ -68,16 +71,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-        appBar: AppBar(
-          leading: IconButton(
-              onPressed: onPressProfileSettings,
-              icon: const Icon(FeatherIcons.edit)),
-          actions: [
-            IconButton(
-                onPressed: onPressSettings,
-                icon: const Icon(FeatherIcons.settings))
-          ],
-        ),
+        appBar: renderAppBar(),
         body: Padding(
           padding: const EdgeInsets.all(20),
           child: Center(
@@ -152,6 +146,20 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
             ),
           ),
         ));
+  }
+
+  AppBar renderAppBar() {
+    final List<Widget> actions = [
+      IconButton(
+          onPressed: onPressSettings, icon: const Icon(FeatherIcons.settings))
+    ];
+    final Widget editButton = IconButton(
+        onPressed: onPressProfileSettings, icon: const Icon(FeatherIcons.edit));
+
+    return AppBar(
+      leading: !isFullScreen ? editButton : null,
+      actions: !isFullScreen ? actions : null,
+    );
   }
 
   Container upgradeButton() {
