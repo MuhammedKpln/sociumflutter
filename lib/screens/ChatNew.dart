@@ -5,12 +5,14 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:scflutter/components/LottieAnimation.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/models/socket/media_permissions_response.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/PermissionModal.dart';
 import 'package:scflutter/theme/animation_durations.dart';
+import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/theme/theme.dart';
 import 'package:scflutter/utils/router.gr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -54,6 +56,7 @@ class _ChatNewState extends ConsumerState<ChatNew>
     with TickerProviderStateMixin {
   final ChatRepository _chatRepository = ChatRepository();
   List<types.Message> messages = [];
+  bool streamInitialized = false;
   late RealtimeSubscription _stream;
   late final AnimationController _controller;
   late final Animation<double> _animation;
@@ -78,8 +81,18 @@ class _ChatNewState extends ConsumerState<ChatNew>
         mediaPermissionsAnswered: _handleMediaPermissionsAllowedEvent,
         permissionsAskedCallback: _handlePermissionAskedEvent);
 
-    fetchChatMessages().then((_) {
-      listenMessages();
+    listenMessages();
+    checkForRealtimeConnection();
+    fetchChatMessages();
+  }
+
+  checkForRealtimeConnection() {
+    _stream.on("system", (payload, {ref}) {
+      if (payload["status"] == "ok") {
+        setState(() {
+          streamInitialized = true;
+        });
+      }
     });
   }
 
@@ -287,7 +300,7 @@ class _ChatNewState extends ConsumerState<ChatNew>
       centerTitle: true,
       title: InkWell(
         onTap: navigateToUserProfile,
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        child: Row(children: [
           Avatar(
             avatarSize: AvatarSize.small,
             username: widget.connectedUser!.username,
@@ -298,7 +311,7 @@ class _ChatNewState extends ConsumerState<ChatNew>
               widget.connectedUser?.username ?? "",
               style: Theme.of(context).textTheme.bodySmall,
             ),
-          ),
+          )
         ]),
       ),
       actions: [
@@ -321,6 +334,17 @@ class _ChatNewState extends ConsumerState<ChatNew>
     await _chatRepository.sendMessage(model);
   }
 
+  Widget customBottomWidget() {
+    if (!streamInitialized) {
+      return LottieAnimation(
+        animationPath: Animations.loadingDots.path,
+        heigth: 70,
+      );
+    }
+
+    return chatUi.Input(onSendPressed: onSendMessage);
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(userProvider);
@@ -333,6 +357,11 @@ class _ChatNewState extends ConsumerState<ChatNew>
         body: chatUi.Chat(
           l10n: const chatUi.ChatL10nTr(),
           showUserNames: true,
+          customBottomWidget: customBottomWidget(),
+          inputOptions: chatUi.InputOptions(
+              sendButtonVisibilityMode: !streamInitialized
+                  ? chatUi.SendButtonVisibilityMode.hidden
+                  : chatUi.SendButtonVisibilityMode.editing),
           onSendPressed: onSendMessage,
           theme: SociumChatTheme,
           user: types.User(

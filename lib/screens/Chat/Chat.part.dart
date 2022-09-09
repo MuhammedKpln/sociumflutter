@@ -13,6 +13,12 @@ peerConnectionEnsureInitialized(
     Function? permissionsAskedCallback,
     Function(MediaPermission payload)? mediaPermissionsAnswered,
     Function? onClientDisconnected}) async {
+  ValueNotifier<bool> connectedToCall = ValueNotifier<bool>(false);
+  ValueNotifier<bool> chatMicMuted = ValueNotifier<bool>(false);
+  ValueNotifier<bool> chatCameraOpened = ValueNotifier<bool>(false);
+  ValueNotifier<MediaStream?> remoteStream = ValueNotifier(null);
+  ValueNotifier<MediaStream?> localStream = ValueNotifier(null);
+
   final webRtcService = await createPeerConnection(rtcConfig);
   peerConnection = PeerConnection(webRtcService);
 
