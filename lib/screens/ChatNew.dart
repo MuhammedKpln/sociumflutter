@@ -55,19 +55,21 @@ class _ChatNewState extends ConsumerState<ChatNew>
   final ChatRepository _chatRepository = ChatRepository();
   List<types.Message> messages = [];
   late RealtimeSubscription _stream;
-
-  late final AnimationController _controller = AnimationController(
-    duration: Duration(milliseconds: AnimationDurations.veryHigh.duration),
-    vsync: this,
-  )..repeat(reverse: true);
-  late final Animation<double> _animation = CurvedAnimation(
-    parent: _controller,
-    curve: Curves.fastOutSlowIn,
-  );
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      duration: Duration(milliseconds: AnimationDurations.veryHigh.duration),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.fastOutSlowIn,
+    );
 
     peerConnectionEnsureInitialized(
         socketService: widget.socketService,
@@ -122,9 +124,9 @@ class _ChatNewState extends ConsumerState<ChatNew>
         });
       }
     });
-    messagesStream.subscribe();
-
     _stream = messagesStream;
+
+    _stream.subscribe();
   }
 
   Future<void> fetchChatMessages() async {
