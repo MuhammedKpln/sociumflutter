@@ -51,5 +51,6 @@
   "settingsChangeLang": "Dil degistir",
   "sureToDelete": "{name} silmek istediginize eminmisiniz?",
   "deleteBtnText": "Sil",
-  "cancelBtnText": "Iptal et"
+  "cancelBtnText": "Iptal et",
+  "logoutBtnTxt": "Cikis yap"
 }

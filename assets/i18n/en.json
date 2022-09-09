@@ -51,5 +51,6 @@
   "settingsChangeLang": "Change language",
   "sureToDelete": "Are you sure you want to delete {name}?",
   "cancelBtnTxt": "Cancel",
-  "deleteBtnTxt": "Delete"
+  "deleteBtnTxt": "Delete",
+  "logoutBtnTxt": "Logout"
 }
