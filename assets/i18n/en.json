@@ -52,5 +52,6 @@
   "sureToDelete": "Are you sure you want to delete {name}?",
   "cancelBtnTxt": "Cancel",
   "deleteBtnTxt": "Delete",
-  "logoutBtnTxt": "Logout"
+  "logoutBtnTxt": "Logout",
+  "joinCommunityBeforeChat":"Join community before chatting."
 }

@@ -256,16 +256,30 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
   Widget renderActionButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        renderJoinButton(),
-        RoundedButton(
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    ColorPalette.surface.withOpacity(0.3))),
-            child: const Icon(FeatherIcons.messageCircle),
-            onPressed: () => null)
-      ],
+      children: [renderJoinButton(), _renderMessageButton()],
     );
+  }
+
+  _navigateToRoomChat() async {
+    await context.router.navigate(GroupChatRoute(
+      roomDetails: roomDetails
+    ));
+  }
+
+  _joinCommunityNotification() {
+    context.toast
+        .showToast("joinCommunityBeforeChat".tr(), toastType: ToastType.Info);
+  }
+
+  RoundedButton _renderMessageButton() {
+    return RoundedButton(
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+                ColorPalette.surface.withOpacity(0.3))),
+        child: const Icon(FeatherIcons.messageCircle),
+        onPressed: isJoinedCommunity
+            ? _navigateToRoomChat
+            : _joinCommunityNotification);
   }
 
   Widget renderJoinButton() {

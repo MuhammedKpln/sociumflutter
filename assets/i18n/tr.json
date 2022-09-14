@@ -52,5 +52,6 @@
   "sureToDelete": "{name} silmek istediginize eminmisiniz?",
   "deleteBtnText": "Sil",
   "cancelBtnText": "Iptal et",
-  "logoutBtnTxt": "Cikis yap"
+  "logoutBtnTxt": "Cikis yap",
+  "joinCommunityBeforeChat": "Lütfen topluluga giriniz."
 }
