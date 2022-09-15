@@ -53,5 +53,7 @@
   "cancelBtnTxt": "Cancel",
   "deleteBtnTxt": "Delete",
   "logoutBtnTxt": "Logout",
-  "joinCommunityBeforeChat":"Join community before chatting."
+  "joinCommunityBeforeChat": "Join community before chatting.",
+  "copyBtnTxt": "Copy",
+  "copiedSuccesfully": "Succesfully copied {message}"
 }

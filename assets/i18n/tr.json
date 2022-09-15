@@ -53,5 +53,7 @@
   "deleteBtnText": "Sil",
   "cancelBtnText": "Iptal et",
   "logoutBtnTxt": "Cikis yap",
-  "joinCommunityBeforeChat": "Lütfen topluluga giriniz."
+  "joinCommunityBeforeChat": "Lütfen topluluga giriniz.",
+  "copyBtnTxt": "Copy",
+  "copiedSuccesfully": "{message} basariyla kopyalandi"
 }
