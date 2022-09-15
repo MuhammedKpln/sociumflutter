@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/Avatar.dart';
@@ -8,9 +9,10 @@ import 'package:scflutter/models/room.dart';
 import 'package:scflutter/models/user.dart';
 import 'package:scflutter/repositories/room.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
+import 'package:scflutter/utils/router.gr.dart';
 
 class RoomsPage extends ConsumerStatefulWidget {
-  RoomsPage({Key? key}) : super(key: key);
+  const RoomsPage({Key? key}) : super(key: key);
 
   @override
   _RoomsPageState createState() => _RoomsPageState();
@@ -18,7 +20,7 @@ class RoomsPage extends ConsumerStatefulWidget {
 
 class _RoomsPageState extends ConsumerState<RoomsPage>
     with NewLoadingMixin, TickerProviderStateMixin {
-  RoomRepository _roomRepository = RoomRepository();
+  final RoomRepository _roomRepository = RoomRepository();
   UserModel? get user => ref.read(userProvider).user;
   List<RoomPartipication> joinedCommunities = [];
 
@@ -38,6 +40,10 @@ class _RoomsPageState extends ConsumerState<RoomsPage>
     }).catchError(onError);
   }
 
+  void _navigateToRoomDetails(int roomId) async {
+    await context.router.navigate(RoomDetailsRoute(roomId: roomId));
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -53,6 +59,7 @@ class _RoomsPageState extends ConsumerState<RoomsPage>
           return Loading(
               type: LoadingType.list,
               child: ListTile(
+                onTap: () => _navigateToRoomDetails(community.id),
                 title: Text(communityName),
                 subtitle: communityDesc != null ? Text(communityDesc) : null,
                 leading: Avatar(username: communityName),
