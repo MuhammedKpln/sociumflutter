@@ -14,10 +14,10 @@ import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/PermissionModal.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/theme/animations.dart';
-import 'package:scflutter/theme/theme.dart';
 import 'package:scflutter/utils/router.gr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../components/Avatar.dart';
+import '../components/Chat.dart';
 import '../components/Scaffold.dart';
 import '../models/room.dart';
 import '../models/user.dart';
@@ -376,6 +376,18 @@ class _ChatNewState extends ConsumerState<ChatNew>
     return chatUi.Input(onSendPressed: onSendMessage);
   }
 
+  handlePreviewDataUpdateState(index, updatedMessage) {
+    setState(() {
+      messages[index] = updatedMessage;
+    });
+  }
+
+  onDeleteMessage(types.Message message) {
+    setState(() {
+      messages.removeWhere((element) => element.id == message.id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(userProvider);
@@ -385,22 +397,16 @@ class _ChatNewState extends ConsumerState<ChatNew>
         appBar: renderAppBar(),
         floatingActionButton:
             connectedToCall.value ? renderFloatingButton() : null,
-        body: chatUi.Chat(
-          l10n: const chatUi.ChatL10nTr(),
-          showUserNames: true,
-          customBottomWidget: customBottomWidget(),
-          inputOptions: chatUi.InputOptions(
-              sendButtonVisibilityMode: !streamInitialized
-                  ? chatUi.SendButtonVisibilityMode.hidden
-                  : chatUi.SendButtonVisibilityMode.editing),
-          onSendPressed: onSendMessage,
-          theme: SociumChatTheme,
+        body: Chat(
+          isLoading: streamInitialized,
+          handlePreviewDataUpdateState: handlePreviewDataUpdateState,
+          showUsername: true,
+          onPressSend: onSendMessage,
           user: types.User(
               id: localUser?.id ?? "qwel",
               firstName: widget.connectedUser?.username ?? ""),
           messages: messages,
-          groupMessagesThreshold: 1,
-          emojiEnlargementBehavior: chatUi.EmojiEnlargementBehavior.multi,
+          onDeleteMessage: onDeleteMessage,
         ));
   }
 }
