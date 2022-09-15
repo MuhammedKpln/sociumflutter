@@ -84,6 +84,10 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
     );
   }
 
+  void _navigateToAllJoinedRooms() async {
+    await context.router.navigate(RoomsRoute());
+  }
+
   @override
   Widget build(BuildContext context) {
     if (rooms.isEmpty) {
@@ -91,13 +95,23 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          "myCommunities".tr().toUpperCase(),
-          style: Theme.of(context)
-              .textTheme
-              .labelLarge
-              ?.copyWith(color: Colors.grey.shade400),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "myCommunities".tr().toUpperCase(),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge
+                  ?.copyWith(color: Colors.grey.shade400),
+            ),
+            TextButton(
+                onPressed: _navigateToAllJoinedRooms,
+                child: const Text("showAllJoinedRoomsBtnTxt").tr())
+          ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),

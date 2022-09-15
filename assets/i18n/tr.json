@@ -55,5 +55,6 @@
   "logoutBtnTxt": "Cikis yap",
   "joinCommunityBeforeChat": "Lütfen topluluga giriniz.",
   "copyBtnTxt": "Copy",
-  "copiedSuccesfully": "{message} basariyla kopyalandi"
+  "copiedSuccesfully": "{message} basariyla kopyalandi",
+  "showAllJoinedRoomsBtnTxt": "Hepsini göster"
 }

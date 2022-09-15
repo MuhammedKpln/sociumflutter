@@ -55,5 +55,6 @@
   "logoutBtnTxt": "Logout",
   "joinCommunityBeforeChat": "Join community before chatting.",
   "copyBtnTxt": "Copy",
-  "copiedSuccesfully": "Succesfully copied {message}"
+  "copiedSuccesfully": "Succesfully copied {message}",
+  "showAllJoinedRoomsBtnTxt": "Show all"
 }
