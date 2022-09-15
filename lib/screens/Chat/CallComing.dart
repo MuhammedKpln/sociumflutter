@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,12 +15,12 @@ class CallComingPage extends StatefulWidget {
       {Key? key,
       required this.username,
       required this.onAcceptCall,
-      required this.onRejectCall})
+      this.onRejectCall})
       : super(key: key);
 
   final String username;
-  final Function onAcceptCall;
-  final Function onRejectCall;
+  final VoidCallback onAcceptCall;
+  final VoidCallback? onRejectCall;
 
   @override
   State<CallComingPage> createState() => _CallComingState();
@@ -52,6 +53,16 @@ class _CallComingState extends State<CallComingPage> {
     super.dispose();
   }
 
+  void acceptCall() async {
+    widget.onAcceptCall();
+    await context.router.pop();
+  }
+
+  void rejectCall() async {
+    widget.onRejectCall?.call();
+    await context.router.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -79,8 +90,8 @@ class _CallComingState extends State<CallComingPage> {
                 color: ColorPalette.red,
               ),
               child: IconButton(
-                  onPressed: () => widget.onRejectCall(),
-                  icon: const Icon(FeatherIcons.phoneForwarded)),
+                  onPressed: rejectCall,
+                  icon: const Icon(FeatherIcons.phoneOff)),
             ),
             Container(
               padding: const EdgeInsets.all(10),
@@ -89,8 +100,8 @@ class _CallComingState extends State<CallComingPage> {
                 color: ColorPalette.green,
               ),
               child: IconButton(
-                  onPressed: () => widget.onAcceptCall(),
-                  icon: const Icon(FeatherIcons.phoneOff)),
+                  onPressed: acceptCall,
+                  icon: const Icon(FeatherIcons.phoneForwarded)),
             )
           ],
         ),

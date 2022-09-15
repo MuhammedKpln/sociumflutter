@@ -8,6 +8,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:scflutter/components/LottieAnimation.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/models/message.model.dart';
+import 'package:scflutter/models/socket/call_made_response.dart';
 import 'package:scflutter/models/socket/media_permissions_response.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/PermissionModal.dart';
@@ -74,16 +75,39 @@ class _ChatNewState extends ConsumerState<ChatNew>
       curve: Curves.fastOutSlowIn,
     );
 
-    peerConnectionEnsureInitialized(
-        socketService: widget.socketService,
-        userUUID: widget.connectedUser!.id,
-        onClientDisconnected: _handleOnClientDisconnected,
-        mediaPermissionsAnswered: _handleMediaPermissionsAllowedEvent,
-        permissionsAskedCallback: _handlePermissionAskedEvent);
+    if (widget.comingFromMatchedPage) {
+      peerConnectionEnsureInitialized(
+          socketService: widget.socketService,
+          userUUID: widget.connectedUser!.id,
+          onClientDisconnected: _handleOnClientDisconnected,
+          mediaPermissionsAnswered: _handleMediaPermissionsAllowedEvent,
+          permissionsAskedCallback: _handlePermissionAskedEvent,
+          onCallMade: _handleOnCallMade);
+    }
 
     listenMessages();
     checkForRealtimeConnection();
     fetchChatMessages();
+  }
+
+  _handleOnCallMade(CallMadeResponse data) {
+    print(data.offer["sdp"]);
+    print(data.offer["type"]);
+    context.router.navigate(CallComingRoute(
+        username: widget.connectedUser!.username,
+        onAcceptCall: () => _answerCall(
+            RTCSessionDescription(data.offer["sdp"], data.offer["type"]),
+            data.uuid)));
+  }
+
+  void _answerCall(RTCSessionDescription offer, String uuid) async {
+    final stream = await peerConnection.getUserMedia();
+
+    await peerConnection.addStream(stream);
+
+    final answer = await peerConnection.createAnswer(offer);
+
+    widget.socketService.makeAnswer(answer, uuid);
   }
 
   checkForRealtimeConnection() {
@@ -98,10 +122,22 @@ class _ChatNewState extends ConsumerState<ChatNew>
 
   @override
   void dispose() {
+    disposeEvents(widget.socketService);
     _controller.dispose();
     _stream.unsubscribe();
-    disposeEvents(widget.socketService);
     super.dispose();
+  }
+
+  navigateToCallManager() {
+    context.router.navigate(InCallManagerScreenRoute(
+        username: widget.connectedUser?.username ?? "null",
+        onPressHangup: onPressHangup));
+  }
+
+  onPressHangup() async {
+    localStream.value?.getTracks().forEach((track) => track.stop());
+    remoteStream.value?.getTracks().forEach((track) => track.stop());
+    await peerConnection.events.close();
   }
 
   _handlePermissionAskedEvent() async {
@@ -161,8 +197,8 @@ class _ChatNewState extends ConsumerState<ChatNew>
           id: message.id.toString(),
           author: types.User(
               id: message.user,
-              imageUrl: generateAvatarUrl(message.user_data.avatar ?? ""),
-              firstName: message.user_data.username),
+              imageUrl: generateAvatarUrl(message.user_data?.avatar ?? ""),
+              firstName: message.user_data?.username),
           text: message.text));
     }
 
@@ -184,16 +220,9 @@ class _ChatNewState extends ConsumerState<ChatNew>
         id: message.id.toString(),
         author: types.User(
             id: message.user,
-            imageUrl: generateAvatarUrl(message.user_data.avatar ?? ""),
-            firstName: message.user_data.username),
+            imageUrl: generateAvatarUrl(message.user_data?.avatar ?? ""),
+            firstName: message.user_data?.username),
         text: message.text);
-  }
-
-  navigateToCallManager() {
-    //FIXME: hopp
-    // context.router.navigate(InCallManagerScreenRoute(
-    //     username: widget.connectedUser?.username ?? "null",
-    //     onPressHangup: onPressHangup));
   }
 
   Widget renderFloatingButton() {
@@ -258,6 +287,8 @@ class _ChatNewState extends ConsumerState<ChatNew>
   }
 
   makeCall() async {
+    print("peerConnection");
+    print(peerConnection);
     //TODO: when not allowed error, cancel it and navigate use§§r to the privacy settings
     final MediaStream stream = await peerConnection.getUserMedia();
 

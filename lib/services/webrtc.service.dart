@@ -52,7 +52,15 @@ class PeerConnection {
 
   _onConnectionState() {
     _peerConnection.onConnectionState = (state) {
+      print("State");
+      print(state);
       connectionState.add(state);
     };
+  }
+
+  dispose() {
+    _peerConnection.getLocalStreams().forEach((stream) => stream?.dispose());
+    _peerConnection.getRemoteStreams().forEach((stream) => stream?.dispose());
+    _peerConnection.close();
   }
 }

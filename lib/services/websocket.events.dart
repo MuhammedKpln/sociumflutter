@@ -44,6 +44,7 @@ enum SocketListenerEvents {
 
 class SocketService extends SocketCore {
   callUser(RTCSessionDescription offer, String userUUID) {
+    print("calling");
     emit(SocketFireEvents.CallUser.path,
         data: {"offer": offer.toMap(), "uuid": userUUID});
   }
@@ -121,6 +122,7 @@ class SocketService extends SocketCore {
 
   onMediaPermissionsAsked(void Function(MediaPermission response) callback) {
     socket.on(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path, ((data) {
+      print({data, "asked"});
       final response = MediaPermission.fromJson(data);
 
       return callback(response);
@@ -129,6 +131,7 @@ class SocketService extends SocketCore {
 
   onMediaPermissionAnswered(void Function(MediaPermission response) callback) {
     socket.on(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path, ((data) {
+      print({data, "asnswered"});
       final response = MediaPermission.fromJson(data);
 
       return callback(response);

@@ -5,3 +5,4 @@ ValueNotifier<bool> chatMicMuted = ValueNotifier<bool>(false);
 ValueNotifier<bool> chatCameraOpened = ValueNotifier<bool>(false);
 ValueNotifier<MediaStream?> remoteStream = ValueNotifier(null);
 ValueNotifier<MediaStream?> localStream = ValueNotifier(null);
+ValueNotifier<bool> connectedToCall = ValueNotifier<bool>(false);

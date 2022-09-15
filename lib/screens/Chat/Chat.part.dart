@@ -1,31 +1,42 @@
 part of '../ChatNew.dart';
 
-ValueNotifier<bool> connectedToCall = ValueNotifier<bool>(false);
 bool mediaPermissionsAlllowed = false;
 bool audio = false;
 bool video = false;
 bool peerConnectionInitialized = false;
 late PeerConnection peerConnection;
 
+_resetState() {
+  connectedToCall = ValueNotifier<bool>(false);
+  chatMicMuted = ValueNotifier<bool>(false);
+  chatCameraOpened = ValueNotifier<bool>(false);
+  remoteStream = ValueNotifier(null);
+  localStream = ValueNotifier(null);
+  audio = false;
+  video = false;
+  peerConnectionInitialized = false;
+  mediaPermissionsAlllowed = false;
+}
+
 peerConnectionEnsureInitialized(
     {required SocketService socketService,
     required String userUUID,
+    Function(CallMadeResponse callback)? onCallMade,
     Function? permissionsAskedCallback,
     Function(MediaPermission payload)? mediaPermissionsAnswered,
     Function? onClientDisconnected}) async {
-  ValueNotifier<bool> connectedToCall = ValueNotifier<bool>(false);
-  ValueNotifier<bool> chatMicMuted = ValueNotifier<bool>(false);
-  ValueNotifier<bool> chatCameraOpened = ValueNotifier<bool>(false);
-  ValueNotifier<MediaStream?> remoteStream = ValueNotifier(null);
-  ValueNotifier<MediaStream?> localStream = ValueNotifier(null);
-
+  _resetState();
   final webRtcService = await createPeerConnection(rtcConfig);
   peerConnection = PeerConnection(webRtcService);
 
   peerConnection.connectionState.stream.listen((state) {
+    print("state");
+    print(state);
     switch (state) {
       case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
-        connectedToCall.value = false;
+        try {
+          connectedToCall.value = false;
+        } catch (err) {}
         break;
       case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
         connectedToCall.value = false;
@@ -76,33 +87,26 @@ peerConnectionEnsureInitialized(
     }
   });
 
-  connectedToCall.addListener(() {
-    // if (connectedToCall.value) {
-    //   floatinActionButtonAnimatorTimer =
-    //       Timer.periodic(const Duration(milliseconds: 700), (timer) {
-    //     if (floatinActionButtonScale == 1) {
-    //       setState(() {
-    //         floatinActionButtonScale = 0.5;
-    //       });
-    //     } else {
-    //       setState(() {
-    //         floatinActionButtonScale = 1;
-    //       });
-    //     }
-    //   });
+  // connectedToCall.addListener(() {
+  //   if (connectedToCall.value) {
+  //     navigateToCallManager();
+  //   }
 
-    //   navigateToCallManager();
-    // }
-
-    //FIXME: hopp
-    // if (context.router.isRouteActive(InCallManagerScreenRoute.name)) {
-    //   context.router.pop();
-    // }
-  });
+  //   if (context.router.isRouteActive(InCallManagerScreenRoute.name)) {
+  //     context.router.pop();
+  //   }
+  // });
 
   peerConnection.events.onIceCandidate = (candidate) {
     socketService.addIceCandidate(candidate, userUUID);
   };
+
+  socketService.onIceCandidate((response) async {
+    final candidate = RTCIceCandidate(response.candidate["candidate"],
+        response.candidate["sdpMid"], response.candidate["sdpMLineIndex"]);
+
+    await peerConnection.events.addCandidate(candidate);
+  });
 
   peerConnection.events.onAddStream = ((stream) {
     final videoTracksLength = stream.getVideoTracks().length;
@@ -138,6 +142,39 @@ peerConnectionEnsureInitialized(
     // context.toast.showToast("Kullanıcı çıkış yaptı");
     // await context.router.pop();
   });
+
+  Future<void> upgradeCall(RTCSessionDescription offer) async {
+    final MediaStream stream =
+        await peerConnection.getUserMedia(turnVideoOn: true);
+    localStream.value = stream;
+
+    final videoTrack = localStream.value?.getVideoTracks()[0];
+    await localStream.value?.addTrack(videoTrack!);
+    await peerConnection.events.addTrack(videoTrack!, localStream.value!);
+
+    final answer = await peerConnection.createAnswer(offer);
+    socketService.makeAnswer(answer, userUUID);
+  }
+
+  socketService.onCallMade((data) async {
+    final offer = RTCSessionDescription(data.offer["sdp"], data.offer["type"]);
+
+    if (connectedToCall.value) {
+      print("qwelk");
+      await upgradeCall(offer);
+
+      return;
+    }
+
+    onCallMade?.call(data);
+  });
+
+  socketService.onAnswerMade((data) async {
+    final answer =
+        RTCSessionDescription(data.answer["sdp"], data.answer["type"]);
+
+    await peerConnection.setRemoteDescription(answer);
+  });
 }
 
 disposeEvents(SocketService socketService) {
@@ -147,8 +184,10 @@ disposeEvents(SocketService socketService) {
     chatMicMuted.dispose();
     chatCameraOpened.dispose();
     remoteStream.dispose();
-    peerConnection.connectionState.close();
-  } catch (err) {}
+    peerConnection.dispose();
+  } catch (err) {
+    print(err);
+  }
 
   socketService.socket.off(SocketListenerEvents.MESSAGE_RECEIVED.path);
   socketService.socket.off(SocketListenerEvents.ANSWER_MADE.path);
