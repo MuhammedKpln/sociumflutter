@@ -1,7 +1,7 @@
 import 'dart:math';
 
 String generateAvatarUrl(String avatarName) {
-  return "https://derdevam.com/static/avatars/$avatarName.webp";
+  return "https://i.pravatar.cc/150?u=$avatarName";
 }
 
 String generateRandomAvatar() {

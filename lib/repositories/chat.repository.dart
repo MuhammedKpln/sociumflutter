@@ -1,4 +1,3 @@
-import 'package:scflutter/models/chat_rooms.dart';
 import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/repositories/room.repository.dart';
 import 'package:scflutter/utils/logger.dart';
@@ -11,7 +10,7 @@ class ChatRepository with LoggerMixin {
 
   SupabaseQueryBuilder get _query => _supabaseClient.from(_table);
 
-  Future<List<ChatRooms>> fetchAllChatRooms({required String id}) async {
+  Future<List<Message>> fetchAllChatRooms({required String id}) async {
     const query = """*,
                     user_data:user(*),
                     receiver_data:receiver(*),
@@ -22,13 +21,14 @@ class ChatRepository with LoggerMixin {
         .from('get_messages_room')
         .select(query)
         .or("user.eq.$id,receiver.eq.$id")
+        .eq("group_message", false)
         .execute();
 
     if (data.hasError) {
       logError(data.error);
     }
 
-    return List<ChatRooms>.from(data.data.map((x) => ChatRooms.fromJson(x)));
+    return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
   }
 
   Future<List<Message>> fetchChatMessages({required int roomId}) async {

@@ -12,12 +12,12 @@ class Message with _$Message {
     required String text,
     required bool seen,
     required String user,
-    required String receiver,
     required int room,
-    required UserModel user_data,
-    required UserModel receiver_data,
-    required Room room_data,
     required DateTime created_at,
+    UserModel? user_data,
+    Room? room_data,
+    String? receiver,
+    UserModel? receiver_data,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) =>
@@ -26,13 +26,13 @@ class Message with _$Message {
 
 @freezed
 class SendMessage with _$SendMessage {
-  factory SendMessage({
-    required String text,
-    required bool seen,
-    required String user,
-    required String receiver,
-    required int room,
-  }) = _SendMessage;
+  factory SendMessage(
+      {required String text,
+      required bool seen,
+      required String user,
+      required int room,
+      String? receiver,
+      bool? group_message}) = _SendMessage;
 
   factory SendMessage.fromJson(Map<String, dynamic> json) =>
       _$SendMessageFromJson(json);
