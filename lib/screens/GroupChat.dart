@@ -1,5 +1,5 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chatUi;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chatTypes;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/LoadingNew.dart';
@@ -8,13 +8,12 @@ import 'package:scflutter/extensions/theme.extension.dart';
 import 'package:scflutter/mixins/NewLoading.mixin.dart';
 import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
-import 'package:scflutter/theme/theme.dart';
+import 'package:scflutter/utils/router.gr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../components/LottieAnimation.dart';
+import '../components/Chat.dart';
 import '../models/room.dart';
 import '../state/auth.state.dart';
-import '../theme/animations.dart';
 import '../utils/avatar.dart';
 
 class GroupChatPage extends ConsumerStatefulWidget {
@@ -31,7 +30,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
   List<chatTypes.Message> messages = [];
   bool streamInitialized = false;
   late RealtimeSubscription _stream;
-  ChatRepository _chatRepository = ChatRepository();
+  final ChatRepository _chatRepository = ChatRepository();
 
   @override
   void initState() {
@@ -132,6 +131,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     );
   }
 
+  _navigateToRoomDetails() async {
+    final roomId = widget.roomDetails.id;
+    await context.router.navigate(RoomDetailsRoute(roomId: roomId));
+  }
+
   _renderAppBar() {
     final roomPartipications =
         widget.roomDetails.room_partipications_data?.take(2).toList();
@@ -139,7 +143,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     final roomPartipicationsAsWidget = roomPartipications?.map((e) {
       final index = roomPartipications.indexOf(e);
 
-      print(index);
       if (index == 0) {
         return _renderUserAvatar(e.user_data?.username ?? "NoUsername");
       }
@@ -149,26 +152,27 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
           child: _renderUserAvatar(e.user_data?.username ?? "NoUsername"));
     }).toList();
 
-    print(roomPartipicationsAsWidget);
-
     return AppBar(
       title: Loading(
         type: LoadingType.singleLine,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.roomDetails.name ?? "No name",
-              style: context.textStyles.titleSmall,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Stack(
-                  clipBehavior: Clip.none,
-                  fit: StackFit.passthrough,
-                  children: roomPartipicationsAsWidget ?? []),
-            ),
-          ],
+        child: InkWell(
+          onTap: _navigateToRoomDetails,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.roomDetails.name ?? "No name",
+                style: context.textStyles.titleSmall,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Stack(
+                    clipBehavior: Clip.none,
+                    fit: StackFit.passthrough,
+                    children: roomPartipicationsAsWidget ?? []),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -188,28 +192,18 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     await _chatRepository.sendMessage(model);
   }
 
-  Widget customBottomWidget() {
-    if (!streamInitialized) {
-      return LottieAnimation(
-        animationPath: Animations.loadingDots.path,
-        heigth: 70,
-      );
-    }
-
-    return chatUi.Input(onSendPressed: onSendMessage);
-  }
-
   void _handlePreviewDataFetched(
-    chatTypes.TextMessage message,
-    chatTypes.PreviewData previewData,
+    int index,
+    chatTypes.Message updatedMessage,
   ) {
-    final index = messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = (messages[index] as chatTypes.TextMessage).copyWith(
-      previewData: previewData,
-    );
-
     setState(() {
       messages[index] = updatedMessage;
+    });
+  }
+
+  void onDeleteMessage(chatTypes.Message message) {
+    setState(() {
+      messages.removeWhere((element) => element.id == message.id);
     });
   }
 
@@ -220,22 +214,17 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
     return AppScaffold(
         appBar: _renderAppBar(),
-        body: chatUi.Chat(
+        body: Chat(
           user: chatTypes.User(
               id: localUser?.id ?? "qwel",
               firstName: localUser?.username ?? ""),
-          onSendPressed: onSendMessage,
+          onPressSend: onSendMessage,
           messages: messages,
-          theme: SociumChatTheme,
-          showUserAvatars: true,
-          usePreviewData: true,
-          onPreviewDataFetched: _handlePreviewDataFetched,
-          showUserNames: true,
-          customBottomWidget: customBottomWidget(),
-          inputOptions: chatUi.InputOptions(
-              sendButtonVisibilityMode: !streamInitialized
-                  ? chatUi.SendButtonVisibilityMode.hidden
-                  : chatUi.SendButtonVisibilityMode.editing),
+          showAvatar: true,
+          showUsername: true,
+          isLoading: streamInitialized,
+          handlePreviewDataUpdateState: _handlePreviewDataFetched,
+          onDeleteMessage: onDeleteMessage,
         ));
   }
 }
