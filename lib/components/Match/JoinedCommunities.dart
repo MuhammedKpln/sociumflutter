@@ -85,7 +85,7 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
   }
 
   void _navigateToAllJoinedRooms() async {
-    await context.router.navigate(RoomsRoute());
+    await context.router.navigate(const RoomsRoute());
   }
 
   @override
@@ -122,9 +122,12 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
               itemBuilder: ((context, index) {
                 final community = rooms[index];
 
-                return Community(
-                    title: community.room_data?.name ?? "No name",
-                    roomId: community.room);
+                return Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Community(
+                      title: community.room_data?.name ?? "No name",
+                      roomId: community.room),
+                );
               }),
               scrollDirection: Axis.horizontal,
               itemCount: rooms.length,
