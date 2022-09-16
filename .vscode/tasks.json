@@ -1,0 +1,10 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run easy localization",
+            "type": "shell",
+            "command": "flutter pub run easy_localization:generate -S assets/i18n/ -f json",
+        }
+    ]
+}
