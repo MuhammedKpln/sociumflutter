@@ -56,5 +56,6 @@
   "joinCommunityBeforeChat": "Lütfen topluluga giriniz.",
   "copyBtnTxt": "Kopyala",
   "copiedSuccesfully": "{message} basariyla kopyalandi",
-  "showAllJoinedRoomsBtnTxt": "Hepsini göster"
+  "showAllJoinedRoomsBtnTxt": "Hepsini göster",
+  "changeAvatar": "Profil resmi düzenle"
 }

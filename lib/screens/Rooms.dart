@@ -59,7 +59,7 @@ class _RoomsPageState extends ConsumerState<RoomsPage>
           return Loading(
               type: LoadingType.list,
               child: ListTile(
-                onTap: () => _navigateToRoomDetails(community.id),
+                onTap: () => _navigateToRoomDetails(community.room_data!.id),
                 title: Text(communityName),
                 subtitle: communityDesc != null ? Text(communityDesc) : null,
                 leading: Avatar(username: communityName),

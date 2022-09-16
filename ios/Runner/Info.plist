@@ -56,5 +56,7 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME) Microphone Usage!</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) Needed to upload avatars.</string>
 </dict>
 </plist>

@@ -55,6 +55,7 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
 
   fetchRoomDetails() async {
     _roomRepository.fetchRoomDetails(roomId: widget.roomId).then((value) {
+      print(value);
       setState(() {
         roomDetails = value;
         isLoading = false;
@@ -205,7 +206,7 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
                       Column(
                         children: [
                           Text(
-                            roomDetails.name!,
+                            roomDetails.name ?? "nonemae",
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           renderCategories(),
@@ -261,9 +262,7 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
   }
 
   _navigateToRoomChat() async {
-    await context.router.navigate(GroupChatRoute(
-      roomDetails: roomDetails
-    ));
+    await context.router.navigate(GroupChatRoute(roomDetails: roomDetails));
   }
 
   _joinCommunityNotification() {
@@ -276,10 +275,10 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
         style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(
                 ColorPalette.surface.withOpacity(0.3))),
-        child: const Icon(FeatherIcons.messageCircle),
         onPressed: isJoinedCommunity
             ? _navigateToRoomChat
-            : _joinCommunityNotification);
+            : _joinCommunityNotification,
+        child: const Icon(FeatherIcons.messageCircle));
   }
 
   Widget renderJoinButton() {
@@ -296,7 +295,7 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
 
   Widget renderCategories() {
     if (roomDetails.category_data == null) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return Padding(

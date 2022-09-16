@@ -42,6 +42,11 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
         "screen": const router.BlockIncomingCallsScreenRoute(),
         "value": user!.blockIncomingCalls! ? "blocked".tr() : "unblocked".tr()
       },
+      {
+        "label": "changeAvatar".tr(),
+        "screen": const router.ChangeAvatarRoute(),
+        "value": ""
+      },
     ];
 
     return AppScaffold(
@@ -50,7 +55,6 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
       ),
       body: Column(children: [
         Expanded(
-            flex: 1,
             child: ListView.separated(
                 itemBuilder: ((context, index) {
                   final page = ProfileSettingsPageModal(
@@ -64,13 +68,15 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
                       color: Colors.white,
                     ),
                     title: Text(page.label),
-                    subtitle: Text(
-                      page.value,
-                      style: Theme.of(context)
-                          .textTheme
-                          .caption
-                          ?.copyWith(color: Colors.grey),
-                    ),
+                    subtitle: page.value != null
+                        ? Text(
+                            page.value,
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption
+                                ?.copyWith(color: Colors.grey),
+                          )
+                        : null,
                     onTap: () => navigateToScreen(page.screen),
                   );
                 }),

@@ -56,5 +56,6 @@
   "joinCommunityBeforeChat": "Join community before chatting.",
   "copyBtnTxt": "Copy",
   "copiedSuccesfully": "Succesfully copied {message}",
-  "showAllJoinedRoomsBtnTxt": "Show all"
+  "showAllJoinedRoomsBtnTxt": "Show all",
+  "changeAvatar": "Change Avatar"
 }
