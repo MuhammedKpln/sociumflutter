@@ -1,7 +1,9 @@
 import 'dart:math';
 
-String generateAvatarUrl(String avatarName) {
-  return "https://i.pravatar.cc/150?u=$avatarName";
+import 'package:scflutter/serivces.dart';
+
+String generateAvatarUrl(String avatarPath) {
+  return "${ApiService.SupabaseUrl.path}/storage/v1/object/public/${avatarPath}png";
 }
 
 String generateRandomAvatar() {

@@ -47,6 +47,12 @@ class UserModelNotifier extends StateNotifier<AuthStateModel> {
     state = state.copyWith(user: modifiedUser);
   }
 
+  setAvatar(String avatarPath) {
+    final modifiedUser = state.user?.copyWith(avatar: avatarPath);
+
+    state = state.copyWith(user: modifiedUser);
+  }
+
   clearUser() async {
     await AuthRepository().signOut();
     state = const AuthStateModel();

@@ -1,20 +1,28 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/Scaffold.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
+import 'package:scflutter/mixins/NewLoading.mixin.dart';
+import 'package:scflutter/repositories/user.repository.dart';
+import 'package:scflutter/state/auth.state.dart';
+import 'package:scflutter/theme/toast.dart';
 import 'package:scflutter/utils/palette.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:path/path.dart' as p;
 
-class ChangeAvatarPage extends StatefulWidget {
+class ChangeAvatarPage extends ConsumerStatefulWidget {
   const ChangeAvatarPage({Key? key}) : super(key: key);
 
   @override
-  State<ChangeAvatarPage> createState() => _ChangeAvatarPageState();
+  _ChangeAvatarPageState createState() => _ChangeAvatarPageState();
 }
 
-class _ChangeAvatarPageState extends State<ChangeAvatarPage> {
+class _ChangeAvatarPageState extends ConsumerState<ChangeAvatarPage>
+    with NewLoadingMixin, TickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
+  final UserRepository _userRepository = UserRepository();
 
   AppBar _renderAppBar() {
     return AppBar(
@@ -22,18 +30,26 @@ class _ChangeAvatarPageState extends State<ChangeAvatarPage> {
     );
   }
 
+  void _onSuccesfull(String? avatarPath) {
+    if (avatarPath != null) {
+      ref.read(userProvider.notifier).setAvatar(avatarPath);
+      context.toast.showToast("success".tr(), toastType: ToastType.Success);
+      return;
+    }
+  }
+
   Future<void> _upload(XFile imageFile) async {
-    final fileExt = imageFile.path.split('.').last;
+    final user = ref.read(userProvider).rawUser;
+    final userId = user!.id;
+    final fileExt = p.extension(imageFile.path);
     final fileName = '${DateTime.now().toIso8601String()}.$fileExt';
-    final filePath = fileName;
+    final filePath = "$userId/$fileName";
     final bytes = await imageFile.readAsBytes();
 
-    final s = await Supabase.instance.client.storage
-        .from("users")
-        .uploadBinary(filePath, bytes);
-
-    print(s.error);
-    print(s.data);
+    await _userRepository
+        .uploadAvatar(filePath, bytes, userId)
+        .then((_) => _onSuccesfull(_))
+        .catchError(onError);
   }
 
   Future<void> _pickImage() async {
@@ -45,14 +61,19 @@ class _ChangeAvatarPageState extends State<ChangeAvatarPage> {
   }
 
   Widget _build() {
+    final user = ref.watch(userProvider).user;
+    final userName = user!.username;
+    final userAvatar = user.avatar;
+
     return Container(
       decoration: BoxDecoration(gradient: ColorPalette.surfaceLinearGradient),
       child: Center(
         child: Column(children: [
           InkWell(
             onTap: _pickImage,
-            child: const Avatar(
-              username: "username",
+            child: Avatar(
+              username: userName,
+              avatarPath: userAvatar,
               avatarSize: AvatarSize.large,
             ),
           ),
