@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:scflutter/utils/env.dart';
 
 enum ApiService {
-  SupabaseUrl("https://yjifhdpnxmwbuaoxumbk.supabase.co"),
+  SupabaseUrl(Env.SUPABASE_URL),
   WebsocketAPI(kDebugMode
       ? "https://dad4-78-82-129-164.eu.ngrok.io"
-      : 'https://socium.fly.dev');
+      : Env.WEBSOCKET_API);
 
   final String path;
   const ApiService(this.path);
