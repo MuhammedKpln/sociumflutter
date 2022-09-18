@@ -10,7 +10,7 @@ class ChatRepository with LoggerMixin {
 
   SupabaseQueryBuilder get _query => _supabaseClient.from(_table);
 
-  Future<List<Message>> fetchAllChatRooms({required String id}) async {
+  Future<List<Message>> fetchPrivateChats({required String id}) async {
     const query = """*,
                     user_data:user(*),
                     receiver_data:receiver(*),
@@ -27,6 +27,30 @@ class ChatRepository with LoggerMixin {
     if (data.hasError) {
       logError(data.error);
     }
+
+    return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
+  }
+
+  Future<List<Message>> fetchCommunityChats({required String id}) async {
+    const query = """*,
+                    user_data:user(*),
+                    receiver_data:receiver(*),
+                    room_data:room(*, room_partipications_data:room_partipications(*))
+
+                   """;
+
+    var data = await _supabaseClient
+        .from('get_messages_room')
+        .select(query)
+        .or("user.eq.$id,receiver.eq.$id")
+        .eq("group_message", true)
+        .execute();
+
+    if (data.hasError) {
+      logError(data.error);
+    }
+
+    print(data.data);
 
     return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
   }

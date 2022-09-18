@@ -71,7 +71,7 @@ class Chat extends StatelessWidget {
   void onMessageLongPress(BuildContext context, types.Message message) async {
     List<SheetAction<_ChatActionKeys>> actions = [
       SheetAction(
-          label: "deleteBtnText".tr(),
+          label: "deleteBtnTxt".tr(),
           isDestructiveAction: true,
           key: _ChatActionKeys.delete,
           icon: FeatherIcons.delete)
@@ -88,7 +88,7 @@ class Chat extends StatelessWidget {
     }
 
     final action = await showModalActionSheet<_ChatActionKeys>(
-        context: context, actions: actions, cancelLabel: "cancelBtnText".tr());
+        context: context, actions: actions, cancelLabel: "cancelBtnTxt".tr());
 
     switch (action) {
       case _ChatActionKeys.copy:

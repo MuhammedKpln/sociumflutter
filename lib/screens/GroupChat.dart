@@ -4,13 +4,13 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as chatTypes;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/LoadingNew.dart';
 import 'package:scflutter/components/Scaffold.dart';
-import 'package:scflutter/extensions/theme.extension.dart';
 import 'package:scflutter/mixins/NewLoading.mixin.dart';
 import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/utils/router.gr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../components/Avatar.dart';
 import '../components/Chat.dart';
 import '../models/room.dart';
 import '../state/auth.state.dart';
@@ -106,6 +106,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     final List<chatTypes.Message> mappedData = [];
 
     for (var message in results) {
+      print("generateAvatarUrl(message.user_data?.avatar ?? " ")");
+      print(generateAvatarUrl(message.user_data?.avatar ?? ""));
+
       mappedData.add(chatTypes.TextMessage(
           id: message.id.toString(),
           author: chatTypes.User(
@@ -158,11 +161,17 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         child: InkWell(
           onTap: _navigateToRoomDetails,
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.roomDetails.name ?? "No name",
-                style: context.textStyles.titleSmall,
+              Avatar(
+                avatarSize: AvatarSize.small,
+                username: widget.roomDetails.name,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(
+                  widget.roomDetails.name ?? "No name",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 10),
@@ -217,6 +226,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         body: Chat(
           user: chatTypes.User(
               id: localUser?.id ?? "qwel",
+              imageUrl: generateAvatarUrl(localUser?.avatar ?? ""),
               firstName: localUser?.username ?? ""),
           onPressSend: onSendMessage,
           messages: messages,

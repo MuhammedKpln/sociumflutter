@@ -57,5 +57,6 @@
   "copyBtnTxt": "Copy",
   "copiedSuccesfully": "Succesfully copied {message}",
   "showAllJoinedRoomsBtnTxt": "Show all",
-  "changeAvatar": "Change Avatar"
+  "changeAvatar": "Change Avatar",
+  "communityChatsTitle": "Community chats"
 }

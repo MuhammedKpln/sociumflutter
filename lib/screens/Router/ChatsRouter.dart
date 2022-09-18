@@ -19,7 +19,7 @@ class ChatsRouter extends ConsumerWidget {
     final user = ref.watch(userProvider.notifier);
 
     return AutoTabsRouter(
-      routes: const [ChatsScreenRoute()],
+      routes: const [ChatsScreenRoute(), GroupChatsRoute()],
       builder: (context, child, animation) {
         final tabsRouter = AutoTabsRouter.of(context);
 

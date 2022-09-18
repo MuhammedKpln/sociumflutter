@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:scflutter/screens/GroupChat.dart';
+import 'package:scflutter/screens/GroupChats.dart';
 import 'package:scflutter/screens/Match/Communities.dart';
 import 'package:scflutter/screens/ChatNew.dart';
 import 'package:scflutter/screens/Home.dart';
@@ -45,7 +46,10 @@ import '../screens/ProfileSettings/bio_settings.dart';
       ),
       AutoRoute(
           page: ChatsRouter,
-          children: [AutoRoute(page: ChatsScreenPage, initial: true)],
+          children: [
+            AutoRoute(page: ChatsScreenPage, initial: true),
+            AutoRoute(page: GroupChatsPage)
+          ],
           name: "ChatsRouter"),
     ]),
     // AutoRoute(
