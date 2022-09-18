@@ -7,7 +7,6 @@ import 'package:scflutter/screens/Login.dart';
 import 'package:scflutter/screens/Match.dart';
 import 'package:scflutter/screens/Onboard.dart';
 import 'package:scflutter/screens/Profile/Followers.dart';
-import 'package:scflutter/screens/ProfileSettings/ChangeAvatar.dart';
 import 'package:scflutter/screens/Register/StepFour.dart';
 import 'package:scflutter/screens/Register/StepOne.dart';
 import 'package:scflutter/screens/Register/StepThree.dart';
@@ -77,10 +76,7 @@ import '../screens/ProfileSettings/bio_settings.dart';
     ),
     AutoRoute(
       page: GroupChatPage,
-    ),
-    AutoRoute(
-      page: ChangeAvatarPage,
-    ),
+    )
     // AutoRoute(page: TestScreen),
   ],
 )

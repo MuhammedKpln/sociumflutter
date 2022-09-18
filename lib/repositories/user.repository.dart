@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:scflutter/repositories/_base.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -44,5 +45,25 @@ class UserRepository extends BaseRepositoryClass {
 
     logError(fetchMetaData.error);
     throw Exception(fetchMetaData.error);
+  }
+
+  Future<String?> uploadAvatar(
+      String filePath, Uint8List bytes, String userId) async {
+    final request =
+        await supabase.storage.from("users").uploadBinary(filePath, bytes);
+
+    if (request.hasError) {
+      logError(request.error);
+      throw Exception(request.error);
+    }
+
+    try {
+      await updateProfile({"avatar": request.data}, userId);
+    } catch (err) {
+      logError(err);
+      throw Exception(err);
+    }
+
+    return request.data;
   }
 }
