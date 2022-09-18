@@ -9,10 +9,10 @@ class SettingsLogout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    VoidCallback logOut = () => ref.read(userProvider.notifier).clearUser();
+    logOut() => ref.read(userProvider.notifier).clearUser();
 
     return ListTile(
-      title: Text(
+      title: const Text(
         "logoutBtnTxt",
         style: TextStyle(color: ColorPalette.red),
       ).tr(),

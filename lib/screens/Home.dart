@@ -25,7 +25,7 @@ class _HomeScreenPageState extends ConsumerState<HomeScreenPage> {
 
     stateChangeEvent = _client.auth.onAuthStateChange((event, session) {
       if (event == AuthChangeEvent.signedOut) {
-        context.router.replace(const OnboardScreenRoute());
+        context.router.replaceAll([const OnboardScreenRoute()]);
       }
     });
   }
