@@ -3,7 +3,6 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/components/Scaffold.dart';
-import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/palette.dart';
 import 'package:scflutter/utils/router.gr.dart';
 
@@ -16,8 +15,6 @@ class ChatsRouter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider.notifier);
-
     return AutoTabsRouter(
       routes: const [ChatsScreenRoute(), GroupChatsRoute()],
       builder: (context, child, animation) {
@@ -25,10 +22,6 @@ class ChatsRouter extends ConsumerWidget {
 
         return AppScaffold(
             appBar: AppBar(
-              leading: IconButton(
-                icon: const Icon(FeatherIcons.moreHorizontal),
-                onPressed: () => user.clearUser(),
-              ),
               title:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Container(
