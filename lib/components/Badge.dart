@@ -11,8 +11,9 @@ class Badge extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-            gradient: ColorPalette.surfaceLinearGradient,
-            borderRadius: BorderRadius.circular(20)),
+          shape: BoxShape.circle,
+          gradient: ColorPalette.bgLinearGradient,
+        ),
         child: child);
   }
 }

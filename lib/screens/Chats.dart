@@ -6,15 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/mixins/Loading.mixin.dart';
 import 'package:scflutter/models/message.model.dart';
+import 'package:scflutter/models/room.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/toast.dart';
 import 'package:scflutter/utils/palette.dart';
 
 import '../components/Avatar.dart';
+import '../components/Badge.dart';
 import '../components/Loading.dart';
 import '../components/Scaffold.dart';
-import '../models/room.dart';
 import '../models/user.dart';
 import '../services/websocket.events.dart';
 import '../utils/router.gr.dart';
@@ -28,8 +29,6 @@ class ChatsScreenPage extends ConsumerStatefulWidget {
 
 class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
     with LoadingMixin {
-  final PageController pageController =
-      PageController(initialPage: 0, keepPage: true);
   final ChatRepository _chatRepository = ChatRepository();
   num? currentIndex = 0;
   List<Message> messages = [];
@@ -40,12 +39,6 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
     super.initState();
 
     fetchChatRooms();
-
-    pageController.addListener(() {
-      setState(() {
-        currentIndex = pageController.page?.round();
-      });
-    });
   }
 
   fetchChatRooms() async {
@@ -53,8 +46,11 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
 
     final data = await _chatRepository.fetchAllChatRooms(id: userId);
 
+    messages = data;
+
     setState(() {
-      messages = data;
+      messages = _sortMessages();
+
       isLoading = false;
     });
   }
@@ -101,12 +97,33 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
     return false;
   }
 
+  List<Message> _sortMessages() {
+    return messages
+      ..sort((a, b) {
+        if (a.seen) {
+          return 0;
+        }
+
+        if (b.seen) {
+          return 0;
+        }
+
+        return 1;
+      });
+  }
+
+  _navigateToChat(UserModel user, Room room) async {
+    await context.router.navigate(ChatNew(
+        comingFromMatchedPage: false,
+        connectedUser: user,
+        room: room,
+        socketService: socketService));
+  }
+
   Widget main() {
     if (isLoading) {
       return const Loading();
     }
-
-    print(messages);
 
     if (messages.isEmpty) {
       return noDataExists();
@@ -122,6 +139,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
 
             String username = "noName";
             late UserModel user;
+            Color textColor = Colors.grey;
 
             if (message.user != localUser?.id) {
               username = message.user_data!.username;
@@ -131,6 +149,10 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
             if (message.receiver != localUser?.id) {
               username = message.receiver_data!.username;
               user = message.receiver_data!;
+            }
+
+            if (message.seen) {
+              textColor = Colors.grey.shade600;
             }
 
             return Dismissible(
@@ -144,60 +166,48 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
               ),
               key: Key(message.id.toString()),
               onDismissed: (_) => deleteRoom(message.room),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: InkWell(
-                  onTap: () => context.router.navigate(ChatNew(
-                      comingFromMatchedPage: false,
-                      connectedUser: user,
-                      room: Room.fromJson(message.room_data!.toJson()),
-                      socketService: socketService)),
-                  child: Column(
-                    children: [
-                      Row(
+              child: InkWell(
+                onTap: () => _navigateToChat(user, message.room_data!),
+                child: Row(
+                  children: [
+                    _renderBadge(message.seen),
+                    Avatar(
+                      avatarSize: AvatarSize.mediumish,
+                      username: username,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Avatar(
-                            avatarSize: AvatarSize.mediumish,
-                            username: username,
+                          Text(
+                            username,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    color: message.seen ? textColor : null),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Row(
                               children: [
                                 Text(
-                                  username,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: Row(
-                                    children: [
-                                      Avatar(
-                                          username: username,
-                                          avatarSize: AvatarSize.extraSmall),
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 5),
-                                        child: Text(
-                                          message.text,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText2
-                                              ?.copyWith(color: Colors.grey),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                  message.text,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2
+                                      ?.copyWith(
+                                          color:
+                                              message.seen ? textColor : null),
                                 )
                               ],
                             ),
-                          ),
+                          )
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -207,8 +217,13 @@ class _ChatsScreenState extends ConsumerState<ChatsScreenPage>
     );
   }
 
-  Widget pageTwo() {
-    return const Text("Page2");
+  Widget _renderBadge(bool messageSeen) {
+    if (!messageSeen) {
+      return const Padding(
+          padding: EdgeInsets.only(right: 10), child: Badge(child: Text("1")));
+    }
+
+    return const SizedBox();
   }
 
   @override
