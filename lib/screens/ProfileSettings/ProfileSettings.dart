@@ -41,12 +41,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettingsScreenPage> {
         "label": "blockIncomingCallsSettingsTitle".tr(),
         "screen": const router.BlockIncomingCallsScreenRoute(),
         "value": user!.blockIncomingCalls! ? "blocked".tr() : "unblocked".tr()
-      },
-      {
-        "label": "changeAvatar".tr(),
-        "screen": const router.ChangeAvatarRoute(),
-        "value": ""
-      },
+      }
     ];
 
     return AppScaffold(

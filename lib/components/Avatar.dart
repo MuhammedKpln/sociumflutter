@@ -32,10 +32,11 @@ class Avatar extends StatelessWidget {
     if (avatarPath != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: Expanded(
-          child: Image.network(
-            generateAvatarUrl(avatarPath!),
-          ),
+        child: Image.network(
+          generateAvatarUrl(avatarPath!),
+          fit: BoxFit.cover,
+          height: avatarSize.size,
+          width: avatarSize.size,
         ),
       );
     }

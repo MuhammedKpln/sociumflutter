@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scflutter/components/Avatar.dart';
+import 'package:scflutter/components/ChangeAvatar.dart';
 import 'package:scflutter/components/LoadingNew.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/components/Scaffold.dart';
@@ -65,7 +65,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
   }
 
   void navigateToRoomsPage() {
-    context.router.navigate(RoomsRoute());
+    context.router.navigate(const RoomsRoute());
   }
 
   @override
@@ -135,13 +135,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
                               upgradeButton()
                             ]),
                       ),
-                      Center(
-                        child: Container(
-                            transform: Matrix4.translationValues(0.0, -50, 0.0),
-                            child: Avatar(
-                                username: user?.username ?? "s",
-                                avatarSize: AvatarSize.large)),
-                      ),
+                      renderAvatar(),
                     ],
                   ),
                 ],
@@ -149,6 +143,18 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
             ),
           ),
         ));
+  }
+
+  Widget renderAvatar() {
+    return Center(
+      child: Container(
+          transform: Matrix4.translationValues(0.0, -50, 0.0),
+          child: ChangeAvatar(
+            username: user?.username ?? "s",
+            isAuthenticatedUser: !isFullScreen,
+            avatar: user?.avatar,
+          )),
+    );
   }
 
   AppBar renderAppBar() {
