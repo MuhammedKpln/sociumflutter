@@ -4,6 +4,7 @@ import 'package:date_format/date_format.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:nil/nil.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/main.dart';
@@ -101,26 +102,28 @@ class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          RoundedButton(
-              onPressed: () {
-                chatMicMuted.value = !chatMicMuted.value;
-                // widget.micMuted.value = !widget.micMuted.value;
-              },
-              icon: Icon(
-                  chatMicMuted.value ? FeatherIcons.micOff : FeatherIcons.mic),
-              child: const Text("")),
-          RoundedButton(
+          RoundedButton.icon(
+            onPressed: () {
+              chatMicMuted.value = !chatMicMuted.value;
+              // widget.micMuted.value = !widget.micMuted.value;
+            },
+            icon: Icon(
+                chatMicMuted.value ? FeatherIcons.micOff : FeatherIcons.mic),
+            label: const SizedBox(),
+          ),
+          RoundedButton.icon(
+              label: const SizedBox(),
               onPressed: inVideoCall ? switchCamera : openCamera,
               icon: inVideoCall
                   ? const Icon(Icons.flip_camera_ios_outlined)
-                  : const Icon(FeatherIcons.camera),
-              child: const Text("")),
-          RoundedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(ColorPalette.red)),
-              onPressed: widget.onPressHangup,
-              icon: const Icon(FeatherIcons.phoneOff),
-              child: const Text("")),
+                  : const Icon(FeatherIcons.camera)),
+          RoundedButton.icon(
+            label: const SizedBox(),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(ColorPalette.red)),
+            onPressed: widget.onPressHangup,
+            icon: const Icon(FeatherIcons.phoneOff),
+          ),
         ],
       ),
     );

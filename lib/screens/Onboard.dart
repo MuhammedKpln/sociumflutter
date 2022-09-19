@@ -89,7 +89,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
               Text("onboardBottomSheetTitleText",
                       style: Theme.of(context).textTheme.titleMedium)
                   .tr(),
-              RoundedButton(
+              RoundedButton.icon(
                 onPressed: () => null,
                 icon: SvgPicture.asset(
                   "assets/google.svg",
@@ -99,30 +99,30 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
                 style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all(const Color(0xffDB4437))),
-                child: Text(!registering
+                label: Text(!registering
                         ? "onboardLoginWithGoogleBtnTxt"
                         : "onboardRegisterWithGoogleBtnTxt")
                     .tr(),
               ),
-              RoundedButton(
+              RoundedButton.icon(
                 onPressed: () => null,
                 icon: const Icon(Icons.apple),
                 style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all(Colors.black),
                     backgroundColor: MaterialStateProperty.all(Colors.white)),
-                child: Text(!registering
+                label: Text(!registering
                         ? "onboardLoginWithAppleBtnTxt"
                         : "onboardRegisterWithAppleBtnTxt")
                     .tr(),
               ),
-              RoundedButton(
+              RoundedButton.icon(
                 icon: const Icon(Icons.mail_outline),
                 onPressed: () => !registering
                     ? context.router.push(const LoginScreenRoute())
                     : context.router.push(const RegisterScreenStepOneRoute()),
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black)),
-                child: Text(!registering
+                label: Text(!registering
                         ? "onboardLoginWithEmailBtnTxt"
                         : "onboardRegisterWithEmailBtnTxt")
                     .tr(),
