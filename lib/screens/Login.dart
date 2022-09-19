@@ -9,8 +9,6 @@ import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/theme/toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scflutter/utils/router.gr.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'
-    show Supabase, GotrueError;
 
 import '../components/Scaffold.dart';
 
@@ -25,10 +23,10 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
   final AuthRepository _authRepository = AuthRepository();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final _client = Supabase.instance.client;
+  bool loggingIn = false;
 
-  onError(GotrueError? error) {
-    if (error?.message == "Email not confirmed") {
+  onError(dynamic error) {
+    if (error.message == "Email not confirmed") {
       context.toast
           .showToast("Email not confirmed", toastType: ToastType.Error);
     }
@@ -40,8 +38,13 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
   }
 
   login() async {
-    final signIn = await _authRepository.signIn(
-        email: emailController.text, password: passwordController.text);
+    setState(() => loggingIn = true);
+    final signIn = await _authRepository
+        .signIn(email: emailController.text, password: passwordController.text)
+        .catchError(onError)
+        .whenComplete(() {
+      setState(() => loggingIn = false);
+    });
 
     final userModel = AuthStateModel(
         accessToken: signIn.accessToken,
@@ -120,7 +123,8 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
                 ),
               ),
               const Spacer(),
-              RoundedButton(
+              RoundedButton.loading(
+                isLoading: loggingIn,
                 onPressed: login,
                 child: const Text("onboardLoginBtnText").tr(),
               )

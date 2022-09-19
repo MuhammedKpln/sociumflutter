@@ -77,10 +77,10 @@ class MatchFound extends StatelessWidget {
             ),
             Column(
               children: [
-                RoundedButton(
+                RoundedButton.icon(
                   onPressed: sendMessage,
                   icon: const Icon(EvaIcons.messageCircleOutline, size: 20),
-                  child:
+                  label:
                       const Text("matchScreenMatchFoundSendMessageBtnTxt").tr(),
                 ),
                 TextButton(

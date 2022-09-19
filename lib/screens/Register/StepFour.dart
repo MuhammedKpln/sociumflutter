@@ -158,9 +158,7 @@ class RegisterScreenStepFourState
                   width: double.infinity,
                   margin: const EdgeInsets.all(30),
                   child: RoundedButton(
-                      icon: null,
-                      onPressed: register,
-                      child: const Text("Kayıt ol")))
+                      onPressed: register, child: const Text("Kayıt ol")))
             ],
           )),
     );
