@@ -72,7 +72,7 @@ class _PermissionModalState extends State<PermissionModal> {
       if (audio || video) {
         // Give/send permission to the user
         // Send permission
-        widget.sendPermissionsAskedCallback.call(audio: true, video: true);
+        widget.sendPermissionsAskedCallback.call(audio: audio, video: video);
         context.router.pop();
         context.toast.showToast(widget.askingForPermission
             ? 'İsteğiniz gönderildi!'

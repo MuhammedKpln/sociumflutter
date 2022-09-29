@@ -295,6 +295,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
+  eventify:
+    dependency: transitive
+    description:
+      name: eventify
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -370,6 +377,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_call_ui:
+    dependency: "direct main"
+    description:
+      name: flutter_call_ui
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2+1"
   flutter_chat_types:
     dependency: transitive
     description:
@@ -791,6 +805,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.3"
+  peerdart:
+    dependency: "direct main"
+    description:
+      name: peerdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   petitparser:
     dependency: transitive
     description:
@@ -1153,6 +1174,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.6"
   vector_math:
     dependency: transitive
     description:
@@ -1217,5 +1245,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.18.0 <3.0.0"
+  dart: ">=2.18.1 <3.0.0"
   flutter: ">=3.3.0"

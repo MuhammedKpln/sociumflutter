@@ -5,15 +5,13 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:scflutter/components/LottieAnimation.dart';
+import 'package:peerdart/peerdart.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/models/message.model.dart';
-import 'package:scflutter/models/socket/call_made_response.dart';
 import 'package:scflutter/models/socket/media_permissions_response.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/PermissionModal.dart';
 import 'package:scflutter/theme/animation_durations.dart';
-import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/utils/router.gr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../components/Avatar.dart';
@@ -21,15 +19,12 @@ import '../components/Chat.dart';
 import '../components/Scaffold.dart';
 import '../models/room.dart';
 import '../models/user.dart';
-import '../services/webrtc.service.dart';
 import '../services/websocket.events.dart';
 import '../state/auth.state.dart';
 import '../state/chat.state.dart';
 import '../utils/avatar.dart';
-import 'Chat/CallConnectInformation.dart';
 
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chatUi;
 
 part 'Chat/Chat.part.dart';
 
@@ -61,10 +56,35 @@ class _ChatNewState extends ConsumerState<ChatNew>
   late RealtimeSubscription _stream;
   late final AnimationController _controller;
   late final Animation<double> _animation;
+  late final Peer peer;
+  late MediaStream localStream;
+  late MediaStream remoteStream;
+  late MediaConnection call;
 
   @override
   void initState() {
     super.initState();
+    _initPeer();
+    _initCallAnimation();
+
+    if (widget.comingFromMatchedPage) {
+      peerConnectionEnsureInitialized(
+        socketService: widget.socketService,
+        userUUID: widget.connectedUser!.id,
+        onClientDisconnected: _handleOnClientDisconnected,
+        mediaPermissionsAnswered: _handleMediaPermissionsAllowedEvent,
+        permissionsAskedCallback: _handlePermissionAskedEvent,
+      );
+
+      _connectedToCallListener();
+    }
+
+    listenMessages();
+    checkForRealtimeConnection();
+    fetchChatMessages();
+  }
+
+  void _initCallAnimation() {
     _controller = AnimationController(
       duration: Duration(milliseconds: AnimationDurations.veryHigh.duration),
       vsync: this,
@@ -74,54 +94,67 @@ class _ChatNewState extends ConsumerState<ChatNew>
       parent: _controller,
       curve: Curves.fastOutSlowIn,
     );
-
-    if (widget.comingFromMatchedPage) {
-      peerConnectionEnsureInitialized(
-          socketService: widget.socketService,
-          userUUID: widget.connectedUser!.id,
-          onClientDisconnected: _handleOnClientDisconnected,
-          mediaPermissionsAnswered: _handleMediaPermissionsAllowedEvent,
-          permissionsAskedCallback: _handlePermissionAskedEvent,
-          onCallMade: _handleOnCallMade);
-    }
-
-    listenMessages();
-    checkForRealtimeConnection();
-    fetchChatMessages();
   }
 
-  _handleOnCallMade(CallMadeResponse data) {
-    print(data.offer["sdp"]);
-    print(data.offer["type"]);
-    context.router.navigate(CallComingRoute(
-        username: widget.connectedUser!.username,
-        onAcceptCall: () => _answerCall(
-            RTCSessionDescription(data.offer["sdp"], data.offer["type"]),
-            data.uuid)));
-  }
+  void _connectedToCallListener() {
+    connectedToCall.addListener(() {
+      if (connectedToCall.value) {
+        navigateToCallManager();
+        return;
+      }
 
-  void _answerCall(RTCSessionDescription offer, String uuid) async {
-    final stream = await peerConnection.getUserMedia();
-
-    await peerConnection.addStream(stream);
-
-    final answer = await peerConnection.createAnswer(offer);
-
-    widget.socketService.makeAnswer(answer, uuid);
-  }
-
-  checkForRealtimeConnection() {
-    _stream.on("system", (payload, {ref}) {
-      if (payload["status"] == "ok") {
-        setState(() {
-          streamInitialized = true;
-        });
+      if (context.router.isRouteActive(InCallManagerScreenRoute.name)) {
+        context.router.pop();
       }
     });
   }
 
+  _initPeer() {
+    final userId = ref.read(userProvider).user!.id;
+    peer = Peer(id: userId);
+
+    peer.on("call", null, (ev, _) async {
+      call = ev.eventData as MediaConnection;
+
+      call.on("stream", null, (ev, _) async {
+        remoteStream = ev.eventData as MediaStream;
+        connectedToCall.value = true;
+      });
+
+      context.router.navigate(CallComingRoute(
+          username: widget.connectedUser!.username,
+          onAcceptCall: () async {
+            final mediaStream = await _getUserMedia(turnVideoOn: true);
+            localStream = mediaStream;
+
+            call.answer(mediaStream);
+          }));
+    });
+  }
+
+  Future<MediaStream> _getUserMedia({bool turnVideoOn = true}) async {
+    const videoCons = {"facingMode": "user"};
+
+    return await navigator.mediaDevices.getUserMedia(
+        {"audio": true, "video": turnVideoOn ? videoCons : false});
+  }
+
+  checkForRealtimeConnection() {
+    if (!streamInitialized) {
+      _stream.on("system", (payload, {ref}) {
+        if (payload["status"] == "ok") {
+          setState(() {
+            streamInitialized = true;
+          });
+        }
+      });
+    }
+  }
+
   @override
   void dispose() {
+    peer.dispose();
+
     disposeEvents(widget.socketService);
     _controller.dispose();
     _stream.unsubscribe();
@@ -131,13 +164,16 @@ class _ChatNewState extends ConsumerState<ChatNew>
   navigateToCallManager() {
     context.router.navigate(InCallManagerScreenRoute(
         username: widget.connectedUser?.username ?? "null",
-        onPressHangup: onPressHangup));
+        userAvatar: widget.connectedUser?.avatar ?? "null",
+        onPressHangup: onPressHangup,
+        localStream: localStream,
+        remoteStream: remoteStream));
   }
 
   onPressHangup() async {
-    localStream.value?.getTracks().forEach((track) => track.stop());
-    remoteStream.value?.getTracks().forEach((track) => track.stop());
-    await peerConnection.events.close();
+    call.close();
+
+    connectedToCall.value = false;
   }
 
   _handlePermissionAskedEvent() async {
@@ -149,7 +185,6 @@ class _ChatNewState extends ConsumerState<ChatNew>
   }
 
   _handleMediaPermissionsAllowedEvent(MediaPermission payload) {
-    print("selam");
     setState(() {
       audio = payload.audio!;
       video = payload.video!;
@@ -235,17 +270,6 @@ class _ChatNewState extends ConsumerState<ChatNew>
     );
   }
 
-  PreferredSizeWidget? renderAppBarBottom() {
-    if (peerConnectionInitialized) {
-      return PreferredSize(
-          preferredSize: const Size.fromHeight(80),
-          child: CallConnectInformation(
-            peerConnection: peerConnection,
-          ));
-    }
-    return null;
-  }
-
   void acceptPermissionsAsked({bool audio = false, bool video = false}) {
     widget.socketService
         .giveMediaPermission(widget.userUUID!, audio: audio, video: video);
@@ -256,22 +280,16 @@ class _ChatNewState extends ConsumerState<ChatNew>
       askingForPermission: askingForPermission,
       user: widget.connectedUser!,
       sendPermissionsAskedCallback: ({audio = false, video = false}) {
-        print(
-          "Selam",
-        );
         widget.socketService.askForMediaPermissions(widget.userUUID!,
             audio: audio, video: video);
       },
       acceptPermissionsAskedCallback: ({mediaPermissionsAllowed = false}) {
-        print("Selam");
-
         setState(() {
           mediaPermissionsAlllowed = mediaPermissionsAllowed;
         });
 
         acceptPermissionsAsked(audio: audio, video: video);
         context.router.pop();
-        context.toast.showToast("text");
       },
       audio: audio,
       video: video,
@@ -287,18 +305,20 @@ class _ChatNewState extends ConsumerState<ChatNew>
   }
 
   makeCall() async {
-    print("peerConnection");
-    print(peerConnection);
-    //TODO: when not allowed error, cancel it and navigate use§§r to the privacy settings
-    final MediaStream stream = await peerConnection.getUserMedia();
+    final MediaStream mediaStream = await _getUserMedia(turnVideoOn: video);
+    localStream = mediaStream;
 
-    await peerConnection.addStream(stream);
-    localStream.value = stream;
-    final RTCSessionDescription offer = await peerConnection.createOffer();
+    call = peer.call(widget.connectedUser!.id, mediaStream);
 
-    if (widget.userUUID != null) {
-      widget.socketService.callUser(offer, widget.userUUID!);
-    }
+    _initLocalPeerEvents(call);
+  }
+
+  _initLocalPeerEvents(MediaConnection connection) {
+    connection.on("stream", null, (ev, _) {
+      final data = ev.eventData as MediaStream;
+      remoteStream = data;
+      connectedToCall.value = true;
+    });
   }
 
   void callOrAskForPermission() {
@@ -327,7 +347,6 @@ class _ChatNewState extends ConsumerState<ChatNew>
 
   AppBar renderAppBar() {
     return AppBar(
-      bottom: renderAppBarBottom(),
       centerTitle: true,
       title: InkWell(
         onTap: navigateToUserProfile,
@@ -363,17 +382,6 @@ class _ChatNewState extends ConsumerState<ChatNew>
         room: widget.room!.id);
 
     await _chatRepository.sendMessage(model);
-  }
-
-  Widget customBottomWidget() {
-    if (!streamInitialized) {
-      return LottieAnimation(
-        animationPath: Animations.loadingDots.path,
-        heigth: 70,
-      );
-    }
-
-    return chatUi.Input(onSendPressed: onSendMessage);
   }
 
   handlePreviewDataUpdateState(index, updatedMessage) {

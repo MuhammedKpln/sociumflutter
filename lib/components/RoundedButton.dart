@@ -77,6 +77,7 @@ class _RoundedIconButton extends RoundedButton {
   Widget build(BuildContext context) {
     return RoundedButton(
         onPressed: onPressed,
+        style: super.style,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Stack(
