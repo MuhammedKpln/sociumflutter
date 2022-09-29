@@ -1,24 +1,26 @@
-import 'dart:async';
-
-import 'package:date_format/date_format.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_call_ui/flutter_call_ui.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:nil/nil.dart';
-import 'package:scflutter/components/Avatar.dart';
-import 'package:scflutter/components/RoundedButton.dart';
-import 'package:scflutter/main.dart';
+import 'package:scflutter/utils/avatar.dart';
 import 'package:scflutter/utils/palette.dart';
 
-import '../../state/chat.state.dart';
-
 class InCallManagerScreenPage extends StatefulWidget {
-  InCallManagerScreenPage(
-      {Key? key, required this.username, required this.onPressHangup})
-      : super(key: key);
+  const InCallManagerScreenPage({
+    Key? key,
+    required this.username,
+    required this.userAvatar,
+    required this.onPressHangup,
+    required this.localStream,
+    required this.remoteStream,
+  }) : super(key: key);
 
-  String username;
-  VoidCallback onPressHangup;
+  final String username;
+  final String userAvatar;
+  final VoidCallback onPressHangup;
+  final MediaStream localStream;
+  final MediaStream remoteStream;
 
   @override
   State<InCallManagerScreenPage> createState() =>
@@ -26,213 +28,91 @@ class InCallManagerScreenPage extends StatefulWidget {
 }
 
 class _InCallManagerScreenPageState extends State<InCallManagerScreenPage> {
-  DateTime date = DateTime(DateTime.now().year, 0, 0, 0, 0, 0, 0, 0);
-  late Timer timer;
-  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
-  RTCVideoRenderer localRenderer = RTCVideoRenderer();
   bool fullScreen = false;
-  bool inVideoCall = false;
-  Offset cameraOffset = const Offset(0, 0);
+  CameraState cameraState = CameraState.closed;
+  MicState micState = MicState.closed;
 
   @override
   void initState() {
     super.initState();
-    remoteRenderer.initialize();
-    localRenderer.initialize();
+    _switchCameraState();
+  }
 
-    localStream.addListener(() {
-      localRenderer.srcObject = localStream.value;
-    });
+  void _switchCameraState() {
+    final stream = widget.remoteStream;
+    final tracks = stream.getVideoTracks();
 
-    remoteStream.addListener(() {
-      remoteRenderer.srcObject = remoteStream.value;
-
+    if (tracks.isNotEmpty) {
       setState(() {
-        inVideoCall = true;
+        cameraState = CameraState.front;
       });
-    });
+    }
+  }
 
-    chatCameraOpened.addListener(() {
-      if (chatCameraOpened.value) {
-        setState(() {
-          inVideoCall = true;
-        });
-      } else {
-        setState(() {
-          inVideoCall = false;
-        });
-      }
-    });
+  PreferredSizeWidget _renderAppBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(FeatherIcons.arrowLeft),
+        onPressed: () => context.router.navigateBack(),
+      ),
+    );
+  }
 
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() {
-        date = date.add(const Duration(seconds: 1));
-      });
+  void _toggleFullScreen() {
+    setState(() {
+      fullScreen = !fullScreen;
     });
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    remoteRenderer.dispose();
-    localRenderer.dispose();
+  Future<void> _onPressCamera() async {
+    final stream = widget.remoteStream;
+    final tracks = stream.getVideoTracks();
 
-    timer.cancel();
+    await Helper.switchCamera(tracks[0]);
   }
 
-  void switchCamera() {
-    scaffoldKey.currentState
-        ?.showSnackBar(const SnackBar(content: Text("In progress")));
-    // Helper.switchCamera(stream.getVideoTracks()[0]);
-  }
+  _onPressMic() {
+    final stream = widget.remoteStream;
+    final tracks = stream.getAudioTracks();
+    final bool state = micState == MicState.closed ? true : false;
 
-  openCamera() async {
-    chatCameraOpened.value = true;
+    for (var track in tracks) {
+      track.enabled = state;
+    }
 
     setState(() {
-      inVideoCall = true;
+      if (state) {
+        micState = MicState.open;
+      } else {
+        micState = MicState.closed;
+      }
     });
-  }
-
-  Widget actionButtons() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: ColorPalette.surface.withOpacity(0.5)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          RoundedButton.icon(
-            onPressed: () {
-              chatMicMuted.value = !chatMicMuted.value;
-              // widget.micMuted.value = !widget.micMuted.value;
-            },
-            icon: Icon(
-                chatMicMuted.value ? FeatherIcons.micOff : FeatherIcons.mic),
-            label: const SizedBox(),
-          ),
-          RoundedButton.icon(
-              label: const SizedBox(),
-              onPressed: inVideoCall ? switchCamera : openCamera,
-              icon: inVideoCall
-                  ? const Icon(Icons.flip_camera_ios_outlined)
-                  : const Icon(FeatherIcons.camera)),
-          RoundedButton.icon(
-            label: const SizedBox(),
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(ColorPalette.red)),
-            onPressed: widget.onPressHangup,
-            icon: const Icon(FeatherIcons.phoneOff),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget renderCameraView() {
-    onDragEnd(DraggableDetails details) {
-      setState(() {
-        cameraOffset = details.offset;
-      });
-    }
-
-    final localCamera = RTCVideoView(
-      localRenderer,
-      mirror: true,
-      filterQuality: FilterQuality.high,
-      objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-    );
-
-    final remoteCamera = RTCVideoView(
-      remoteRenderer,
-      mirror: true,
-      objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-    );
-
-    final userCameraWidget = ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: SizedBox(
-        width: 150,
-        height: 200,
-        child: localCamera,
-      ),
-    );
-
-    return Stack(alignment: Alignment.bottomCenter, children: [
-      GestureDetector(
-        onTap: () {
-          setState(() {
-            fullScreen = !fullScreen;
-          });
-        },
-        child: remoteCamera,
-      ),
-      Positioned(
-        top: cameraOffset.dy,
-        left: cameraOffset.dx,
-        child: Draggable(
-          childWhenDragging: Container(),
-          feedback: Opacity(opacity: .4, child: userCameraWidget),
-          onDragEnd: onDragEnd,
-          child: userCameraWidget,
-        ),
-      ),
-      AnimatedOpacity(
-          opacity: fullScreen ? 0 : 1,
-          duration: const Duration(milliseconds: 100),
-          child: actionButtons())
-    ]);
-  }
-
-  Widget renderCallView() {
-    final callTimer = formatDate(date, [HH, ':', nn, ':', ss]);
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          children: [
-            Avatar(
-              avatarSize: AvatarSize.large,
-              username: widget.username,
-            ),
-            Text(widget.username),
-            Text(callTimer)
-          ],
-        ),
-        actionButtons()
-      ],
-    );
-  }
-
-  PreferredSizeWidget? appBar() {
-    if (fullScreen) {
-      return null;
-    }
-
-    return AppBar(
-      backgroundColor: ColorPalette.background.withOpacity(.3),
-    );
-  }
-
-  Widget withSafeArea({required Widget child}) {
-    if (inVideoCall) {
-      return child;
-    }
-
-    return SafeArea(child: child);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      extendBody: true,
-      appBar: appBar(),
-      body: withSafeArea(
-          child: Center(
-        child: inVideoCall ? renderCameraView() : renderCallView(),
-      )),
+    return CallUI(
+      remoteStream: widget.remoteStream,
+      localStream: widget.localStream,
+      onPressCamera: _onPressCamera,
+      onPressHangup: widget.onPressHangup,
+      onPressMic: _onPressMic,
+      user: CallUserModel(
+          avatar: generateAvatarUrl(widget.userAvatar),
+          username: widget.username),
+      appBarScaffold: _renderAppBar(),
+      cameraState: cameraState,
+      micState: micState,
+      fullScreen: fullScreen,
+      locale: const CallTRLocale(),
+      onPressContainer: _toggleFullScreen,
+      theme: const CallUIDefaultTheme(
+          backgoundColor: ColorPalette.background,
+          iconColor: Colors.white,
+          redColor: ColorPalette.red,
+          secondaryColor: ColorPalette.primary),
     );
   }
 }
