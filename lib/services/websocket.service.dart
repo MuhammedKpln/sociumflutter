@@ -7,7 +7,7 @@ class SocketCore {
 
   SocketCore() {
     final uri = ApiService.WebsocketAPI.path;
-    final options = IO.OptionBuilder().setTransports(["websocket"]).build();
+    final options = IO.OptionBuilder().build();
     socket = IO.io(uri, options);
 
     socket.onConnect((data) {
