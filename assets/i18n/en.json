@@ -58,5 +58,6 @@
   "copiedSuccesfully": "Succesfully copied {message}",
   "showAllJoinedRoomsBtnTxt": "Show all",
   "changeAvatar": "Change Avatar",
-  "communityChatsTitle": "Community chats"
+  "communityChatsTitle": "Community chats",
+  "matchRejected": "Match rejected from user."
 }

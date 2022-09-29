@@ -57,10 +57,6 @@ disposeEvents(SocketService socketService) {
     print(err);
   }
 
-  socketService.socket.off(SocketListenerEvents.MESSAGE_RECEIVED.path);
-  socketService.socket.off(SocketListenerEvents.ANSWER_MADE.path);
-  socketService.socket.off(SocketListenerEvents.CALL_MADE.path);
-  socketService.socket.off(SocketListenerEvents.RECEIVED_ICE_CANDIDATE.path);
   socketService.socket.off(SocketListenerEvents.MEDIA_PERMISSION_ANSWERED.path);
   socketService.socket.off(SocketListenerEvents.MEDIA_PERMISSION_ASKED.path);
   socketService.socket.off(SocketListenerEvents.CLIENT_DISCONNECTED.path);

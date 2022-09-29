@@ -58,5 +58,6 @@
   "copiedSuccesfully": "{message} basariyla kopyalandi",
   "showAllJoinedRoomsBtnTxt": "Hepsini göster",
   "changeAvatar": "Profil resmi düzenle",
-  "communityChatsTitle": "Community chats"
+  "communityChatsTitle": "Community chats",
+  "matchRejected": "Eşleşme karşıdakı kullanıcı tarafından rededildi."
 }

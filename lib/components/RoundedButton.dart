@@ -33,7 +33,11 @@ class RoundedButton extends StatelessWidget {
       );
     }
 
-    return RoundedButton(onPressed: onPressed, child: child);
+    return RoundedButton(
+      onPressed: onPressed,
+      style: style,
+      child: child,
+    );
   }
 
   @override
