@@ -60,3 +60,4 @@ google-services.json
 firebase_app_id_file.json
 GoogleService-Info.plist
 .env
+.env.local
