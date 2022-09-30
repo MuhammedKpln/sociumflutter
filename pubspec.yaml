@@ -64,6 +64,7 @@ dependencies:
   envied: ^0.2.3
   peerdart: ^0.2.0
   flutter_call_ui: ^0.2.2+1
+  firebase_messaging: ^13.0.4
 
 
 

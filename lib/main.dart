@@ -25,9 +25,10 @@ Future<void> main() async {
       debug: kDebugMode,
       localStorage: const HiveLocalStorage());
 
-  if (defaultTargetPlatform != TargetPlatform.macOS && !kDebugMode) {
+  if (defaultTargetPlatform != TargetPlatform.macOS) {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
+
     FlutterError.onError = Logger().logError;
   }
 
@@ -42,6 +43,8 @@ Future<void> main() async {
 
 class SociumApplication extends ConsumerWidget {
   final _appRouter = AppRouter();
+
+  SociumApplication({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
