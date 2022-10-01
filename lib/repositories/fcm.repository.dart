@@ -6,6 +6,7 @@ class FcmRepository extends BaseRepositoryClass {
 
   Future<void> updateFcmToken(
       {required String fcmToken, required String user}) async {
-    await _builder.upsert({"fcm_token": fcmToken, "user": user}).execute();
+    await _builder.upsert({"fcm_token": fcmToken, "user": user},
+        onConflict: "user").execute();
   }
 }
