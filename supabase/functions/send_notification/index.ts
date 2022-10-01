@@ -1,34 +1,39 @@
 import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import { supabaseClient } from "../_shared/supabaseClient.ts";
 import { definitions } from "../_shared/types.ts";
+import {
+  IFirebaseNotification,
+  SupabaseRequest,
+  SupportedLocales,
+} from "../_shared/baseTypes.ts";
+import { initLocale, _l } from "../_shared/locale.ts";
 
 const sendNotification = async (
   fcmToken: string,
-  senderInformation: definitions["users"],
-  text: string,
+  notification: IFirebaseNotification,
 ) => {
   const headers = new Headers();
   headers.set("Authorization", `key=${Deno.env.get("FIREBASE_SERVER_KEY")}`);
   headers.set("Content-Type", "application/json");
+
   const body = {
-    notification: {
-      title: `${senderInformation.username} adlı kişiden mesajınız var!`,
-      body: text,
-    },
+    notification: notification,
     to: fcmToken,
   };
 
-  return await fetch("https://fcm.googleapis.com/fcm/send", {
+  const request = await fetch("https://fcm.googleapis.com/fcm/send", {
     method: "POST",
     headers: headers,
     body: JSON.stringify(body),
-  });
+  }).catch((err) => console.log(err));
+
+  return request;
 };
 
 const getFcmToken = async (userId: string): Promise<string | null> => {
   const fcmTokenRequest = await supabaseClient
     .from<definitions["fcm_token"]>("fcm_token")
-    .select("fcm_token")
+    .select("*")
     .eq("user", userId)
     .single();
 
@@ -40,12 +45,12 @@ const getFcmToken = async (userId: string): Promise<string | null> => {
   return fcmToken;
 };
 
-const getSenderInformation = async (
+const getUserInformation = async (
   userId: string,
-): Promise<definitions["users"] | null> => {
+): Promise<Pick<definitions["users"], "username" | "locale"> | null> => {
   const request = await supabaseClient
     .from<definitions["users"]>("users")
-    .select("username")
+    .select("*")
     .eq("id", userId)
     .single();
 
@@ -56,19 +61,38 @@ const getSenderInformation = async (
   return request.data;
 };
 
-serve(async (req) => {
-  const { record } = await req.json();
-  const { receiver, user, text } = record;
+const sendMessageNotification = async ({
+  receiver,
+  user,
+  text,
+}: definitions["messages"]) => {
+  const fcmToken = await getFcmToken(receiver!);
+  const getSender = await getUserInformation(user);
+  const getReceiver = await getUserInformation(receiver!);
 
-  const fcmToken = await getFcmToken(receiver);
-  const getSender = await getSenderInformation(user);
-
-  if (fcmToken && getSender) {
-    await sendNotification(fcmToken, getSender, text);
+  if (getReceiver?.locale) {
+    initLocale(getReceiver.locale as SupportedLocales);
+  }
+  if (fcmToken && getSender && getReceiver) {
+    const notification: IFirebaseNotification = {
+      title: _l("youHaveANewMessage", { name: getSender.username }),
+      body: text,
+    };
+    await sendNotification(fcmToken, notification);
   } else {
     return new Response("not acceptable", {
       status: 406,
     });
+  }
+};
+
+serve(async (req) => {
+  const { record, table } = (await req.json()) as SupabaseRequest;
+
+  switch (table) {
+    case "messages":
+      await sendMessageNotification(record as definitions["messages"]);
+      break;
   }
 
   return new Response("ok", {

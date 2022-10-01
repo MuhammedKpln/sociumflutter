@@ -662,6 +662,8 @@ export interface paths {
           blockIncomingCalls?: parameters["rowFilter.users.blockIncomingCalls"];
           biography?: parameters["rowFilter.users.biography"];
           birthday?: parameters["rowFilter.users.birthday"];
+          /** User locale */
+          locale?: parameters["rowFilter.users.locale"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -718,6 +720,8 @@ export interface paths {
           blockIncomingCalls?: parameters["rowFilter.users.blockIncomingCalls"];
           biography?: parameters["rowFilter.users.biography"];
           birthday?: parameters["rowFilter.users.birthday"];
+          /** User locale */
+          locale?: parameters["rowFilter.users.locale"];
         };
         header: {
           /** Preference */
@@ -738,6 +742,8 @@ export interface paths {
           blockIncomingCalls?: parameters["rowFilter.users.blockIncomingCalls"];
           biography?: parameters["rowFilter.users.biography"];
           birthday?: parameters["rowFilter.users.birthday"];
+          /** User locale */
+          locale?: parameters["rowFilter.users.locale"];
         };
         body: {
           /** users */
@@ -1105,6 +1111,12 @@ export interface definitions {
     biography?: string;
     /** Format: date */
     birthday?: string;
+    /**
+     * Format: character varying
+     * @description User locale
+     * @default en
+     */
+    locale?: string;
   };
   categories: {
     /**
@@ -1268,6 +1280,11 @@ export interface parameters {
   "rowFilter.users.biography": string;
   /** Format: date */
   "rowFilter.users.birthday": string;
+  /**
+   * Format: character varying
+   * @description User locale
+   */
+  "rowFilter.users.locale": string;
   /** @description categories */
   "body.categories": definitions["categories"];
   /** Format: bigint */
