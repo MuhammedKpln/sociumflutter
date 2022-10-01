@@ -45,7 +45,6 @@ dependencies:
   json_annotation: ^4.5.0
   lottie: ^1.4.2
   flutter_chat_ui: ^1.6.3
-  eva_icons_flutter: ^3.1.0
   feather_icons: ^1.2.0
   logging: ^1.0.2
   flutter_webrtc: ^0.9.7
@@ -64,6 +63,7 @@ dependencies:
   envied: ^0.2.3
   peerdart: ^0.2.0
   flutter_call_ui: ^0.2.2+1
+  firebase_messaging: ^13.0.4
 
 
 

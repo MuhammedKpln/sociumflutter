@@ -16,10 +16,12 @@ enum ToastType {
 class Toast {
   const Toast();
 
-  showToast(String text, {ToastType? toastType = ToastType.Info}) {
+  showToast(String text,
+      {ToastType? toastType = ToastType.Info, SnackBarAction? action}) {
     scaffoldKey.currentState?.showSnackBar(SnackBar(
       content: Text(text),
       backgroundColor: toastType?.color ?? ColorPalette.primary,
+      action: action,
     ));
   }
 }
