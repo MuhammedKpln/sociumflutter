@@ -8,17 +8,31 @@ import {
 } from "../_shared/baseTypes.ts";
 import { initLocale, _l } from "../_shared/locale.ts";
 
+const _setNotificationData = (
+  table: keyof definitions,
+  args?: Record<string, unknown>,
+) => {
+  return {
+    messageType: table,
+    ...args,
+  };
+};
+
 const sendNotification = async (
   fcmToken: string,
   notification: IFirebaseNotification,
+  table: keyof definitions,
+  notificationData?: Record<string, unknown>,
 ) => {
   const headers = new Headers();
   headers.set("Authorization", `key=${Deno.env.get("FIREBASE_SERVER_KEY")}`);
   headers.set("Content-Type", "application/json");
+  notificationData = _setNotificationData(table, notificationData);
 
   const body = {
     notification: notification,
     to: fcmToken,
+    data: notificationData,
   };
 
   const request = await fetch("https://fcm.googleapis.com/fcm/send", {
@@ -65,6 +79,7 @@ const sendMessageNotification = async ({
   receiver,
   user,
   text,
+  room,
 }: definitions["messages"]) => {
   const fcmToken = await getFcmToken(receiver!);
   const getSender = await getUserInformation(user);
@@ -78,7 +93,9 @@ const sendMessageNotification = async ({
       title: _l("youHaveANewMessage", { name: getSender.username }),
       body: text,
     };
-    await sendNotification(fcmToken, notification);
+    await sendNotification(fcmToken, notification, "messages", {
+      roomId: room,
+    });
   } else {
     return new Response("not acceptable", {
       status: 406,
