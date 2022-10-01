@@ -66,4 +66,15 @@ class UserRepository extends BaseRepositoryClass {
 
     return request.data;
   }
+
+  Future<bool> saveLocale(String locale, String userId) async {
+    final request =
+        await _builder.update({"locale": locale}).eq("id", userId).execute();
+
+    if (!request.hasError) {
+      return true;
+    }
+
+    return false;
+  }
 }

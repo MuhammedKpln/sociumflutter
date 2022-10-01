@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
+import 'package:scflutter/repositories/user.repository.dart';
 import 'package:scflutter/theme/toast.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingsChangeLanguage extends StatefulWidget {
   const SettingsChangeLanguage({super.key});
@@ -11,11 +13,14 @@ class SettingsChangeLanguage extends StatefulWidget {
 }
 
 class SettingsChangeLanguageState extends State<SettingsChangeLanguage> {
-  void onChangedLanguage(Locale? value) async {
-    await context.setLocale(value!);
+  final UserRepository _userRepository = UserRepository();
 
+  void onChangedLanguage(Locale? value) async {
+    final userId = Supabase.instance.client.auth.user()!.id;
+
+    await context.setLocale(value!);
+    await _userRepository.saveLocale(value.languageCode, userId);
     context.toast.showToast("success".tr(), toastType: ToastType.Success);
-    
   }
 
   List<Locale> get _languages => context.supportedLocales;
@@ -30,7 +35,7 @@ class SettingsChangeLanguageState extends State<SettingsChangeLanguage> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text("settingsChangeLang").tr(),
+      title: const Text("settingsChangeLang").tr(),
       trailing: DropdownButton<Locale>(
         onChanged: (Locale? val) => onChangedLanguage(val),
         value: context.locale,
