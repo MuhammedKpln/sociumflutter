@@ -5,6 +5,8 @@
 - WebRTC
 - Websocket
 - Firebase (Crashlytics, Messaging)
+- Supabase Edge Functions
+- Supabase
 
 
 ## Made for Socium..
