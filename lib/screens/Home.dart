@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/repositories/fcm.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/storage/fcm.storage.dart';
+import 'package:scflutter/theme/toast.dart';
 import 'package:scflutter/utils/router.gr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -23,12 +28,36 @@ class _HomeScreenPageState extends ConsumerState<HomeScreenPage> {
   final FcmRepository _fcmRepository = FcmRepository();
   final FcmStorage _fcmStorage = FcmStorage();
   late GotrueSubscription stateChangeEvent;
+  late StreamSubscription onFirebaseMessage;
 
   @override
   void initState() {
     super.initState();
     registerFcmToken();
+    _supabaseAuthChange();
+    _onFirebaseMessage();
+  }
 
+  void _onFirebaseMessage() {
+    onFirebaseMessage =
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      navigateToScreen() async {
+        switch (message.data["messageType"]) {
+          case "messages":
+            await context.router.navigate(const ChatsRouter());
+        }
+      }
+
+      if (message.notification != null) {
+        context.toast.showToast(message.notification!.title!,
+            toastType: ToastType.Info,
+            action: SnackBarAction(
+                label: "showBtnTxt".tr(), onPressed: navigateToScreen));
+      }
+    });
+  }
+
+  void _supabaseAuthChange() {
     stateChangeEvent = _client.auth.onAuthStateChange((event, session) async {
       if (event == AuthChangeEvent.signedOut) {
         context.router.replaceAll([const OnboardScreenRoute()]);
@@ -59,6 +88,7 @@ class _HomeScreenPageState extends ConsumerState<HomeScreenPage> {
   @override
   void dispose() {
     stateChangeEvent.data?.unsubscribe();
+    onFirebaseMessage.cancel();
     super.dispose();
   }
 

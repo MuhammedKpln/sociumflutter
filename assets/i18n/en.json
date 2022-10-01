@@ -59,5 +59,6 @@
   "showAllJoinedRoomsBtnTxt": "Show all",
   "changeAvatar": "Change Avatar",
   "communityChatsTitle": "Community chats",
-  "matchRejected": "Match rejected from user."
+  "matchRejected": "Match rejected from user.",
+  "showBtnTxt": "Show"
 }
