@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nil/nil.dart';
 import 'package:scflutter/utils/palette.dart';
 
 class RoundedButton extends StatelessWidget {
@@ -72,7 +71,7 @@ class _RoundedIconButton extends RoundedButton {
       required this.label,
       required this.icon,
       super.style})
-      : super(child: nil);
+      : super(child: const SizedBox.shrink());
 
   Widget label;
   Widget icon;

@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nil/nil.dart';
 import 'package:scflutter/components/LoadingNew.dart';
 import 'package:scflutter/mixins/NewLoading.mixin.dart';
 import 'package:scflutter/models/room.dart';
@@ -91,7 +90,7 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
   @override
   Widget build(BuildContext context) {
     if (rooms.isEmpty) {
-      return nil;
+      return const SizedBox.shrink();
     }
 
     return Column(
