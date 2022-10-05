@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:scflutter/components/Avatar.dart';
 import 'package:scflutter/components/LottieAnimation.dart';
 import 'package:scflutter/components/RoundedButton.dart';
 import 'package:scflutter/extensions/toastExtension.dart';
 import 'package:scflutter/models/user.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:scflutter/services/websocket.events.dart';
 import 'package:scflutter/theme/animations.dart';
 import 'package:scflutter/theme/toast.dart';
@@ -129,7 +129,7 @@ class _MatchFoundState extends State<MatchFound> {
                 width: 200,
                 child: RoundedButton.icon(
                   onPressed: sendMessage,
-                  icon: const Icon(EvaIcons.messageCircleOutline, size: 20),
+                  icon: const Icon(FeatherIcons.messageCircle, size: 20),
                   label:
                       const Text("matchScreenMatchFoundSendMessageBtnTxt").tr(),
                 ),
