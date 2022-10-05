@@ -12,26 +12,21 @@ class AuthRepository with LoggerMixin {
     final request =
         await _supabase.auth.signIn(email: email, password: password);
 
-    if (request.error != null) {
-      throw Exception(request.error);
+    if (request.session == null) {
+      throw Exception(request.statusCode);
     }
 
-    final userProfile =
-        await getUserProfile(userUuid: request.data?.user?.id ?? "");
+    final userProfile = await getUserProfile(userUuid: request.user?.id ?? "");
 
     return LoginResponse(
         user: userProfile,
-        rawUser: request.data!.user!,
-        accessToken: request.data!.accessToken,
-        refreshToken: request.data!.refreshToken!);
+        rawUser: request.user!,
+        accessToken: request.session!.accessToken,
+        refreshToken: request.session!.refreshToken!);
   }
 
   Future<void> signOut() async {
-    final request = await _supabase.auth.signOut();
-
-    if (request.error != null) {
-      throw Exception(request.error);
-    }
+    await _supabase.auth.signOut();
   }
 
   Future<LoginResponse> signUp(
@@ -41,30 +36,24 @@ class AuthRepository with LoggerMixin {
     final request = await _supabase.auth
         .signUp(email, password, userMetadata: {"username": username});
 
-    if (request.error != null) {
-      throw Exception(request.error);
+    if (request.session == null) {
+      throw Exception(request.statusCode);
     }
 
-    final userProfile =
-        await getUserProfile(userUuid: request.data?.user?.id ?? "");
-
+    final userProfile = await getUserProfile(userUuid: request.user?.id ?? "");
     return LoginResponse(
         user: userProfile,
-        rawUser: request.data!.user!,
-        accessToken: request.data!.accessToken,
-        refreshToken: request.data!.refreshToken!);
+        rawUser: request.user!,
+        accessToken: request.session!.accessToken,
+        refreshToken: request.session!.refreshToken!);
   }
 
   Future<UserModel> getUserProfile({required String userUuid}) async {
-    final request = await _supabase
-        .from('users')
-        .select()
-        .eq('id', userUuid)
-        .single()
-        .execute();
+    final request =
+        await _supabase.from('users').select().eq('id', userUuid).single();
 
-    if (request.hasError) {
-      logError(request.error);
+    if (request == null) {
+      logError("No profile found with userId: $userUuid");
     }
 
     return UserModel.fromJson(request.data);
