@@ -25,7 +25,7 @@ Future<void> main() async {
       debug: kDebugMode,
       localStorage: const HiveLocalStorage());
 
-  if (defaultTargetPlatform != TargetPlatform.macOS) {
+  if (defaultTargetPlatform != TargetPlatform.macOS && !kIsWeb) {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
 
