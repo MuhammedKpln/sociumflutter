@@ -10,28 +10,29 @@ class ChatRepository with LoggerMixin {
 
   SupabaseQueryBuilder get _query => _supabaseClient.from(_table);
 
-  Future<List<Message>> fetchPrivateChats({required String id}) async {
+  Future<List<Message>?> fetchPrivateChats({required String id}) async {
     const query = """*,
                     user_data:user(*),
                     receiver_data:receiver(*),
                     room_data:room(*)
                    """;
 
-    var data = await _supabaseClient
-        .from('get_messages_room')
-        .select(query)
-        .or("user.eq.$id,receiver.eq.$id")
-        .eq("group_message", false)
-        .execute();
+    try {
+      final request = await _supabaseClient
+          .from('get_messages_room')
+          .select(query)
+          .or("user.eq.$id,receiver.eq.$id")
+          .eq("group_message", false);
 
-    if (data.hasError) {
-      logError(data.error);
+      return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
+    } catch (err) {
+      logError(err);
     }
 
-    return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
+    return null;
   }
 
-  Future<List<Message>> fetchCommunityChats({required String id}) async {
+  Future<List<Message>?> fetchCommunityChats({required String id}) async {
     const query = """*,
                     user_data:user(*),
                     receiver_data:receiver(*),
@@ -39,58 +40,52 @@ class ChatRepository with LoggerMixin {
 
                    """;
 
-    var data = await _supabaseClient
-        .from('get_messages_room')
-        .select(query)
-        .or("user.eq.$id,receiver.eq.$id")
-        .eq("group_message", true)
-        .execute();
+    try {
+      var data = await _supabaseClient
+          .from('get_messages_room')
+          .select(query)
+          .or("user.eq.$id,receiver.eq.$id")
+          .eq("group_message", true);
 
-    if (data.hasError) {
-      logError(data.error);
+      return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
+    } catch (err) {
+      logError(err);
     }
-
-    print(data.data);
-
-    return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
+    return null;
   }
 
-  Future<List<Message>> fetchChatMessages({required int roomId}) async {
+  Future<List<Message>?> fetchChatMessages({required int roomId}) async {
     const query = """*,
                     user_data:user(*),
                     receiver_data:receiver(*),
                     room_data:room(*)
                    """;
 
-    final request = await _query
-        .select(query)
-        .eq("room", roomId)
-        .order("created_at", ascending: false)
-        .execute();
+    try {
+      final request = await _query
+          .select(query)
+          .eq("room", roomId)
+          .order("created_at", ascending: false);
 
-    if (request.hasError) {
-      logError(request.error);
+      return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
+    } catch (err) {
+      logError(err);
     }
-
-    print(request.data);
-
-    return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
+    return null;
   }
 
   Future<void> sendMessage(SendMessage message) async {
-    final request = await _query.insert(message.toJson()).execute();
-
-    if (request.hasError) {
-      logError(request.error);
+    try {
+      await _query.insert(message.toJson());
+    } catch (err) {
+      logError(err);
     }
   }
 
-  RealtimeSubscription listenMessages(
-      int roomId, Function(SupabaseRealtimePayload payload) callback) {
+  listenMessages(int roomId) {
     return Supabase.instance.client
         .from("messages:room=eq.$roomId")
-        .on(SupabaseEventTypes.all, callback)
-        .subscription;
+        .stream(["id"]);
   }
 
   Future<bool> Function({required int roomId}) get deleteRoom =>
