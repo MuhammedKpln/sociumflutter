@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/repositories/room.repository.dart';
 import 'package:scflutter/utils/logger.dart';
@@ -17,18 +19,18 @@ class ChatRepository with LoggerMixin {
                     room_data:room(*)
                    """;
 
-    var data = await _supabaseClient
-        .from('get_messages_room')
-        .select(query)
-        .or("user.eq.$id,receiver.eq.$id")
-        .eq("group_message", false)
-        .execute();
+    try {
+      final request = await _supabaseClient
+          .from('get_messages_room')
+          .select(query)
+          .or("user.eq.$id,receiver.eq.$id")
+          .eq("group_message", false);
 
-    if (data.hasError) {
-      logError(data.error);
+      return List<Message>.from(request.map((x) => Message.fromJson(x)));
+    } catch (err) {
+      logError(err);
+      throw Exception(err);
     }
-
-    return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
   }
 
   Future<List<Message>> fetchCommunityChats({required String id}) async {
@@ -39,20 +41,18 @@ class ChatRepository with LoggerMixin {
 
                    """;
 
-    var data = await _supabaseClient
-        .from('get_messages_room')
-        .select(query)
-        .or("user.eq.$id,receiver.eq.$id")
-        .eq("group_message", true)
-        .execute();
+    try {
+      var data = await _supabaseClient
+          .from('get_messages_room')
+          .select(query)
+          .or("user.eq.$id,receiver.eq.$id")
+          .eq("group_message", true);
 
-    if (data.hasError) {
-      logError(data.error);
+      return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
+    } catch (err) {
+      logError(err);
+      throw Exception(err);
     }
-
-    print(data.data);
-
-    return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
   }
 
   Future<List<Message>> fetchChatMessages({required int roomId}) async {
@@ -62,35 +62,32 @@ class ChatRepository with LoggerMixin {
                     room_data:room(*)
                    """;
 
-    final request = await _query
-        .select(query)
-        .eq("room", roomId)
-        .order("created_at", ascending: false)
-        .execute();
+    try {
+      final request = await _query
+          .select(query)
+          .eq("room", roomId)
+          .order("created_at", ascending: false);
 
-    if (request.hasError) {
-      logError(request.error);
+      return List<Message>.from(request.map((x) => Message.fromJson(x)));
+    } catch (err) {
+      logError(err);
+      throw Exception(err);
     }
-
-    print(request.data);
-
-    return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
   }
 
   Future<void> sendMessage(SendMessage message) async {
-    final request = await _query.insert(message.toJson()).execute();
-
-    if (request.hasError) {
-      logError(request.error);
+    try {
+      await _query.insert(message.toJson());
+    } catch (err) {
+      logError(err);
     }
   }
 
-  RealtimeSubscription listenMessages(
-      int roomId, Function(SupabaseRealtimePayload payload) callback) {
+  StreamSubscription listenMessages(
+      int roomId, Function(dynamic payload) callback) {
     return Supabase.instance.client
         .from("messages:room=eq.$roomId")
-        .on(SupabaseEventTypes.all, callback)
-        .subscription;
+        .stream(["id"]).listen(callback);
   }
 
   Future<bool> Function({required int roomId}) get deleteRoom =>

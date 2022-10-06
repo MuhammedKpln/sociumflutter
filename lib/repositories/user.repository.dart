@@ -9,72 +9,67 @@ class UserRepository extends BaseRepositoryClass {
 
   Future<UserModel> updateProfile(
       Map<String, dynamic> data, String userId) async {
-    final request = await _builder.update(data).eq("id", userId).execute();
-
-    if (!request.hasError) {
-      final parsedData = UserModel.fromJson(request.data[0]);
+    try {
+      final request = await _builder.update(data).eq("id", userId);
+      final parsedData = UserModel.fromJson(request[0]);
 
       return parsedData;
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    logError(request.error);
-    throw Exception(request.error);
   }
 
   Future<UserModel> fetchUser(String username) async {
-    final request =
-        await _builder.select().eq("username", username).single().execute();
+    try {
+      final request = await _builder.select().eq("username", username).single();
 
-    if (request.hasError) {
-      logError(request.error);
-      throw Exception(request.error);
+      return UserModel.fromJson(request);
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    return UserModel.fromJson(request.data);
   }
 
   Future<UserMetaData> fetchUserMeta(String userId) async {
-    final fetchMetaData = await supabase.rpc('user_followers_count').execute();
-
-    if (!fetchMetaData.hasError) {
+    try {
+      final fetchMetaData = await supabase.rpc('user_followers_count');
       return UserMetaData(
-          followers: fetchMetaData.data[0],
-          followings: fetchMetaData.data[1],
-          rooms: fetchMetaData.data[2]);
+          followers: fetchMetaData[0],
+          followings: fetchMetaData[1],
+          rooms: fetchMetaData[2]);
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    logError(fetchMetaData.error);
-    throw Exception(fetchMetaData.error);
   }
 
   Future<String?> uploadAvatar(
       String filePath, Uint8List bytes, String userId) async {
-    final request =
-        await supabase.storage.from("users").uploadBinary(filePath, bytes);
-
-    if (request.hasError) {
-      logError(request.error);
-      throw Exception(request.error);
-    }
-
     try {
-      await updateProfile({"avatar": request.data}, userId);
-    } catch (err) {
-      logError(err);
-      throw Exception(err);
-    }
+      final request =
+          await supabase.storage.from("users").uploadBinary(filePath, bytes);
+      try {
+        await updateProfile({"avatar": request}, userId);
+      } catch (err) {
+        logError(err);
+        throw Exception(err);
+      }
 
-    return request.data;
+      return request;
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
+    }
   }
 
   Future<bool> saveLocale(String locale, String userId) async {
-    final request =
-        await _builder.update({"locale": locale}).eq("id", userId).execute();
-
-    if (!request.hasError) {
+    try {
+      await _builder.update({"locale": locale}).eq("id", userId);
       return true;
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    return false;
   }
 }

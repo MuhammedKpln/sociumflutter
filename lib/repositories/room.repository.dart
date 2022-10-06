@@ -5,26 +5,22 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class RoomRepository extends BaseRepositoryClass {
   final SupabaseQueryBuilder _builder = Supabase.instance.client.from('rooms');
 
-  RoomRepository()
-      : super(BaseRepositoryArguments(userData: true, roomData: true));
+  RoomRepository();
 
   Future<List<Room>> fetchPublishedRooms() async {
     String select = """*,
       room_partipications_data:room_partipications(*,user_data:users(*))
 """;
 
-    final request = await supabase
-        .from("rooms")
-        .select(select)
-        .eq("published", true)
-        .execute();
+    try {
+      final request =
+          await supabase.from("rooms").select(select).eq("published", true);
 
-    if (request.hasError) {
-      logError(request.error);
-      throw Exception(request.error);
+      return List.from(request.map((data) => Room.fromJson(data)));
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    return List.from(request.data.map((data) => Room.fromJson(data)));
   }
 
   Future<List<RoomPartipication>> fetchJoinedRooms(
@@ -33,19 +29,17 @@ class RoomRepository extends BaseRepositoryClass {
       room_data:room(*)
 """;
 
-    final request = await supabase
-        .from("room_partipications")
-        .select(select)
-        .eq("user", userId)
-        .execute();
+    try {
+      final request = await supabase
+          .from("room_partipications")
+          .select(select)
+          .eq("user", userId);
 
-    if (request.hasError) {
-      logError(request.error);
-      throw Exception(request.error);
+      return List.from(request.map((data) => RoomPartipication.fromJson(data)));
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    return List.from(
-        request.data.map((data) => RoomPartipication.fromJson(data)));
   }
 
   Future<Room> fetchRoomDetails({required int roomId}) async {
@@ -54,63 +48,58 @@ class RoomRepository extends BaseRepositoryClass {
       category_data:categories(*)
 """;
 
-    final request = await supabase
-        .from("rooms")
-        .select(select)
-        .eq("id", roomId)
-        .limit(1)
-        .single()
-        .execute();
+    try {
+      final request = await supabase
+          .from("rooms")
+          .select(select)
+          .eq("id", roomId)
+          .limit(1)
+          .single();
 
-    print(request.data);
-
-    if (request.hasError) {
-      logError(request.error);
-      throw Exception(request.error);
+      return Room.fromJson(request);
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    return Room.fromJson(request.data);
   }
 
   Future<bool> leaveCommunity(
       {required int roomId, required String userId}) async {
-    final request = await supabase
-        .from("room_partipications")
-        .delete()
-        .eq("user", userId)
-        .eq("room", roomId)
-        .execute();
+    try {
+      await supabase
+          .from("room_partipications")
+          .delete()
+          .eq("user", userId)
+          .eq("room", roomId);
 
-    if (request.hasError) {
-      logError(request.error);
-      throw Exception(request.error);
+      return true;
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    return true;
   }
 
   Future<RoomPartipication> joinCommunity(
       {required int roomId, required String userId}) async {
-    final request = await supabase
-        .from("room_partipications")
-        .upsert({"room": roomId, "user": userId}).execute();
+    try {
+      final request = await supabase
+          .from("room_partipications")
+          .upsert({"room": roomId, "user": userId});
 
-    if (request.hasError) {
-      logError(request.error);
-      throw Exception(request.error);
+      return RoomPartipication.fromJson(request.first);
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    return RoomPartipication.fromJson(request.data.first);
   }
 
   Future<bool> deleteRoom({required int roomId}) async {
-    final request = await _builder.delete().eq("id", roomId).execute();
-
-    if (request.hasError) {
-      logError(request.error);
-      throw Exception(request.error);
+    try {
+      await _builder.delete().eq("id", roomId);
+      return true;
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    return true;
   }
 }

@@ -15,6 +15,8 @@ class BaseRepositoryClass with LoggerMixin {
 
   final userMeta = ["*"];
 
+  String get selectUserMeta => userMeta.join(",");
+
   BaseRepositoryClass([BaseRepositoryArguments? args]) {
     if (args == null) return;
 

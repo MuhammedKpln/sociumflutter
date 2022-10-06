@@ -16,7 +16,7 @@ class SettingsChangeLanguageState extends State<SettingsChangeLanguage> {
   final UserRepository _userRepository = UserRepository();
 
   void onChangedLanguage(Locale? value) async {
-    final userId = Supabase.instance.client.auth.user()!.id;
+    final userId = Supabase.instance.client.auth.currentUser!.id;
 
     await context.setLocale(value!);
     await _userRepository.saveLocale(value.languageCode, userId);

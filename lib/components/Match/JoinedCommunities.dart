@@ -6,7 +6,7 @@ import 'package:scflutter/components/LoadingNew.dart';
 import 'package:scflutter/mixins/NewLoading.mixin.dart';
 import 'package:scflutter/models/room.dart';
 import 'package:scflutter/repositories/room.repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:scflutter/state/auth.state.dart';
 
 import '../../utils/palette.dart';
 import '../../utils/router.gr.dart';
@@ -37,7 +37,7 @@ class JoinedCommunitiesState extends ConsumerState<JoinedCommunities>
   }
 
   fetchRooms() async {
-    final userId = Supabase.instance.client.auth.user()!.id;
+    final userId = ref.read(userProvider).rawUser!.id;
 
     final request = await _roomRepository.fetchJoinedRooms(userId: userId);
 

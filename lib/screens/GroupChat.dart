@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chatTypes;
@@ -8,7 +10,6 @@ import 'package:scflutter/mixins/NewLoading.mixin.dart';
 import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/utils/router.gr.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../components/Avatar.dart';
 import '../components/Chat.dart';
@@ -29,7 +30,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     with NewLoadingMixin, TickerProviderStateMixin {
   List<chatTypes.Message> messages = [];
   bool streamInitialized = false;
-  late RealtimeSubscription _stream;
+  late StreamSubscription _stream;
   final ChatRepository _chatRepository = ChatRepository();
 
   @override
@@ -42,7 +43,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
   @override
   void dispose() {
-    _stream.unsubscribe();
+    _stream.cancel();
     super.dispose();
   }
 
@@ -58,14 +59,15 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
   }
 
   checkForRealtimeConnection() {
-    _stream.on("system", (payload, {ref}) {
-      if (payload["status"] == "ok") {
-        setLoading(false);
-        setState(() {
-          streamInitialized = true;
-        });
-      }
-    });
+    //TODO: merge it
+    // _stream.on("system", (payload, {ref}) {
+    //   if (payload["status"] == "ok") {
+    //     setLoading(false);
+    //     setState(() {
+    //       streamInitialized = true;
+    //     });
+    //   }
+    // });
   }
 
   chatTypes.Message _convertToChatUIMessageObject(Map<String, dynamic> data) {
@@ -87,8 +89,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
   }
 
   listenMessages() async {
-    final messagesStream =
-        _chatRepository.listenMessages(widget.roomDetails.id, (payload) {
+    _stream = _chatRepository.listenMessages(widget.roomDetails.id, (payload) {
       if (payload.eventType == "INSERT") {
         final message = _convertToChatUIMessageObject(payload.newRecord!);
 
@@ -97,9 +98,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         });
       }
     });
-    _stream = messagesStream;
-
-    _stream.subscribe();
   }
 
   List<chatTypes.Message> _mergeChatFromQuery(List<Message> results) {

@@ -49,8 +49,8 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
   }
 
   bool get isJoinedCommunity => roomDetails.room_partipications_data!
-      .where(
-          (element) => element.user == Supabase.instance.client.auth.user()!.id)
+      .where((element) =>
+          element.user == Supabase.instance.client.auth.currentUser!.id)
       .isNotEmpty;
 
   fetchRoomDetails() async {
@@ -94,12 +94,10 @@ class _RoomDetailsPageState extends ConsumerState<RoomDetailsPage>
   }
 
   onPressLeaveCommunity() async {
-    final userId = Supabase.instance.client.auth.user()!.id;
+    final userId = ref.read(userProvider).rawUser!.id;
     _roomRepository
         .leaveCommunity(roomId: widget.roomId, userId: userId)
         .then((value) {
-      final userId = Supabase.instance.client.auth.user()!.id;
-
       final t = [...roomDetails.room_partipications_data!];
       t.removeWhere(
           (element) => element.user == userId && element.room == widget.roomId);
