@@ -9,28 +9,25 @@ class FollowerRepository extends BaseRepositoryClass {
       : super(BaseRepositoryArguments(userData: true, actorData: true));
 
   Future<List<Follower>> fetchUserFollowers(String userId) async {
-    String select = userMeta.join(",");
-    final request = await _builder.select(select).eq('actor', userId).execute();
-
-    if (!request.hasError) {
+    try {
+      final request = await _builder.select(selectUserMeta).eq('actor', userId);
       return List<Follower>.from(
           request.data.map((data) => Follower.fromJson(data)));
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    logError(request.error);
-    throw Exception(request.error);
   }
 
   Future<List<Follower>> fetchUserFollowings(String userId) async {
-    String select = userMeta.join(",");
-    final request = await _builder.select(select).eq('user', userId).execute();
+    try {
+      final request = await _builder.select(selectUserMeta).eq('user', userId);
 
-    if (!request.hasError) {
       return List<Follower>.from(
           request.data.map((data) => Follower.fromJson(data)));
+    } catch (error) {
+      logError(error);
+      throw Exception(error);
     }
-
-    logError(request.error);
-    throw Exception(request.error);
   }
 }
