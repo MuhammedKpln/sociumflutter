@@ -43,7 +43,7 @@ class RegisterScreenStepFourState
 
   register() async {
     if (_validateInput()) {
-      final signUp = _authRepository
+      _authRepository
           .signUp(
               email: widget.email,
               password: passwordController.text,
@@ -69,19 +69,18 @@ class RegisterScreenStepFourState
     return null;
   }
 
-  onSuccessfullLoginAttempt(LoginResponse response) {
+  onSuccessfullLoginAttempt(LoginResponse? response) {
     final model = AuthStateModel(
-        accessToken: response.accessToken,
-        rawUser: response.rawUser,
-        user: response.user,
-        refreshToken: response.refreshToken);
+        accessToken: response?.accessToken,
+        rawUser: response?.rawUser,
+        user: response?.user,
+        refreshToken: response?.refreshToken);
 
     ref.read(userProvider.notifier).setUser(model);
     context.router.replaceAll([const HomeScreenRoute()]);
   }
 
   onErrorLoginAttempt(Exception error) {
-    print(error);
     context.toast.showToast("Lütfen daha sonra tekrar deneyiniz.",
         toastType: ToastType.Error);
   }
