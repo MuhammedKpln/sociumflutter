@@ -52,10 +52,7 @@ class _LoginScreenState extends ConsumerState<OnboardScreenPage> {
       final user =
           await _authRepository.getUserProfile(userUuid: currentUser.id);
 
-      if (user != null) {
-        _updateState(user);
-      }
-
+      _updateState(user);
       context.router.replace(const HomeScreenRoute());
     }
   }

@@ -47,10 +47,10 @@ class _LoginState extends ConsumerState<LoginScreenPage> {
     });
 
     final userModel = AuthStateModel(
-        accessToken: signIn?.accessToken,
-        rawUser: signIn?.rawUser,
-        user: signIn?.user,
-        refreshToken: signIn?.refreshToken);
+        accessToken: signIn.accessToken,
+        rawUser: signIn.rawUser,
+        user: signIn.user,
+        refreshToken: signIn.refreshToken);
 
     ref.read(userProvider.notifier).setUser(userModel);
 
