@@ -11,7 +11,6 @@ import 'package:scflutter/models/user.dart';
 import 'package:scflutter/repositories/user.repository.dart';
 import 'package:scflutter/state/auth.state.dart';
 import 'package:scflutter/utils/palette.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../utils/router.gr.dart';
 
@@ -54,7 +53,7 @@ class _ProfileScreenState extends ConsumerState<ProfilePage>
   }
 
   Future<UserMetaData> fetchUserMeta() async {
-    final userId = Supabase.instance.client.auth.user()!.id;
+    final userId = ref.read(userProvider).rawUser!.id;
 
     return await _userRepository.fetchUserMeta(userId);
   }

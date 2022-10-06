@@ -13,7 +13,6 @@ import 'package:scflutter/repositories/chat.repository.dart';
 import 'package:scflutter/screens/Chat/PermissionModal.dart';
 import 'package:scflutter/theme/animation_durations.dart';
 import 'package:scflutter/utils/router.gr.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../components/Avatar.dart';
 import '../components/Chat.dart';
 import '../components/Scaffold.dart';
@@ -53,7 +52,7 @@ class _ChatNewState extends ConsumerState<ChatNew>
   final ChatRepository _chatRepository = ChatRepository();
   List<types.Message> messages = [];
   bool streamInitialized = false;
-  late RealtimeSubscription _stream;
+  late StreamSubscription _stream;
   late final AnimationController _controller;
   late final Animation<double> _animation;
   late final Peer peer;
@@ -141,13 +140,15 @@ class _ChatNewState extends ConsumerState<ChatNew>
 
   checkForRealtimeConnection() {
     if (!streamInitialized) {
-      _stream.on("system", (payload, {ref}) {
-        if (payload["status"] == "ok") {
-          setState(() {
-            streamInitialized = true;
-          });
-        }
-      });
+      //TODO: merge it
+
+      // _stream.on("system", (payload, {ref}) {
+      //   if (payload["status"] == "ok") {
+      //     setState(() {
+      //       streamInitialized = true;
+      //     });
+      //   }
+      // });
     }
   }
 
@@ -157,7 +158,7 @@ class _ChatNewState extends ConsumerState<ChatNew>
 
     disposeEvents(widget.socketService);
     _controller.dispose();
-    _stream.unsubscribe();
+    _stream.cancel();
     super.dispose();
   }
 
@@ -208,9 +209,6 @@ class _ChatNewState extends ConsumerState<ChatNew>
         });
       }
     });
-    _stream = messagesStream;
-
-    _stream.subscribe();
   }
 
   Future<void> fetchChatMessages() async {

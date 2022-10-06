@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:scflutter/models/message.model.dart';
 import 'package:scflutter/repositories/room.repository.dart';
 import 'package:scflutter/utils/logger.dart';
@@ -10,7 +12,7 @@ class ChatRepository with LoggerMixin {
 
   SupabaseQueryBuilder get _query => _supabaseClient.from(_table);
 
-  Future<List<Message>?> fetchPrivateChats({required String id}) async {
+  Future<List<Message>> fetchPrivateChats({required String id}) async {
     const query = """*,
                     user_data:user(*),
                     receiver_data:receiver(*),
@@ -27,12 +29,11 @@ class ChatRepository with LoggerMixin {
       return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
     } catch (err) {
       logError(err);
+      throw Exception(err);
     }
-
-    return null;
   }
 
-  Future<List<Message>?> fetchCommunityChats({required String id}) async {
+  Future<List<Message>> fetchCommunityChats({required String id}) async {
     const query = """*,
                     user_data:user(*),
                     receiver_data:receiver(*),
@@ -50,11 +51,11 @@ class ChatRepository with LoggerMixin {
       return List<Message>.from(data.data.map((x) => Message.fromJson(x)));
     } catch (err) {
       logError(err);
+      throw Exception(err);
     }
-    return null;
   }
 
-  Future<List<Message>?> fetchChatMessages({required int roomId}) async {
+  Future<List<Message>> fetchChatMessages({required int roomId}) async {
     const query = """*,
                     user_data:user(*),
                     receiver_data:receiver(*),
@@ -70,8 +71,8 @@ class ChatRepository with LoggerMixin {
       return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
     } catch (err) {
       logError(err);
+      throw Exception(err);
     }
-    return null;
   }
 
   Future<void> sendMessage(SendMessage message) async {
@@ -82,10 +83,11 @@ class ChatRepository with LoggerMixin {
     }
   }
 
-  listenMessages(int roomId) {
+  StreamSubscription listenMessages(
+      int roomId, Function(dynamic payload) callback) {
     return Supabase.instance.client
         .from("messages:room=eq.$roomId")
-        .stream(["id"]);
+        .stream(["id"]).listen(callback);
   }
 
   Future<bool> Function({required int roomId}) get deleteRoom =>
