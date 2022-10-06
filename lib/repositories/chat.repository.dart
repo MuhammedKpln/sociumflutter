@@ -26,7 +26,7 @@ class ChatRepository with LoggerMixin {
           .or("user.eq.$id,receiver.eq.$id")
           .eq("group_message", false);
 
-      return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
+      return List<Message>.from(request.map((x) => Message.fromJson(x)));
     } catch (err) {
       logError(err);
       throw Exception(err);
@@ -68,7 +68,7 @@ class ChatRepository with LoggerMixin {
           .eq("room", roomId)
           .order("created_at", ascending: false);
 
-      return List<Message>.from(request.data.map((x) => Message.fromJson(x)));
+      return List<Message>.from(request.map((x) => Message.fromJson(x)));
     } catch (err) {
       logError(err);
       throw Exception(err);

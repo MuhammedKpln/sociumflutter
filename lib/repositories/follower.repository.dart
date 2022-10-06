@@ -12,7 +12,7 @@ class FollowerRepository extends BaseRepositoryClass {
     try {
       final request = await _builder.select(selectUserMeta).eq('actor', userId);
       return List<Follower>.from(
-          request.data.map((data) => Follower.fromJson(data)));
+          request.map((data) => Follower.fromJson(data)));
     } catch (error) {
       logError(error);
       throw Exception(error);
@@ -24,7 +24,7 @@ class FollowerRepository extends BaseRepositoryClass {
       final request = await _builder.select(selectUserMeta).eq('user', userId);
 
       return List<Follower>.from(
-          request.data.map((data) => Follower.fromJson(data)));
+          request.map((data) => Follower.fromJson(data)));
     } catch (error) {
       logError(error);
       throw Exception(error);

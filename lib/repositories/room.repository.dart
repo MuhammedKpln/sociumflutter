@@ -16,7 +16,7 @@ class RoomRepository extends BaseRepositoryClass {
       final request =
           await supabase.from("rooms").select(select).eq("published", true);
 
-      return List.from(request.data.map((data) => Room.fromJson(data)));
+      return List.from(request.map((data) => Room.fromJson(data)));
     } catch (error) {
       logError(error);
       throw Exception(error);
@@ -35,8 +35,7 @@ class RoomRepository extends BaseRepositoryClass {
           .select(select)
           .eq("user", userId);
 
-      return List.from(
-          request.data.map((data) => RoomPartipication.fromJson(data)));
+      return List.from(request.map((data) => RoomPartipication.fromJson(data)));
     } catch (error) {
       logError(error);
       throw Exception(error);
@@ -57,7 +56,7 @@ class RoomRepository extends BaseRepositoryClass {
           .limit(1)
           .single();
 
-      return Room.fromJson(request.data);
+      return Room.fromJson(request);
     } catch (error) {
       logError(error);
       throw Exception(error);
@@ -87,7 +86,7 @@ class RoomRepository extends BaseRepositoryClass {
           .from("room_partipications")
           .upsert({"room": roomId, "user": userId});
 
-      return RoomPartipication.fromJson(request.data.first);
+      return RoomPartipication.fromJson(request.first);
     } catch (error) {
       logError(error);
       throw Exception(error);

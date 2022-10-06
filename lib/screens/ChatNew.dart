@@ -199,8 +199,7 @@ class _ChatNewState extends ConsumerState<ChatNew>
   }
 
   listenMessages() async {
-    final messagesStream =
-        _chatRepository.listenMessages(widget.room?.id ?? 0, (payload) {
+    _stream = _chatRepository.listenMessages(widget.room?.id ?? 0, (payload) {
       if (payload.eventType == "INSERT") {
         final message = _convertToChatUIMessageObject(payload.newRecord!);
 

@@ -11,7 +11,7 @@ class UserRepository extends BaseRepositoryClass {
       Map<String, dynamic> data, String userId) async {
     try {
       final request = await _builder.update(data).eq("id", userId);
-      final parsedData = UserModel.fromJson(request.data[0]);
+      final parsedData = UserModel.fromJson(request[0]);
 
       return parsedData;
     } catch (error) {
@@ -24,7 +24,7 @@ class UserRepository extends BaseRepositoryClass {
     try {
       final request = await _builder.select().eq("username", username).single();
 
-      return UserModel.fromJson(request.data);
+      return UserModel.fromJson(request);
     } catch (error) {
       logError(error);
       throw Exception(error);
@@ -35,9 +35,9 @@ class UserRepository extends BaseRepositoryClass {
     try {
       final fetchMetaData = await supabase.rpc('user_followers_count');
       return UserMetaData(
-          followers: fetchMetaData.data[0],
-          followings: fetchMetaData.data[1],
-          rooms: fetchMetaData.data[2]);
+          followers: fetchMetaData[0],
+          followings: fetchMetaData[1],
+          rooms: fetchMetaData[2]);
     } catch (error) {
       logError(error);
       throw Exception(error);
